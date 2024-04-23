@@ -1,15 +1,26 @@
 #pragma once
 
-#include "Camera.hpp"
+#include "GameObject.hpp"
+#include "engine/core/Camera.hpp"
+#include <vector>
 
 class AbstractScene {
 protected:
     Camera *camera;
+    std::vector<GameObject *> gameObjects;
 
-public:
+private:
+    bool isRunning = false;
+
+protected:
     AbstractScene() {}
 
-    virtual void Update(float dt) = 0;
+public:
+    virtual void Init() {};
 
-    virtual void Init() = 0;
+    void Start();
+
+    void AddGameObject(GameObject *go);
+
+    virtual void Update(float dt) = 0;
 };

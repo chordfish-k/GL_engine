@@ -3,26 +3,35 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "AbstractScene.hpp"
-#include "Camera.hpp"
+#include "engine/core/AbstractScene.hpp"
+#include "engine/core/Camera.hpp"
+#include "engine/core/GameObject.hpp"
+
+#include "engine/component/SpriteRenderer.hpp"
 #include "engine/renderer/Shader.hpp"
+#include "engine/renderer/Texture.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/Common.hpp"
+#include "engine/util/Time.hpp"
+
 #include <glm/ext/vector_float2.hpp>
 
 class LevelEditorScene : public AbstractScene {
 private:
     Shader *defaultShader;
+    Texture *testTexture;
+    GameObject *testObj;
+    bool firstTime = false;
 
     unsigned int shaderProgram;
     unsigned int vboID, vaoID, eboID;
 
-    float verticesArray[28] = {
-        // position                 // color
-        100.5f, 100.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 右上 2
-        100.5f, -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 右下 0
-        -0.5f,  -0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // 左下 3
-        -0.5f,  100.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // 左上 1
+    float verticesArray[36] = {
+        // position                 // color // UV
+        100.5f,  100.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1, 0, // 右上 0
+        100.5f,  -100.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1, 1, // 右下 1
+        -100.5f, -100.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0, 1, // 左下 2
+        -100.5f, 100.5f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0, 0, // 左上 3
 
     };
     unsigned int elementArray[6] = {
@@ -32,13 +41,28 @@ private:
 public:
     LevelEditorScene() { util::Println("Inside level editor scene."); }
 
-    ~LevelEditorScene() { delete defaultShader; }
+    ~LevelEditorScene() {
+        delete defaultShader;
+        defaultShader = nullptr;
+        delete camera;
+        camera = nullptr;
+    }
 
     void Init() {
+        // 初始化一个GameObject
+        testObj = new GameObject("test object");
+        testObj->AddComponent<SpriteRenderer>();
+        AddGameObject(testObj);
+
+        // 初始化摄像机
         this->camera = new Camera(glm::vec2(0.f, 0.f));
 
+        // 加载Shader
         defaultShader = new Shader("assets/shader/default.glsl");
-        defaultShader->compile();
+        defaultShader->Compile();
+
+        // 加载纹理
+        testTexture = new Texture("assets/image/testImage.png");
 
         // ********************************
         // 创建VAO, VBO, EBO 缓冲， 并发送到GPU
@@ -63,30 +87,45 @@ public:
         // 设置顶点属性指针
         int positionSize = 3;
         int colorSize = 4;
+        int uvSize = 2;
         int floatSizeBytes = sizeof(float);
-        int vertexSizeBytes = (positionSize + colorSize) * floatSizeBytes;
-        glVertexAttribPointer(0, positionSize, GL_FLOAT, GL_FALSE, vertexSizeBytes,
-                              (void *)0);
+        int vertexSizeBytes =
+            (positionSize + colorSize + uvSize) * floatSizeBytes;
+
+        glVertexAttribPointer(0, positionSize, GL_FLOAT, GL_FALSE,
+                              vertexSizeBytes, (void *)0);
         glEnableVertexAttribArray(0);
+
         glVertexAttribPointer(1, colorSize, GL_FLOAT, GL_FALSE, vertexSizeBytes,
                               (void *)(positionSize * floatSizeBytes));
         glEnableVertexAttribArray(1);
 
+        glVertexAttribPointer(
+            2, uvSize, GL_FLOAT, GL_FALSE, vertexSizeBytes,
+            (void *)((positionSize + colorSize) * floatSizeBytes));
+        glEnableVertexAttribArray(2);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        camera->position.x = -500.f;
+        camera->position.y = -300.f;
     }
 
     void Update(float dt) {
 
-        camera->position.x -= dt * 50.f;
-
         // 绑定着色器程序
-        defaultShader->use();
+        defaultShader->Use();
+
+        // 上传纹理到着色器
+        defaultShader->UploadTexture("TEX_SAMPLER", 0);
+        glActiveTexture(GL_TEXTURE0);
+        testTexture->Bind();
 
         // 上传坐标变换矩阵到着色器
         defaultShader->UploadMat4("uProjection", camera->GetProjMatrix());
         defaultShader->UploadMat4("uView", camera->GetViewMatrix());
-        
+        defaultShader->UploadFloat("uTime", Time::GetGameTime());
 
         // 绑定要用的VAO
         glBindVertexArray(vaoID);
@@ -103,6 +142,10 @@ public:
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
-        defaultShader->detach();
+        defaultShader->Detach();
+
+        for (GameObject *go : gameObjects) {
+            go->Update(dt);
+        }
     }
 };

@@ -115,10 +115,12 @@ void Window::ChangeScene(int newScene) {
     case 0:
         currentScene = new LevelEditorScene();
         currentScene->Init();
+        // currentScene->Start();
         break;
     case 1:
         currentScene = new LevelScene();
         currentScene->Init();
+        // currentScene->Start();
         break;
     default:
         util::Print("Unknow scene ", newScene);

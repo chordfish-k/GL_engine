@@ -1,5 +1,6 @@
 #pragma once
 
+#include "engine/util/Print.hpp"
 #include <cstddef>
 #include <string>
 
@@ -11,16 +12,15 @@ size_t LenOf(T (&arr)[N]) {
 }
 
 inline std::string Trim(std::string str) {
-    size_t size = str.size();
-    size_t begin = 0;
-    size_t end = size - 1;
-    while (begin < size && (str[begin] == ' ' || str[begin] == '\n'))
-        begin++;
+    size_t first = str.find_first_not_of(" \t\n\r");
+    size_t last = str.find_last_not_of(" \t\n\r");
 
-    while (end >= 0 && (str[end] == ' ' || str[end] == '\n'))
-        end--;
-
-    return str.substr(begin, end - begin + 1);
+    if (first == std::string::npos) {
+        // 字符串全由空格字符组成
+        return "";
+    } else {
+        return str.substr(first, last - first + 1);
+    }
 }
 
 } // namespace util

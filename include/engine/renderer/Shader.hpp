@@ -1,12 +1,19 @@
 #pragma once
 
-#include <glm/ext/matrix_float4x4.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 class Shader {
 private:
+    const char *filePath;
+
     unsigned int shaderProgramID;
-    const char *vertexSource;
-    const char *fragmentSource;
+    bool beingUsed;
+
+    std::string vertexSource;
+    std::string fragmentSource;
 
 public:
     Shader(const char *filePath);
@@ -14,14 +21,20 @@ public:
     ~Shader();
 
     // 编译着色器
-    void compile();
+    void Compile();
 
     // 绑定着色器程序
-    void use();
+    void Use();
 
     // 解绑
-    void detach();
+    void Detach();
 
     // 数据上传
-    void UploadMat4(const char*varName, glm::mat4 mat4);
+    void UploadMat4(const char *varName, glm::mat4 mat4);
+    void UploadMat3(const char *varName, glm::mat3 mat3);
+    void UploadVec4(const char *varName, glm::vec4 vec4);
+    void UploadVec3(const char *varName, glm::vec3 vec3);
+    void UploadInt(const char *varName, int slot);
+    void UploadFloat(const char *varName, float slot);
+    void UploadTexture(const char *varName, int slot);
 };
