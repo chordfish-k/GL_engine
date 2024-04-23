@@ -18,4 +18,4 @@ public:
     }
 };
 
-std::int64_t Time::timeStarted = Time::NanoTime();
+inline std::int64_t Time::timeStarted = Time::NanoTime();

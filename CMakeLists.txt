@@ -29,9 +29,9 @@ endif()
 include_directories(${VCPKG_ROOT}/installed/x64-windows/include)
 link_directories(${VCPKG_ROOT}/installed/x64-windows/lib)
 
-
 aux_source_directory(src SOURCES)
-aux_source_directory(src/engin/core SOURCES)
+aux_source_directory(src/engine/core SOURCES)
+aux_source_directory(src/engine/renderer SOURCES)
 
 file(GLOB_RECURSE HEADERS "./include/*.hpp")
 add_executable(main main.cpp ${SOURCES} ${HEADERS})
@@ -47,5 +47,5 @@ target_link_libraries(main PRIVATE GLEW::GLEW)
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(main PRIVATE glm::glm)
 
-# 将资源文件复制到输出目录
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# 将assets文件夹复制到输出目录
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

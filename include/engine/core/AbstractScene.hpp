@@ -1,6 +1,11 @@
 #pragma once
 
+#include "Camera.hpp"
+
 class AbstractScene {
+protected:
+    Camera *camera;
+
 public:
     AbstractScene() {}
 

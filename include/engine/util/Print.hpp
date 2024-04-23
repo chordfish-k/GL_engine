@@ -14,7 +14,8 @@ void Println(const Args &...args) {
     Print(args..., "\n");
 }
 
-void GLFWErrorCallBack(int code, const char *msg) {
+inline void GLFWErrorCallBack(int code, const char *msg) {
     Print("[", code, "] ", msg);
 }
+
 } // namespace util

@@ -10,7 +10,7 @@ size_t LenOf(T (&arr)[N]) {
     return N;
 }
 
-std::string Trim(std::string str) {
+inline std::string Trim(std::string str) {
     size_t size = str.size();
     size_t begin = 0;
     size_t end = size - 1;

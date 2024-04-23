@@ -1,11 +1,14 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "AbstractScene.hpp"
-#include "Window.hpp"
-#include "engine/core/Window.hpp"
+#include "Camera.hpp"
 #include "engine/renderer/Shader.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/Common.hpp"
+#include <glm/ext/vector_float2.hpp>
 
 class LevelEditorScene : public AbstractScene {
 private:
@@ -16,10 +19,10 @@ private:
 
     float verticesArray[28] = {
         // position                 // color
-        0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 右上 2
-        0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 右下 0
-        -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // 左下 3
-        -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // 左上 1
+        100.5f, 100.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 右上 2
+        100.5f, -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 右下 0
+        -0.5f,  -0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // 左下 3
+        -0.5f,  100.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // 左上 1
 
     };
     unsigned int elementArray[6] = {
@@ -29,13 +32,12 @@ private:
 public:
     LevelEditorScene() { util::Println("Inside level editor scene."); }
 
-    ~LevelEditorScene() {
-        delete defaultShader;
-    }
+    ~LevelEditorScene() { delete defaultShader; }
 
     void Init() {
-        defaultShader = new Shader(
-            "assets/shader/default.glsl");
+        this->camera = new Camera(glm::vec2(0.f, 0.f));
+
+        defaultShader = new Shader("assets/shader/default.glsl");
         defaultShader->compile();
 
         // ********************************
@@ -63,7 +65,7 @@ public:
         int colorSize = 4;
         int floatSizeBytes = sizeof(float);
         int vertexSizeBytes = (positionSize + colorSize) * floatSizeBytes;
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSizeBytes,
+        glVertexAttribPointer(0, positionSize, GL_FLOAT, GL_FALSE, vertexSizeBytes,
                               (void *)0);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, colorSize, GL_FLOAT, GL_FALSE, vertexSizeBytes,
@@ -75,8 +77,16 @@ public:
     }
 
     void Update(float dt) {
+
+        camera->position.x -= dt * 50.f;
+
         // 绑定着色器程序
         defaultShader->use();
+
+        // 上传坐标变换矩阵到着色器
+        defaultShader->UploadMat4("uProjection", camera->GetProjMatrix());
+        defaultShader->UploadMat4("uView", camera->GetViewMatrix());
+        
 
         // 绑定要用的VAO
         glBindVertexArray(vaoID);
