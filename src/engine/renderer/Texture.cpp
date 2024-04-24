@@ -2,13 +2,14 @@
 #include <cassert>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <string>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "engine/renderer/Texture.hpp"
 
-Texture::Texture(const char *filePath) {
+Texture::Texture(std::string filePath) {
     this->filePath = filePath;
 
     // 让GPU生成纹理
@@ -24,7 +25,7 @@ Texture::Texture(const char *filePath) {
 
     // 使用stb库加载纹理
     int width, height, channels;
-    auto image = stbi_load(filePath, &width, &height, &channels, 0);
+    auto image = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
 
     if (image != nullptr) {
         if (channels == 3) {

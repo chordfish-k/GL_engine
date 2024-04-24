@@ -1,12 +1,13 @@
 #pragma once
 
+#include <string>
 class Texture {
 private:
-    const char *filePath;
+    std::string filePath;
     unsigned int texID;
 
 public:
-    Texture(const char *filePath);
+    Texture(std::string filePath);
     ~Texture();
 
     void Bind();

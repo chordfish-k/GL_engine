@@ -10,6 +10,7 @@
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/renderer/Shader.hpp"
 #include "engine/renderer/Texture.hpp"
+#include "engine/util/AssetPool.hpp"
 #include "engine/util/Common.hpp"
 #include "engine/util/Print.hpp"
 
@@ -40,7 +41,7 @@ private:
     };
 
 public:
-    LevelEditorScene() { util::Println("Inside level editor scene."); }
+    LevelEditorScene() {}
 
     ~LevelEditorScene() {
         delete defaultShader;
@@ -75,7 +76,11 @@ public:
                 this->AddGameObject(go);
             }
         }
+
+        InitResources();
     }
+
+    void InitResources() { AssetPool::GetShader("assets/shader/default.glsl"); }
 
     void Update(float dt) {
 

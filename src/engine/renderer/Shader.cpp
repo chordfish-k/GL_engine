@@ -18,7 +18,7 @@
 #include <sstream>
 #include <string>
 
-Shader::Shader(const char *filePath) {
+Shader::Shader(std::string filePath) {
     this->filePath = filePath;
     this->beingUsed = false;
 
@@ -29,7 +29,7 @@ Shader::Shader(const char *filePath) {
     shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
-        shaderFile.open(filePath);
+        shaderFile.open(filePath.c_str());
 
         std::stringstream shaderStream;
         shaderStream << shaderFile.rdbuf();

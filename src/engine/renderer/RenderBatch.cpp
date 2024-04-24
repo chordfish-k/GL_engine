@@ -10,10 +10,11 @@
 #include "engine/core/Camera.hpp"
 #include "engine/core/GameObject.hpp"
 #include "engine/renderer/Shader.hpp"
+#include "engine/util/AssetPool.hpp"
 #include "engine/util/Print.hpp"
 
 RenderBatch::RenderBatch(int maxBatchSize) {
-    shader = new Shader("assets/shader/default.glsl");
+    shader = AssetPool::GetShader("assets/shader/default.glsl");
     shader->Compile();
 
     this->maxBatchSize = maxBatchSize;
@@ -27,7 +28,7 @@ RenderBatch::RenderBatch(int maxBatchSize) {
 }
 
 RenderBatch::~RenderBatch() {
-    delete shader;
+    // delete shader;
 }
 
 void RenderBatch::Start() {

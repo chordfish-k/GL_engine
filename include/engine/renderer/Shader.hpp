@@ -7,7 +7,7 @@
 
 class Shader {
 private:
-    const char *filePath;
+    std::string filePath;
 
     unsigned int shaderProgramID;
     bool beingUsed;
@@ -16,7 +16,7 @@ private:
     std::string fragmentSource;
 
 public:
-    Shader(const char *filePath);
+    Shader(std::string filePath);
 
     ~Shader();
 
