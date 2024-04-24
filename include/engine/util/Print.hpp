@@ -1,8 +1,17 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
+#include <string>
 
 namespace util {
+
+template <typename... Args>
+std::string Concat(const Args &...args) {
+    std::stringstream ss;
+    ((ss << args), ...);
+    return ss.str();
+}
 
 template <typename... Args>
 void Print(const Args &...args) {

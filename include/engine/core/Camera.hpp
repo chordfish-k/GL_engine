@@ -16,6 +16,8 @@ public:
     glm::vec2 position;
 
 public:
+    Camera();
+
     Camera(glm::vec2 position);
 
     void AdjustProjection();

@@ -1,13 +1,21 @@
 #pragma once
 
 #include "engine/component/Component.hpp"
-#include "engine/util/Print.hpp"
+#include <glm/ext/vector_float4.hpp>
 
 class SpriteRenderer : public Component {
+private:
+    glm::vec4 color;
+
 public:
-    SpriteRenderer() {};
+    SpriteRenderer();
 
-    void Start() override { util::Println("starting..."); }
+    SpriteRenderer(glm::vec4 color);
 
-    void Update(float dt) {}
+    void Start();
+
+    void Update(float dt);
+
+    // 属性
+    glm::vec4 GetColor() { return color; };
 };

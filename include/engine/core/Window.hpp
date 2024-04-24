@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "AbstractScene.hpp"
+#include "engine/core/AbstractScene.hpp"
 #include <cassert>
 #include <string>
 
@@ -27,12 +28,7 @@ private:
     }
 
 public:
-    static Window *Get() {
-        if (window == nullptr) {
-            window = new Window();
-        }
-        return window;
-    }
+    static Window *Get();
 
     void Run();
 
@@ -50,4 +46,6 @@ public:
     static void SetWidth(int width) { Get()->width = width; }
 
     static void SetHeight(int height) { Get()->height = height; }
+
+    static AbstractScene *GetScene() {return Get()->currentScene; }
 };

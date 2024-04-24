@@ -7,10 +7,18 @@
 #include "engine/core/LevelScene.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/Time.hpp"
+#include <GLFW/glfw3.h>
 
 Window *Window::window = nullptr;
 
 AbstractScene *Window::currentScene = nullptr;
+
+Window *Window::Get() {
+    if (window == nullptr) {
+        window = new Window();
+    }
+    return window;
+}
 
 void Window::Loop() {
     float beginTime = Time::GetGameTime();
@@ -66,6 +74,7 @@ void Window::Init() {
         glfwTerminate();
     }
 
+
     // 鼠标和键盘监听
     glfwSetCursorPosCallback(glfwWindow, &MouseListener::MousePosCallback);
     glfwSetMouseButtonCallback(glfwWindow, &MouseListener::MouseButtonCallback);
@@ -115,12 +124,12 @@ void Window::ChangeScene(int newScene) {
     case 0:
         currentScene = new LevelEditorScene();
         currentScene->Init();
-        // currentScene->Start();
+        currentScene->Start();
         break;
     case 1:
         currentScene = new LevelScene();
         currentScene->Init();
-        // currentScene->Start();
+        currentScene->Start();
         break;
     default:
         util::Print("Unknow scene ", newScene);

@@ -1,10 +1,10 @@
 #pragma once
 
-// class GameObject;
+class GameObject;
 
 class Component {
 public:
-    // GameObject *gameObject = nullptr;
+    GameObject *gameObject = nullptr;
 
 protected:
     Component() {};

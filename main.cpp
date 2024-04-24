@@ -2,8 +2,8 @@
 
 int main() {
     Window *window = Window::Get();
-    window->SetWidth(800);
-    window->SetHeight(600);
+    window->SetWidth(1920*0.5);
+    window->SetHeight(1080*0.5);
     window->Run();
     return 0;
 }

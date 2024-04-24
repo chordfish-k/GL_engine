@@ -17,7 +17,6 @@
 #include <regex>
 #include <sstream>
 #include <string>
-#include <vector>
 
 Shader::Shader(const char *filePath) {
     this->filePath = filePath;
@@ -59,59 +58,6 @@ Shader::Shader(const char *filePath) {
             util::Println("Unexpect token '", type, "'");
         }
     }
-
-    // std::string text = "#type vertice";
-    // std::regex pattern("#type ([a-zA-Z]+)"); // 注意：\\b表示单词边界
-    // std::pmr::vector<std::smatch> matches;
-
-    // 在字符串中查找所有匹配项
-    // 遍历所有匹配项
-    // for (std::sregex_iterator it(source.begin(), source.end(), pattern);
-    //      it != std::sregex_iterator(); ++it) {
-    //     std::smatch match = *it;
-    //     matches.push_back(match);
-    // }
-    // size_t fShaderBegin = matches[1].position() + matches[1].size();
-    // if (matches.size() != 2) {
-    //     util::Println("ERROR::SHADER::GLSL_PARESING_FAILED: vertex or "
-    //                   "fragment shader declaration missed.");
-    // }
-
-    // size_t index = source.find("#type") + 6;
-    // size_t eol = source.find("\n", index);
-    // std::string firstPattern = util::Trim(source.substr(index, eol - index));
-
-    // size_t index2 = source.find("#type", eol) + 6;
-    // size_t eol2 = source.find("\n", index2);
-    // std::string secondPattern =
-    //     util::Trim(source.substr(index2, eol2 - index2));
-
-    // size_t piece1from = eol + 1;
-    // size_t piece2from = eol2 + 1;
-    // size_t piece1n = (index2 - 6) - (piece1from);
-    // size_t piece2n = (source.size()) - (piece2from);
-
-    // if (firstPattern == "vertex") {
-    //     std::string code = source.substr(piece1from, piece1n);
-    //     vertexSource = util::Trim(code);
-    //     util::Println(vertexSource);
-
-    // } else if (firstPattern == "fragment") {
-    //     std::string code = source.substr(piece1from, piece1n);
-    //     fragmentSource = util::Trim(code);
-    // } else {
-    //     util::Println("Unexpect token '", firstPattern, "'");
-    // }
-
-    // if (secondPattern == "vertex") {
-    //     std::string code = source.substr(piece2from, piece2n);
-    //     vertexSource = util::Trim(code);
-    // } else if (secondPattern == "fragment") {
-    //     std::string code = source.substr(piece2from, piece2n);
-    //     fragmentSource = util::Trim(code);
-    // } else {
-    //     util::Println("Unexpect token '", firstPattern, "'");
-    // }
 }
 
 Shader::~Shader() {

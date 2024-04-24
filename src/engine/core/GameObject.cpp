@@ -1,13 +1,20 @@
 #include "engine/core/GameObject.hpp"
 #include "engine/component/SpriteRenderer.hpp"
+#include "engine/component/Transform.hpp"
 
 #include <cassert>
 #include <string>
-#include <type_traits>
 
 GameObject::GameObject(std::string name) {
-    SpriteRenderer *sr = new SpriteRenderer();
-    this->GetComponent<SpriteRenderer>();
+    this->name = name;
+    this->transform = new Transform();
+    this->components.push_back(this->transform);
+}
+
+GameObject::GameObject(std::string name, Transform *transform) {
+    this->name = name;
+    this->transform = transform;
+    this->components.push_back(transform);
 }
 
 GameObject::~GameObject() {

@@ -32,6 +32,7 @@ link_directories(${VCPKG_ROOT}/installed/x64-windows/lib)
 aux_source_directory(src SOURCES)
 aux_source_directory(src/engine/core SOURCES)
 aux_source_directory(src/engine/renderer SOURCES)
+aux_source_directory(src/engine/component SOURCES)
 
 file(GLOB_RECURSE HEADERS "./include/*.hpp")
 add_executable(main main.cpp ${SOURCES} ${HEADERS})
