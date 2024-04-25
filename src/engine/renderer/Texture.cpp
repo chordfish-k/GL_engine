@@ -29,6 +29,9 @@ Texture::Texture(std::string filePath) {
     auto image = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
 
     if (image != nullptr) {
+        this->width = width;
+        this->height = height;
+
         if (channels == 3) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                          GL_UNSIGNED_BYTE, image);

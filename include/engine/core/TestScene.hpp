@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "engine/component/Spritesheet.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/core/AbstractScene.hpp"
 #include "engine/core/GameObject.hpp"
@@ -23,26 +24,34 @@ public:
     ~TestScene() {}
 
     void Init() {
-        this->camera = new Camera();
+        InitResources();
+
+        this->camera = new Camera(glm::vec2(-250, 0));
+
+        Spritesheet *sprites =
+            AssetPool::GetSpritesheet("assets/image/spritesheet.png");
 
         GameObject *obj1 =
             new GameObject("Object 1", new Transform(glm::vec2(100, 200),
                                                      glm::vec2(256, 256)));
-        obj1->AddComponent(new SpriteRenderer(
-            AssetPool::GetTexture("assets/image/testImage.png")));
+        obj1->AddComponent(new SpriteRenderer(sprites->GetSprite(0)));
         this->AddGameObject(obj1);
 
         GameObject *obj2 =
             new GameObject("Object 2", new Transform(glm::vec2(400, 200),
                                                      glm::vec2(256, 256)));
-        obj2->AddComponent(new SpriteRenderer(
-            AssetPool::GetTexture("assets/image/testImage2.png")));
+        obj2->AddComponent(new SpriteRenderer(sprites->GetSprite(15)));
         this->AddGameObject(obj2);
-
-        InitResources();
     }
 
-    void InitResources() { AssetPool::GetShader("assets/shader/default.glsl"); }
+    void InitResources() {
+        AssetPool::GetShader("assets/shader/default.glsl");
+        AssetPool::AddSpritesheet(
+            "assets/image/spritesheet.png",
+            new Spritesheet(
+                AssetPool::GetTexture("assets/image/spritesheet.png"), 16, 16,
+                26, 0));
+    }
 
     void Update(float dt) {
         for (auto go : gameObjects) {

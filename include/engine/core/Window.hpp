@@ -28,6 +28,8 @@ private:
     }
 
 public:
+    ~Window();
+
     static Window *Get();
 
     void Run();
@@ -47,5 +49,5 @@ public:
 
     static void SetHeight(int height) { Get()->height = height; }
 
-    static AbstractScene *GetScene() {return Get()->currentScene; }
+    static AbstractScene *GetScene() { return Get()->currentScene; }
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "engine/component/Sprite.hpp"
 #include "engine/component/Component.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -9,17 +10,14 @@ class Texture;
 class SpriteRenderer : public Component {
 private:
     glm::vec4 color;
-    glm::vec2 texCoords[4];
-    Texture *texture = nullptr;
+    Sprite *sprite;
 
 public:
     SpriteRenderer();
 
     SpriteRenderer(glm::vec4 color);
 
-    SpriteRenderer(Texture *texture);
-    
-    SpriteRenderer(glm::vec4 color, Texture *texture);
+    SpriteRenderer(Sprite *sprite);
 
     void Start();
 
@@ -28,7 +26,7 @@ public:
     // 属性
     glm::vec4 GetColor() { return color; }
 
-    Texture *GetTexture() { return texture; }
+    Texture *GetTexture() { return sprite->GetTexture(); }
 
-    glm::vec2 *GetTexCoords() { return texCoords; }
+    std::vector<glm::vec2> GetTexCoords() { return sprite->GetTexCoords(); }
 };

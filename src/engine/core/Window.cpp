@@ -4,12 +4,17 @@
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/TestScene.hpp"
+#include "engine/util/AssetPool.hpp"
 #include "engine/util/Print.hpp"
 #include <GLFW/glfw3.h>
 
 Window *Window::window = nullptr;
 
 AbstractScene *Window::currentScene = nullptr;
+
+Window::~Window() {
+    AssetPool::Clear();
+}
 
 Window *Window::Get() {
     if (window == nullptr) {

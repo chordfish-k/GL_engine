@@ -141,7 +141,7 @@ void RenderBatch::LoadVertexProperties(int index) {
     int offset = index * 4 * VERTEX_SIZE;
     // float float      float float float float
     glm::vec4 color = sprite->GetColor();
-    glm::vec2 *texCoords = sprite->GetTexCoords();
+    std::vector<glm::vec2> texCoords = sprite->GetTexCoords();
 
     int texId = 0; // 0 表示无texture
     if (sprite->GetTexture() != nullptr) {
