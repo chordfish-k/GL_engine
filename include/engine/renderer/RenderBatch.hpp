@@ -35,9 +35,10 @@ private:
 
     unsigned int vaoID, vboID;
     Shader *shader = nullptr;
+    int zIndex; // 用于确定渲染顺序
 
 public:
-    RenderBatch(int maxBatchSize);
+    RenderBatch(int maxBatchSize, int zIndex);
 
     ~RenderBatch();
 
@@ -49,6 +50,12 @@ public:
 
     // 属性
     bool HasRoom() { return hasRoom; }
+
+    int ZIndex() { return zIndex; }
+
+    int operator<(RenderBatch &to) {
+        return zIndex < to.zIndex ? -1 : (zIndex == to.zIndex ? 0 : 1);
+    }
 
 private:
     void LoadVertexProperties(int index);

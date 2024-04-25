@@ -15,11 +15,10 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Common.hpp"
 
-RenderBatch::RenderBatch(int maxBatchSize) {
+RenderBatch::RenderBatch(int maxBatchSize, int zIndex)
+    : maxBatchSize(maxBatchSize), zIndex(zIndex) {
     shader = AssetPool::GetShader("assets/shader/default.glsl");
     shader->Compile();
-
-    this->maxBatchSize = maxBatchSize;
 
     // 二维引擎，渲染四边形
     verticesSize = maxBatchSize * 4 * VERTEX_SIZE;

@@ -64,7 +64,7 @@ void Window::Init() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     // glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
@@ -102,7 +102,10 @@ void Window::Init() {
     }
 
     // 使窗口可见
-    // glfwShowWindow(this->glfwWindow);
+    glfwShowWindow(this->glfwWindow);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     // 默认场景
     Window::ChangeScene(0);

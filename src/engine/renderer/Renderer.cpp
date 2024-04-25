@@ -2,6 +2,7 @@
 #include "engine/renderer/Renderer.hpp"
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/util/Print.hpp"
+#include <algorithm>
 #include <ios>
 
 Renderer::Renderer() {}
@@ -24,9 +25,10 @@ void Renderer::Add(GameObject *go) {
 
 void Renderer::Add(SpriteRenderer *sprite) {
     bool added = false;
-    // 找到一个有空间的batch，添加进去
+    // 找到一个有空间的batch，并且zindex也相同，添加进去
     for (RenderBatch *batch : batches) {
-        if (batch->HasRoom()) {
+        if (batch->HasRoom() &&
+            batch->ZIndex() == sprite->gameObject->ZIndex()) {
             batch->AddSprite(sprite);
             added = true;
             break;
@@ -35,10 +37,12 @@ void Renderer::Add(SpriteRenderer *sprite) {
 
     // 如果全部batch都满了，添加新的batch
     if (!added) {
-        RenderBatch *newBatch = new RenderBatch(MAX_BATCH_SIZE);
+        RenderBatch *newBatch =
+            new RenderBatch(MAX_BATCH_SIZE, sprite->gameObject->ZIndex());
         newBatch->Start();
         batches.push_back(newBatch);
         newBatch->AddSprite(sprite);
+        std::sort(batches.begin(), batches.end());
     }
 }
 

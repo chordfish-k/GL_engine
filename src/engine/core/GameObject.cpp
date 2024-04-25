@@ -5,15 +5,14 @@
 #include <cassert>
 #include <string>
 
-GameObject::GameObject(std::string name) {
-    this->name = name;
-    this->transform = new Transform();
-    this->components.push_back(this->transform);
-}
+GameObject::GameObject(std::string name)
+    : GameObject(name, new Transform(), 0) {}
 
-GameObject::GameObject(std::string name, Transform *transform) {
-    this->name = name;
-    this->transform = transform;
+GameObject::GameObject(std::string name, Transform *transform)
+    : GameObject(name, transform, 0) {}
+
+GameObject::GameObject(std::string name, Transform *transform, int zIndex)
+    : name(name), transform(transform), zIndex(zIndex) {
     this->components.push_back(transform);
 }
 

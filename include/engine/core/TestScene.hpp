@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "engine/component/Sprite.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/core/AbstractScene.hpp"
 #include "engine/core/GameObject.hpp"
@@ -32,15 +33,18 @@ public:
 
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheet.png");
 
-        obj1 = new GameObject("Object 1", new Transform(glm::vec2(100, 200),
-                                                        glm::vec2(256, 256)));
-        obj1->AddComponent(new SpriteRenderer(sprites->GetSprite(0)));
+        obj1 = new GameObject(
+            "Object 1", new Transform(glm::vec2(200, 200), glm::vec2(256, 256)),
+            1);
+        obj1->AddComponent(new SpriteRenderer(
+            new Sprite(AssetPool::GetTexture("assets/image/blendImage1.png"))));
         this->AddGameObject(obj1);
 
-        GameObject *obj2 =
-            new GameObject("Object 2", new Transform(glm::vec2(400, 200),
-                                                     glm::vec2(256, 256)));
-        obj2->AddComponent(new SpriteRenderer(sprites->GetSprite(15)));
+        GameObject *obj2 = new GameObject(
+            "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
+            0);
+        obj2->AddComponent(new SpriteRenderer(
+            new Sprite(AssetPool::GetTexture("assets/image/blendImage2.png"))));
         this->AddGameObject(obj2);
     }
 
@@ -54,25 +58,9 @@ public:
     }
 
     void Update(float dt) {
-        spriteFlipTimeLeft -= dt;
-        if (spriteFlipTimeLeft <= 0) {
-            spriteFlipTimeLeft = spriteFlipTime;
-            spriteIndex++;
-            if (spriteIndex >= 4) {
-                spriteIndex = 0;
-            }
-            obj1->GetComponent<SpriteRenderer>()->SetSprite(
-                sprites->GetSprite(spriteIndex));
-        }
-
         for (auto go : gameObjects) {
             go->Update(dt);
         }
         this->renderer->Render();
     }
-
-private:
-    int spriteIndex = 0;
-    float spriteFlipTime = 0.2f;
-    float spriteFlipTimeLeft = 0.0f;
 };

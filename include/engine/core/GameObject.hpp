@@ -12,6 +12,7 @@ class GameObject {
 private:
     std::string name;
     std::vector<Component *> components;
+    int zIndex;
 
 public:
     Transform *transform;
@@ -20,6 +21,8 @@ public:
     GameObject(std::string name);
 
     GameObject(std::string name, Transform *transform);
+
+    GameObject(std::string name, Transform *transform, int zIndex);
 
     ~GameObject();
 
@@ -65,4 +68,7 @@ public:
     void Update(float dt);
 
     void Start();
+
+    // 属性
+    int ZIndex() { return zIndex; }
 };
