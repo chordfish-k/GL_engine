@@ -4,20 +4,22 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "engine/component/Spritesheet.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/core/AbstractScene.hpp"
 #include "engine/core/GameObject.hpp"
-
+#include "engine/component/Spritesheet.hpp"
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/util/AssetPool.hpp"
-#include "engine/util/Print.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <string>
 
 class TestScene : public AbstractScene {
+private:
+    Spritesheet *sprites;
+    GameObject *obj1;
+
 public:
     TestScene() {}
 
@@ -28,12 +30,10 @@ public:
 
         this->camera = new Camera(glm::vec2(-250, 0));
 
-        Spritesheet *sprites =
-            AssetPool::GetSpritesheet("assets/image/spritesheet.png");
+        sprites = AssetPool::GetSpritesheet("assets/image/spritesheet.png");
 
-        GameObject *obj1 =
-            new GameObject("Object 1", new Transform(glm::vec2(100, 200),
-                                                     glm::vec2(256, 256)));
+        obj1 = new GameObject("Object 1", new Transform(glm::vec2(100, 200),
+                                                        glm::vec2(256, 256)));
         obj1->AddComponent(new SpriteRenderer(sprites->GetSprite(0)));
         this->AddGameObject(obj1);
 
@@ -54,9 +54,25 @@ public:
     }
 
     void Update(float dt) {
+        spriteFlipTimeLeft -= dt;
+        if (spriteFlipTimeLeft <= 0) {
+            spriteFlipTimeLeft = spriteFlipTime;
+            spriteIndex++;
+            if (spriteIndex >= 4) {
+                spriteIndex = 0;
+            }
+            obj1->GetComponent<SpriteRenderer>()->SetSprite(
+                sprites->GetSprite(spriteIndex));
+        }
+
         for (auto go : gameObjects) {
             go->Update(dt);
         }
         this->renderer->Render();
     }
+
+private:
+    int spriteIndex = 0;
+    float spriteFlipTime = 0.2f;
+    float spriteFlipTimeLeft = 0.0f;
 };

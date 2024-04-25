@@ -21,4 +21,12 @@ public:
     void Start();
 
     void Update(float dt);
+
+    Transform *Copy();
+
+    void CopyTo(Transform *to);
+
+    Transform &operator=(Transform &t);
+
+    bool Equals(Transform &t);
 };

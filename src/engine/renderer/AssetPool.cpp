@@ -1,7 +1,6 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/component/Spritesheet.hpp"
 #include "engine/renderer/Texture.hpp"
-#include "engine/util/Print.hpp"
 
 #include <cassert>
 #include <filesystem>

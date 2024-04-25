@@ -14,7 +14,6 @@
 #include "engine/renderer/Shader.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Common.hpp"
-#include "engine/util/Print.hpp"
 
 RenderBatch::RenderBatch(int maxBatchSize) {
     shader = AssetPool::GetShader("assets/shader/default.glsl");
@@ -98,10 +97,23 @@ void RenderBatch::AddSprite(SpriteRenderer *spr) {
 }
 
 void RenderBatch::Render() {
-    // 每帧重新缓冲所有数据 glBufferSubData：用来更新VBO中的部分数据
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float),
-                    vertices.data());
+    // 遍历这一批的sprite，根据脏标志重新载入贴图信息
+    bool rebufferData = false;
+    for (int i = 0; i < sprites.size(); i++) {
+        SpriteRenderer *spr = sprites[i];
+        if (spr->IsDirty()) {
+            LoadVertexProperties(i);
+            spr->SetClean();
+            rebufferData = true;
+        }
+    }
+
+    if (rebufferData) {
+        // 每帧重新缓冲所有数据 glBufferSubData：用来更新VBO中的部分数据
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float),
+                        vertices.data());
+    }
 
     // 使用shader
     shader->Use();
