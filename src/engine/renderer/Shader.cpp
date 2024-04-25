@@ -164,3 +164,9 @@ void Shader::UploadTexture(const char *varName, int slot) {
     Use();
     glUniform1i(varLocation, slot);
 }
+
+void Shader::UploadIntArray(const char *varName, int size, int *array) {
+    int varLocation = glGetUniformLocation(shaderProgramID, varName);
+    Use();
+    glUniform1iv(varLocation, size, array);
+}

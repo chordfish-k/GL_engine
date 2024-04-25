@@ -2,18 +2,25 @@
 
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/renderer/Shader.hpp"
+#include "engine/renderer/Texture.hpp"
 #include <vector>
 
 class RenderBatch {
 private:
     const int VERTEX_POS_SIZE = 2;
     const int VERTEX_COLOR_SIZE = 4;
+    const int VERTEX_TEX_COORDS_SIZE = 2;
+    const int VERTEX_TEX_ID_SIZE = 1;
 
     const int VERTEX_POS_OFFSET = 0;
     const int VERTEX_COLOR_OFFSET =
         VERTEX_POS_OFFSET + VERTEX_POS_SIZE * sizeof(float);
+    const int VERTEX_TEX_COORDS_OFFSET =
+        VERTEX_COLOR_OFFSET + VERTEX_COLOR_SIZE * sizeof(float);
+    const int VERTEX_TEX_ID_OFFSET =
+        VERTEX_TEX_COORDS_OFFSET + VERTEX_TEX_COORDS_SIZE * sizeof(float);
 
-    const int VERTEX_SIZE = 6;
+    const int VERTEX_SIZE = 9;
     const int VERTEX_SIZE_BYTES = VERTEX_SIZE * sizeof(float);
 
 private:
@@ -23,8 +30,11 @@ private:
     int verticesSize;
     int maxBatchSize;
 
+    int texSlots[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<Texture *> textures;
+
     unsigned int vaoID, vboID;
-    Shader *shader;
+    Shader *shader = nullptr;
 
 public:
     RenderBatch(int maxBatchSize);

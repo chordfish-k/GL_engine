@@ -37,4 +37,5 @@ public:
     void UploadInt(const char *varName, int slot);
     void UploadFloat(const char *varName, float slot);
     void UploadTexture(const char *varName, int slot);
+    void UploadIntArray(const char *varName, int size, int *array);
 };

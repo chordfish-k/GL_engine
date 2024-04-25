@@ -2,12 +2,9 @@
 
 #include "engine/renderer/Shader.hpp"
 #include "engine/renderer/Texture.hpp"
-#include "engine/util/Print.hpp"
-#include <filesystem>
 #include <string>
 #include <unordered_map>
 
-namespace fs = std::filesystem;
 
 class AssetPool {
 private:

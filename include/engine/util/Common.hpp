@@ -1,7 +1,7 @@
 #pragma once
 
-#include "engine/util/Print.hpp"
 #include <cstddef>
+#include <malloc.h>
 #include <string>
 
 namespace util {
@@ -9,6 +9,11 @@ namespace util {
 template <typename T, size_t N>
 size_t LenOf(T (&arr)[N]) {
     return N;
+}
+
+template <typename T>
+size_t LenOfP(T *arr) {
+    return _msize(arr) / sizeof(T);
 }
 
 inline std::string Trim(std::string str) {

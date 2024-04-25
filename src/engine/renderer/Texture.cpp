@@ -25,6 +25,7 @@ Texture::Texture(std::string filePath) {
 
     // 使用stb库加载纹理
     int width, height, channels;
+    stbi_set_flip_vertically_on_load(1);
     auto image = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
 
     if (image != nullptr) {

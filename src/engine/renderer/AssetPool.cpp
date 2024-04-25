@@ -1,5 +1,10 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/renderer/Texture.hpp"
+#include "engine/util/Print.hpp"
+
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 std::unordered_map<std::string, Shader *> AssetPool::shaders =
     std::unordered_map<std::string, Shader *>();
@@ -20,7 +25,7 @@ Shader *AssetPool::GetShader(std::string resourceName) {
 }
 
 Texture *AssetPool::GetTexture(std::string resourceName) {
-    // 如果一句载入过，则返回，否则载入再返回
+    // 如果一句载入过，则返回，否则 载入再返回
     std::string path = GetAbsolutePath(resourceName);
     if (textures.count(path)) {
         return textures[path];

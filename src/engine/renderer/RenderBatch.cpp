@@ -1,6 +1,8 @@
+#include <algorithm>
 #include <cstdlib>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <vector>
 
@@ -11,6 +13,7 @@
 #include "engine/core/GameObject.hpp"
 #include "engine/renderer/Shader.hpp"
 #include "engine/util/AssetPool.hpp"
+#include "engine/util/Common.hpp"
 #include "engine/util/Print.hpp"
 
 RenderBatch::RenderBatch(int maxBatchSize) {
@@ -62,12 +65,29 @@ void RenderBatch::Start() {
     glVertexAttribPointer(1, VERTEX_COLOR_SIZE, GL_FLOAT, GL_FALSE,
                           VERTEX_SIZE_BYTES, (void *)(VERTEX_COLOR_OFFSET));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, VERTEX_TEX_COORDS_SIZE, GL_FLOAT, GL_FALSE,
+                          VERTEX_SIZE_BYTES,
+                          (void *)(VERTEX_TEX_COORDS_OFFSET));
+    glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(3, VERTEX_TEX_ID_SIZE, GL_FLOAT, GL_FALSE,
+                          VERTEX_SIZE_BYTES, (void *)(VERTEX_TEX_ID_OFFSET));
+    glEnableVertexAttribArray(3);
 }
 
 void RenderBatch::AddSprite(SpriteRenderer *spr) {
     // 添加SpriteRenderer并获取索引
     sprites.push_back(spr);
- 
+
+    // 将纹理添加到数组
+    if (spr->GetTexture() != nullptr) {
+        if (textures.end() ==
+            std::find(textures.begin(), textures.end(), spr->GetTexture())) {
+            textures.push_back(spr->GetTexture());
+        }
+    }
+
     // 将属性添加到本地顶点数组
     LoadVertexProperties(sprites.size() - 1);
 
@@ -89,6 +109,12 @@ void RenderBatch::Render() {
                        Window::GetScene()->GetCamera()->GetProjMatrix());
     shader->UploadMat4("uView",
                        Window::GetScene()->GetCamera()->GetViewMatrix());
+    // 启用纹理
+    for (int i = 0; i < textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i + 1); // 下标0表示无texture占位
+        textures[i]->Bind();
+    }
+    shader->UploadIntArray("uTextures", util::LenOf(texSlots), texSlots);
 
     glBindVertexArray(vaoID);
     glEnableVertexAttribArray(0);
@@ -100,16 +126,34 @@ void RenderBatch::Render() {
     glBindVertexArray(0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+
+    // 取消纹理
+    for (int i = 0; i < textures.size(); i++) {
+        textures[i]->Unbind();
+    }
     shader->Detach();
 }
 
 void RenderBatch::LoadVertexProperties(int index) {
     auto sprite = sprites[index];
 
-    // 根据相关属性添加顶点
+    // 每个sprite4个顶点
     int offset = index * 4 * VERTEX_SIZE;
     // float float      float float float float
     glm::vec4 color = sprite->GetColor();
+    glm::vec2 *texCoords = sprite->GetTexCoords();
+
+    int texId = 0; // 0 表示无texture
+    if (sprite->GetTexture() != nullptr) {
+        for (int i = 0; i < textures.size(); i++) {
+            if (textures[i] == sprite->GetTexture()) {
+                texId = i + 1;
+                break;
+            }
+        }
+    }
+
+    // 根据相关属性添加顶点
     float xAdd = 1.f;
     float yAdd = 1.f;
     for (int i = 0; i < 4; i++) {
@@ -131,6 +175,13 @@ void RenderBatch::LoadVertexProperties(int index) {
         vertices[offset + 3] = color.y;
         vertices[offset + 4] = color.z;
         vertices[offset + 5] = color.w;
+
+        // 载入材质坐标
+        vertices[offset + 6] = texCoords[i].x;
+        vertices[offset + 7] = texCoords[i].y;
+
+        // 载入材质id
+        vertices[offset + 8] = texId;
 
         offset += VERTEX_SIZE;
     }

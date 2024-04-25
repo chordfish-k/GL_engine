@@ -3,10 +3,8 @@
 #include "engine/core/AbstractScene.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
-#include "engine/core/LevelEditorScene.hpp"
-#include "engine/core/LevelScene.hpp"
+#include "engine/core/TestScene.hpp"
 #include "engine/util/Print.hpp"
-#include "engine/util/Time.hpp"
 #include <GLFW/glfw3.h>
 
 Window *Window::window = nullptr;
@@ -21,7 +19,7 @@ Window *Window::Get() {
 }
 
 void Window::Loop() {
-    float beginTime = Time::GetGameTime();
+    float beginTime = (float)glfwGetTime();
     float endTime;
     float dt = -1.f;
 
@@ -40,7 +38,7 @@ void Window::Loop() {
         glfwSwapBuffers(glfwWindow); // 双缓冲交换
 
         // 计算dt
-        endTime = Time::GetGameTime();
+        endTime = (float)glfwGetTime();
         dt = endTime - beginTime;
         beginTime = endTime;
     }
@@ -73,7 +71,6 @@ void Window::Init() {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
     }
-
 
     // 鼠标和键盘监听
     glfwSetCursorPosCallback(glfwWindow, &MouseListener::MousePosCallback);
@@ -122,12 +119,7 @@ void Window::Run() {
 void Window::ChangeScene(int newScene) {
     switch (newScene) {
     case 0:
-        currentScene = new LevelEditorScene();
-        currentScene->Init();
-        currentScene->Start();
-        break;
-    case 1:
-        currentScene = new LevelScene();
+        currentScene = new TestScene();
         currentScene->Init();
         currentScene->Start();
         break;
