@@ -3,7 +3,6 @@
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/util/Print.hpp"
 #include <algorithm>
-#include <ios>
 
 Renderer::Renderer() {}
 
@@ -42,7 +41,8 @@ void Renderer::Add(SpriteRenderer *sprite) {
         newBatch->Start();
         batches.push_back(newBatch);
         newBatch->AddSprite(sprite);
-        std::sort(batches.begin(), batches.end());
+        std::sort(batches.begin(), batches.end(),
+                  [&](auto a, auto b) { return *a < *b; });
     }
 }
 

@@ -1,6 +1,7 @@
 
 #include "engine/core/Window.hpp"
 #include "engine/core/AbstractScene.hpp"
+#include "engine/core/ImguiLayer.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/TestScene.hpp"
@@ -40,6 +41,9 @@ void Window::Loop() {
         if (dt >= 0)
             currentScene->Update(dt);
 
+        // 更新gui
+        imguiLayer->Update(dt);
+
         glfwSwapBuffers(glfwWindow); // 双缓冲交换
 
         // 计算dt
@@ -66,7 +70,7 @@ void Window::Init() {
 #endif
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    // glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
     // 创建一个窗口
     this->glfwWindow = glfwCreateWindow(this->width, this->height,
@@ -107,6 +111,10 @@ void Window::Init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
+    // 初始化gui
+    imguiLayer = new ImguiLayer(glfwWindow);
+    imguiLayer->InitImgui();
+
     // 默认场景
     Window::ChangeScene(0);
 }
@@ -119,6 +127,10 @@ void Window::Run() {
 
     // 释放内存
     glfwDestroyWindow(this->glfwWindow);
+
+    // 销毁gui
+    imguiLayer->DestroyImgui();
+    delete imguiLayer;
 
     glfwTerminate();
     glfwSetErrorCallback(nullptr);

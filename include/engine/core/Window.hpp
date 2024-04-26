@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "AbstractScene.hpp"
+#include "ImguiLayer.hpp"
 #include "engine/core/AbstractScene.hpp"
 #include <cassert>
 #include <string>
@@ -15,12 +16,13 @@ public:
 
 private:
     static Window *window; // 单例模式
+    static AbstractScene *currentScene;
+    ImguiLayer *imguiLayer = nullptr;
 
     int width;
     int height;
     std::string title;
     GLFWwindow *glfwWindow; // 窗口句柄
-    static AbstractScene *currentScene;
 
     Window() : width(1920), height(1080), title("Window") {
         r = g = b = 0.2f;
