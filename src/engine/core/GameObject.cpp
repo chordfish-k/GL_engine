@@ -36,3 +36,9 @@ void GameObject::Start() {
         c->Start();
     }
 }
+
+void GameObject::Imgui() {
+    for (auto c : components) {
+        c->Imgui();
+    }
+}

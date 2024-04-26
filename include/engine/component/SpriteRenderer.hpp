@@ -5,6 +5,8 @@
 #include "engine/component/Transform.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <imgui.h>
 
 class Texture;
 
@@ -40,4 +42,10 @@ public:
     bool IsDirty() { return isDirty; }
 
     void SetClean() { isDirty = false; }
+
+    void Imgui() {
+        if (ImGui::ColorPicker4("Color Picker:", glm::value_ptr(color))) {
+            isDirty = true;
+        }
+    }
 };

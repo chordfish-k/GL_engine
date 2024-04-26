@@ -36,16 +36,21 @@ public:
         obj1 = new GameObject(
             "Object 1", new Transform(glm::vec2(200, 200), glm::vec2(256, 256)),
             1);
-        obj1->AddComponent(new SpriteRenderer(
-            new Sprite(AssetPool::GetTexture("assets/image/blendImage1.png"))));
-        this->AddGameObject(obj1);
+        // obj1->AddComponent(new SpriteRenderer(
+        //     new
+        //     Sprite(AssetPool::GetTexture("assets/image/blendImage1.png"))));
+        obj1->AddComponent(new SpriteRenderer(glm::vec4(1, 0, 0, 1)));
+
+        AddGameObject(obj1);
 
         GameObject *obj2 = new GameObject(
             "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
             0);
         obj2->AddComponent(new SpriteRenderer(
             new Sprite(AssetPool::GetTexture("assets/image/blendImage2.png"))));
-        this->AddGameObject(obj2);
+        AddGameObject(obj2);
+
+        activeGameObject = obj1;
     }
 
     void InitResources() {

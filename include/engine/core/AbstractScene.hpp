@@ -1,8 +1,7 @@
 #pragma once
 
-// #include "engine/core/GameObject.hpp"
-// #include "engine/core/Camera.hpp"
 #include "engine/renderer/Renderer.hpp"
+#include <imgui.h>
 #include <vector>
 
 class GameObject;
@@ -14,6 +13,7 @@ protected:
     Renderer *renderer;
     Camera *camera;
     std::vector<GameObject *> gameObjects;
+    GameObject *activeGameObject = nullptr;
 
 private:
     bool isRunning = false;
@@ -33,4 +33,8 @@ public:
     Camera *GetCamera();
 
     virtual void Update(float dt) = 0;
+
+    void SceneImgui();
+
+    void Imgui();
 };

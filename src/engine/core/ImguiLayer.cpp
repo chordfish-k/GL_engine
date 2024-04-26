@@ -14,7 +14,7 @@ void ImguiLayer::InitImgui() {
     ImGuiIO &io = ImGui::GetIO();
     io.IniFilename = "imgui.ini";
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     // io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendPlatformName = "imgui_impl_glfw";
@@ -113,7 +113,9 @@ void ImguiLayer::InitImgui() {
 
 void ImguiLayer::Update(float dt) {
     StartFrame(dt);
-    SetupDockspace();
+    // SetupDockspace();
+    if (Window::CurrentScene() != nullptr)
+        Window::CurrentScene()->SceneImgui();
     ImGui::ShowDemoWindow();
     EndFrame();
 }
@@ -126,12 +128,12 @@ void ImguiLayer::StartFrame(float dt) {
 }
 
 void ImguiLayer::EndFrame() {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, Window::GetWidth(), Window::GetHeight());
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui::Render();
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // glViewport(0, 0, Window::GetWidth(), Window::GetHeight());
+    // glClearColor(0, 0, 0, 1);
+    // glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     ImGuiIO &io = ImGui::GetIO();

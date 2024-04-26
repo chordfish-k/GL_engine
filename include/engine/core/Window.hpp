@@ -52,4 +52,6 @@ public:
     static void SetHeight(int height) { Get()->height = height; }
 
     static AbstractScene *GetScene() { return Get()->currentScene; }
+
+    static AbstractScene *CurrentScene() { return Get()->currentScene; }
 };

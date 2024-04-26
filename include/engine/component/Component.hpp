@@ -11,5 +11,6 @@ protected:
 
 public:
     virtual void Start() {};
-    virtual void Update(float dt) = 0;
+    virtual void Update(float dt) {};
+    virtual void Imgui() {}
 };

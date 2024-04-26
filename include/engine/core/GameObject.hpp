@@ -69,6 +69,8 @@ public:
 
     void Start();
 
+    void Imgui();
+
     // 属性
     int ZIndex() { return zIndex; }
 };

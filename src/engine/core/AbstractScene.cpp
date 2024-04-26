@@ -30,3 +30,14 @@ void AbstractScene::AddGameObject(GameObject *go) {
 Camera *AbstractScene::GetCamera() {
     return this->camera;
 }
+
+void AbstractScene::SceneImgui() {
+    if (activeGameObject != nullptr) {
+        ImGui::Begin("Inspector");
+        activeGameObject->Imgui();
+        ImGui::End();
+    }
+    Imgui();
+}
+
+void AbstractScene::Imgui() {}
