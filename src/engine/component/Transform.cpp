@@ -1,4 +1,4 @@
-#include "engine/component/Transform.hpp"
+﻿#include "engine/component/Transform.hpp"
 #include "engine/util/Print.hpp"
 
 Transform::Transform(glm::vec2 position, glm::vec2 scale) {

@@ -1,4 +1,4 @@
-#include "engine/renderer/RenderBatch.hpp"
+﻿#include "engine/renderer/RenderBatch.hpp"
 #include "engine/renderer/Renderer.hpp"
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/util/Print.hpp"

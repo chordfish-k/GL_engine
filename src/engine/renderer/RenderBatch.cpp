@@ -1,4 +1,4 @@
-#include <algorithm>
+﻿#include <algorithm>
 #include <cstdlib>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

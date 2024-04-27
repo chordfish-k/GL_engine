@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/renderer/Shader.hpp"

@@ -1,4 +1,4 @@
-#include "engine/component/SpriteRenderer.hpp"
+﻿#include "engine/component/SpriteRenderer.hpp"
 #include "engine/component/Sprite.hpp"
 #include "engine/core/GameObject.hpp"
 #include <glm/ext/vector_float2.hpp>

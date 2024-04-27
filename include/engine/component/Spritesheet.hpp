@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "engine/component/Sprite.hpp"
 #include "engine/renderer/Texture.hpp"

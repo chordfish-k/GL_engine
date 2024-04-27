@@ -1,4 +1,4 @@
-
+﻿
 #include "engine/core/Window.hpp"
 #include "engine/core/AbstractScene.hpp"
 #include "engine/core/ImguiLayer.hpp"
@@ -122,15 +122,15 @@ void Window::Init() {
 void Window::Run() {
     util::Println("Hello", "GLFW", "!");
 
-    Init();
-    Loop();
+    Get()->Init();
+    Get()->Loop();
 
     // 释放内存
-    glfwDestroyWindow(this->glfwWindow);
+    glfwDestroyWindow(Get()->glfwWindow);
 
     // 销毁gui
-    imguiLayer->DestroyImgui();
-    delete imguiLayer;
+    Get()->imguiLayer->DestroyImgui();
+    delete Get()->imguiLayer;
 
     glfwTerminate();
     glfwSetErrorCallback(nullptr);

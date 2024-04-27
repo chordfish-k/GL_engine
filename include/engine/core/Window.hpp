@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -34,7 +34,7 @@ public:
 
     static Window *Get();
 
-    void Run();
+    static void Run();
 
     void Init();
 

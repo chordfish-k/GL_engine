@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "engine/renderer/Renderer.hpp"
 #include "engine/core/AbstractScene.hpp"

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "engine/renderer/Texture.hpp"
 #include "engine/core/ASerializableObj.hpp"
