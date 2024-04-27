@@ -13,3 +13,7 @@ _deps
 .vscode
 build
 vcpkg**
+test
+external
+3rd_party
+cmake-build-debug

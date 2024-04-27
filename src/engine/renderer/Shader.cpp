@@ -41,10 +41,10 @@ Shader::Shader(std::string filePath) {
     }
 
     // 2.分割成顶点着色器和片段着色器
-    std::regex pattern("#type (\\w+)\\n([\\s\\S]*?)(?=#type |$)");
+    std::regex pattern("#type (\\w+)\\n([\\s\\S]*?)(?=#type |#endtype)");
     std::sregex_iterator iter(source.begin(), source.end(), pattern);
     std::sregex_iterator end;
-
+    //    util::Println(source);
     for (; iter != end; ++iter) {
         std::smatch match = *iter;
         std::string type = util::Trim(match.str(1));

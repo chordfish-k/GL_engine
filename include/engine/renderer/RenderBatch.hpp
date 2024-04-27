@@ -53,8 +53,8 @@ public:
 
     int ZIndex() { return zIndex; }
 
-    int operator<(RenderBatch &to) {
-        return zIndex < to.zIndex ? -1 : (zIndex == to.zIndex ? 0 : 1);
+    friend bool operator<(const RenderBatch &lhs, RenderBatch rhs) {
+        return lhs.zIndex < rhs.zIndex;
     }
 
 private:

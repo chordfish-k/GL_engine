@@ -1,11 +1,11 @@
-#include <glad/glad.h>
+﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/core/Window.hpp"
+#include "engine/util/Print.hpp"
 
 int main() {
-    Window *window = Window::Get();
-    window->SetWidth(1920 * 0.5);
-    window->SetHeight(1080 * 0.5);
-    window->Run();
+    Window::SetWidth(1920 * 0.5);
+    Window::SetHeight(1080 * 0.5);
+    Window::Run();
     return 0;
 }

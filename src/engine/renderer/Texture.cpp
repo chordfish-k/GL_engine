@@ -9,7 +9,7 @@
 
 #include "engine/renderer/Texture.hpp"
 
-Texture::Texture(std::string filePath) {
+void Texture::Init(std::string filePath) {
     this->filePath = filePath;
 
     // 让GPU生成纹理
@@ -59,4 +59,8 @@ void Texture::Bind() {
 
 void Texture::Unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+const std::string &Texture::GetFilePath() const {
+    return filePath;
 }

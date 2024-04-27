@@ -18,6 +18,7 @@ void main() {
     fTexId = aTexId;
     gl_Position = uProjection * uView * vec4(aPos, 1.0);
 }
+#endtype
 
 #type fragment
 #version 330 core
@@ -38,3 +39,4 @@ void main() {
         color = fColor;
     }
 }
+#endtype

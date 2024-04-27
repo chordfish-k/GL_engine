@@ -4,7 +4,7 @@
 #include "engine/component/Component.hpp"
 #include <glm/ext/vector_float2.hpp>
 
-class Transform : public Component {
+COMPONENT(Transform)
 public:
     glm::vec2 position;
     glm::vec2 scale;
@@ -29,4 +29,8 @@ public:
     Transform &operator=(Transform &t);
 
     bool Equals(Transform &t);
+
+    std::string Serialize() override;
+
+    Transform *Deserialize(json j) override;
 };

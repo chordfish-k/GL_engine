@@ -8,16 +8,19 @@
 #include <type_traits>
 #include <vector>
 
-class GameObject {
-private:
+class GameObject : public ASerializableObj{
+public:
     std::string name;
     std::vector<Component *> components;
-    int zIndex;
 
 public:
     Transform *transform;
 
+    int zIndex;
+
 public:
+    GameObject() {this->name = "Object";}
+
     GameObject(std::string name);
 
     GameObject(std::string name, Transform *transform);
@@ -25,6 +28,8 @@ public:
     GameObject(std::string name, Transform *transform, int zIndex);
 
     ~GameObject();
+
+    void RemoveAllComponent();
 
     template <typename T>
     std::enable_if_t<std::is_base_of<Component, T>::value, T *> GetComponent() {
@@ -73,4 +78,8 @@ public:
 
     // 属性
     int ZIndex() { return zIndex; }
+
+    std::string Serialize() override;
+
+    ASerializableObj *Deserialize(json j) override;
 };

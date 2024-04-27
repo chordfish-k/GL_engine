@@ -60,7 +60,7 @@ void ImguiLayer::InitImgui() {
     glfwSetMouseButtonCallback(
         glfwWindow, [](auto w, auto button, auto action, auto mods) {
             ImGuiIO &io = ImGui::GetIO();
-
+            
             io.MouseDown[0] =
                 button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE;
             io.MouseDown[1] =

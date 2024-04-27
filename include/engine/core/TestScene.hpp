@@ -31,24 +31,39 @@ public:
 
         this->camera = new Camera(glm::vec2(-250, 0));
 
-        sprites = AssetPool::GetSpritesheet("assets/image/spritesheet.png");
+        // sprites = AssetPool::GetSpritesheet("assets/image/spritesheet.png");
 
         obj1 = new GameObject(
             "Object 1", new Transform(glm::vec2(200, 200), glm::vec2(256, 256)),
             1);
-        // obj1->AddComponent(new SpriteRenderer(
-        //     new
-        //     Sprite(AssetPool::GetTexture("assets/image/blendImage1.png"))));
-        obj1->AddComponent(new SpriteRenderer(glm::vec4(1, 0, 0, 1)));
+        SpriteRenderer *obj1SpriteRenderer = new SpriteRenderer();
+        
+        obj1SpriteRenderer->SetColor(glm::vec4(1, 0, 0, 1));
 
+        obj1->AddComponent(obj1SpriteRenderer);
         AddGameObject(obj1);
+
+        activeGameObject = obj1;
 
         GameObject *obj2 = new GameObject(
             "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
             0);
-        obj2->AddComponent(new SpriteRenderer(
-            new Sprite(AssetPool::GetTexture("assets/image/blendImage2.png"))));
+        SpriteRenderer *obj2SpriteRenderer = new SpriteRenderer();
+        Sprite *obj2Sprite = new Sprite();
+        obj2Sprite->SetTexture(
+            AssetPool::GetTexture("assets/image/blendImage2.png"));
+        obj2SpriteRenderer->SetSprite(obj2Sprite);
+
+        obj2->AddComponent(obj2SpriteRenderer);
         AddGameObject(obj2);
+
+        std::string j = obj2->Serialize();
+//        util::Println(j);
+        auto obj3 = new GameObject();
+        obj3->Deserialize(json::parse(j));
+        assert(obj3 != nullptr);
+        obj3->transform->position.y = 400;
+        AddGameObject(obj3);
 
         activeGameObject = obj1;
     }

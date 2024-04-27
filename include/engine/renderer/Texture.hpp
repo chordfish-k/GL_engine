@@ -8,9 +8,11 @@ private:
     int width, height;
 
 public:
-    Texture(std::string filePath);
+    Texture() {};
 
     ~Texture();
+
+    void Init(std::string filePath);
 
     void Bind();
 
@@ -20,4 +22,7 @@ public:
     int GetWidth() { return width; }
 
     int GetHeight() { return height; }
+
+    const std::string &GetFilePath() const;
+
 };

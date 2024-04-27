@@ -10,19 +10,19 @@
 
 class Texture;
 
-class SpriteRenderer : public Component {
+COMPONENT(SpriteRenderer)
 private:
-    glm::vec4 color;
-    Sprite *sprite;
+    glm::vec4 color = glm::vec4(1,1,1,1);
+    Sprite *sprite = new Sprite();
     Transform *lastTransform;
     bool isDirty = true; // 脏标记，表示数据有变化
 
 public:
-    SpriteRenderer();
+    // SpriteRenderer();
 
-    SpriteRenderer(glm::vec4 color);
+    // SpriteRenderer(glm::vec4 color);
 
-    SpriteRenderer(Sprite *sprite);
+    // SpriteRenderer(Sprite *sprite);
 
     void Start();
 
@@ -48,4 +48,8 @@ public:
             isDirty = true;
         }
     }
+
+    std::string Serialize() override;
+
+    SpriteRenderer *Deserialize(json j) override;
 };

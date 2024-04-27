@@ -10,7 +10,7 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
     int currentX = 0;
     int currentY = texture->GetHeight() - spriteHeight;
     // 创建numSprites个sprite;
-    for (int i=0; i<numSprite;i++){
+    for (int i = 0; i < numSprite; i++) {
         // 将坐标缩到[0,1]区间，作为texCoords
         float topY = (currentY + spriteHeight) / (float)texture->GetHeight();
         float rightX = (currentX + spriteWidth) / (float)texture->GetWidth();
@@ -23,8 +23,10 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
             glm::vec2(leftX, bottomY),
             glm::vec2(leftX, topY),
         };
-        Sprite *sprite = new Sprite(this->texture, texCoords);
-        this->sprites.push_back(sprite);
+        Sprite *sprite = new Sprite();
+        sprite->SetTexture(texture);
+        sprite->SetTexCoords(texCoords);
+        sprites.push_back(sprite);
         // 移动当前坐标指针
         currentX += spriteHeight + spacing;
         if (currentX >= texture->GetWidth()) {
@@ -35,5 +37,5 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
 }
 
 Sprite *Spritesheet::GetSprite(unsigned int index) {
-    return this->sprites[index];
+    return sprites[index];
 }

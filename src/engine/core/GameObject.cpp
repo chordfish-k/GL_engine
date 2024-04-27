@@ -18,10 +18,7 @@ GameObject::GameObject(std::string name, Transform *transform, int zIndex)
 
 GameObject::~GameObject() {
     for (auto c : components) {
-        if (c == nullptr)
-            continue;
         delete c;
-        c = nullptr;
     }
 }
 
@@ -41,4 +38,45 @@ void GameObject::Imgui() {
     for (auto c : components) {
         c->Imgui();
     }
+}
+
+std::string GameObject::Serialize() {
+    json j;
+    j["name"] = name;
+    j["zIndex"] = zIndex;
+    for (int i = 0; i < components.size(); ++i) {
+        j["components"][i] = Str2Json(components[i]->Serialize());
+    }
+    return j.dump(2);
+}
+
+ASerializableObj *GameObject::Deserialize(json j) {
+    name = j["name"];
+    zIndex = j["zIndex"];
+    RemoveAllComponent();
+    auto &comp = j["components"];
+    for (auto &c : comp) {
+        Component *component;
+        if (c["component"] == "Transform") {
+            component = new Transform();
+            auto *cc = (Transform*)component;
+            cc->Deserialize(c);
+            cc->gameObject = this;
+            transform = cc;
+        } else if (c["component"] == "SpriteRenderer") {
+            component = new SpriteRenderer();
+            auto *cc = (SpriteRenderer*)component;
+            cc->Deserialize(c);
+            cc->gameObject = this;
+        }
+        components.push_back(component);
+    }
+    return this;
+}
+
+void GameObject::RemoveAllComponent() {
+    for (auto c : components) {
+        delete c;
+    }
+    components.clear();
 }
