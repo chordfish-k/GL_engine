@@ -31,12 +31,12 @@ bool Transform::Equals(Transform &t) {
     return t.position == this->position && t.scale == this->scale;
 }
 
-std::string Transform::Serialize() {
+json Transform::Serialize() {
     json j;
     j["component"] = componentName;
     j["position"] = {position.x, position.y};
     j["scale"] = {scale.x, scale.y};
-    return j.dump(2);
+    return j;
 }
 
 Transform *Transform::Deserialize(json j) {

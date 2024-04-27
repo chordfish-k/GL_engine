@@ -3,32 +3,37 @@
 #include "engine/renderer/Renderer.hpp"
 #include <imgui.h>
 #include <vector>
+#include <fstream>
 
 class GameObject;
 class Camera;
 // class Renderer;
 
-class AbstractScene {
+class AScene : public ASerializableObj{
 protected:
-    Renderer *renderer;
-    Camera *camera;
-    std::vector<GameObject *> gameObjects;
+    Renderer *renderer = nullptr;
+    Camera *camera = nullptr;
     GameObject *activeGameObject = nullptr;
+    std::vector<GameObject *> gameObjects;
+
+    bool sceneLoaded = false;
 
 private:
     bool isRunning = false;
 
 protected:
-    AbstractScene();
+    AScene();
 
 public:
-    ~AbstractScene();
+    ~AScene();
 
     virtual void Init() {};
 
     void Start();
 
     void AddGameObject(GameObject *go);
+
+    void RemoveAllGameObject();
 
     Camera *GetCamera();
 
@@ -37,4 +42,12 @@ public:
     void SceneImgui();
 
     void Imgui();
+
+    json Serialize() override;
+
+    ASerializableObj *Deserialize(json j) override;
+
+    void Save();
+
+    void Load();
 };

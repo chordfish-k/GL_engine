@@ -23,14 +23,14 @@ Sprite::~Sprite() {
     //     delete texture;
 }
 
-std::string Sprite::Serialize() {
+json Sprite::Serialize() {
     json j;
     for (int i=0; i<texCoords.size(); i++) {
         j["texCoords"][i] = {texCoords[i].x, texCoords[i].y};
     }
-    j["texture"] = texture->GetFilePath();
+    j["texture"] = texture ? texture->GetFilePath() : "";
 
-    return j.dump(2);
+    return j;
 }
 
 Sprite *Sprite::Deserialize(json j) {

@@ -34,8 +34,9 @@ Texture *AssetPool::GetTexture(std::string resourceName) {
     if (textures.count(path)) {
         return textures[path];
     } else {
-        Texture *texture = new Texture();
-        texture->Init(resourceName);
+        auto *texture = new Texture();
+        bool succeed = texture->Init(resourceName);
+        if (!succeed) return nullptr;
         textures[path] = texture;
         return texture;
     }

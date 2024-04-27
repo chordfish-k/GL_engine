@@ -29,7 +29,7 @@ public:
 
     std::vector<glm::vec2> GetTexCoords() { return texCoords; }
 
-    std::string Serialize() override;
+    json Serialize() override;
 
     Sprite *Deserialize(json j) override;
 };

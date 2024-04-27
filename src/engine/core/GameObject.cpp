@@ -40,14 +40,14 @@ void GameObject::Imgui() {
     }
 }
 
-std::string GameObject::Serialize() {
+json GameObject::Serialize() {
     json j;
     j["name"] = name;
     j["zIndex"] = zIndex;
     for (int i = 0; i < components.size(); ++i) {
-        j["components"][i] = Str2Json(components[i]->Serialize());
+        j["components"][i] = components[i]->Serialize();
     }
-    return j.dump(2);
+    return j;
 }
 
 ASerializableObj *GameObject::Deserialize(json j) {
@@ -60,14 +60,12 @@ ASerializableObj *GameObject::Deserialize(json j) {
         if (c["component"] == "Transform") {
             component = new Transform();
             auto *cc = (Transform*)component;
-            cc->Deserialize(c);
-            cc->gameObject = this;
+            cc->Deserialize(c)->gameObject = this;
             transform = cc;
         } else if (c["component"] == "SpriteRenderer") {
             component = new SpriteRenderer();
             auto *cc = (SpriteRenderer*)component;
-            cc->Deserialize(c);
-            cc->gameObject = this;
+            cc->Deserialize(c)->gameObject = this;
         }
         components.push_back(component);
     }

@@ -14,7 +14,7 @@ public:
     virtual void Start() {};
     virtual void Update(float dt) {};
     virtual void Imgui() {}
-    virtual std::string Serialize() {return "";};
+    virtual json Serialize() {return "";};
     virtual ASerializableObj *Deserialize(json j) {return nullptr;} ;
 };
 

@@ -1,6 +1,6 @@
 ﻿
 #include "engine/core/Window.hpp"
-#include "engine/core/AbstractScene.hpp"
+#include "engine/core/AScene.hpp"
 #include "engine/core/ImguiLayer.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
@@ -11,7 +11,7 @@
 
 Window *Window::window = nullptr;
 
-AbstractScene *Window::currentScene = nullptr;
+AScene *Window::currentScene = nullptr;
 
 Window::~Window() {
     AssetPool::Clear();
@@ -51,6 +51,8 @@ void Window::Loop() {
         dt = endTime - beginTime;
         beginTime = endTime;
     }
+
+    currentScene->Save();
 }
 
 void Window::Init() {
@@ -140,12 +142,13 @@ void Window::ChangeScene(int newScene) {
     switch (newScene) {
     case 0:
         currentScene = new TestScene();
-        currentScene->Init();
-        currentScene->Start();
         break;
     default:
         util::Print("Unknow scene ", newScene);
         assert(false);
         break;
     }
+    currentScene->Load();
+    currentScene->Init();
+    currentScene->Start();
 }

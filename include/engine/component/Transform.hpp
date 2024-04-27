@@ -30,7 +30,7 @@ public:
 
     bool Equals(Transform &t);
 
-    std::string Serialize() override;
+    json Serialize() override;
 
     Transform *Deserialize(json j) override;
 };

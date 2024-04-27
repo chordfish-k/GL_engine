@@ -34,19 +34,20 @@ void SpriteRenderer::SetColor(glm::vec4 color) {
         this->isDirty = true;
     }
 }
-std::string SpriteRenderer::Serialize() {
+
+json SpriteRenderer::Serialize() {
     json j;
     j["component"] = componentName;
     j["color"] = {color.x, color.y, color.z, color.w};
-    j["sprite"] = Str2Json(sprite->Serialize());
+    j["sprite"] = sprite->Serialize();
 
-    return j.dump(2);
+    return j;
 }
 
 SpriteRenderer *SpriteRenderer::Deserialize(json j) {
     auto &c = j["color"];
     SetColor(glm::vec4(c[0], c[1], c[2], c[3]));
-    Sprite *sprite = new Sprite();
+    auto *sprite = new Sprite();
     sprite->Deserialize(j["sprite"]);
     SetSprite(sprite);
     return this;

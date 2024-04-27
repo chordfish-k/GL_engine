@@ -7,7 +7,7 @@ using json = nlohmann::json;
 
 class ASerializableObj {
 public:
-    virtual std::string Serialize() = 0;
+    virtual json Serialize() = 0;
     virtual ASerializableObj *Deserialize(json j) = 0;
 };
 

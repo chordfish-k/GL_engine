@@ -9,8 +9,13 @@
 
 #include "engine/renderer/Texture.hpp"
 
-void Texture::Init(std::string filePath) {
+bool Texture::Init(std::string filePath) {
+    bool succeed = true;
     this->filePath = filePath;
+
+    if (filePath.empty()) {
+        return false;
+    }
 
     // 让GPU生成纹理
     glGenTextures(1, &texID);
@@ -45,10 +50,11 @@ void Texture::Init(std::string filePath) {
         }
     } else {
         util::Println("ERROR: Could not load image '", filePath, "'");
-        assert(false);
+        succeed = false;
     }
 
     stbi_image_free(image);
+    return succeed;
 }
 
 Texture::~Texture() {}

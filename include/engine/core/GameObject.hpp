@@ -79,7 +79,7 @@ public:
     // 属性
     int ZIndex() { return zIndex; }
 
-    std::string Serialize() override;
+    json Serialize() override;
 
     ASerializableObj *Deserialize(json j) override;
 };

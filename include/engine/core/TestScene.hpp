@@ -6,7 +6,7 @@
 
 #include "engine/component/Sprite.hpp"
 #include "engine/core/Camera.hpp"
-#include "engine/core/AbstractScene.hpp"
+#include "engine/core/AScene.hpp"
 #include "engine/core/GameObject.hpp"
 #include "engine/component/Spritesheet.hpp"
 #include "engine/component/SpriteRenderer.hpp"
@@ -16,27 +16,32 @@
 #include <glm/ext/vector_float4.hpp>
 #include <string>
 
-class TestScene : public AbstractScene {
+class TestScene : public AScene {
 private:
-    Spritesheet *sprites;
-    GameObject *obj1;
+    Spritesheet *sprites = nullptr;
+    GameObject *obj1 = nullptr;
 
 public:
-    TestScene() {}
+    TestScene() = default;
 
-    ~TestScene() {}
+    ~TestScene() = default;
 
-    void Init() {
+    void Init() override {
         InitResources();
 
         this->camera = new Camera(glm::vec2(-250, 0));
+
+        if (sceneLoaded) {
+            this->activeGameObject = gameObjects[0];
+            return;
+        }
 
         // sprites = AssetPool::GetSpritesheet("assets/image/spritesheet.png");
 
         obj1 = new GameObject(
             "Object 1", new Transform(glm::vec2(200, 200), glm::vec2(256, 256)),
             1);
-        SpriteRenderer *obj1SpriteRenderer = new SpriteRenderer();
+        auto *obj1SpriteRenderer = new SpriteRenderer();
         
         obj1SpriteRenderer->SetColor(glm::vec4(1, 0, 0, 1));
 
@@ -45,11 +50,11 @@ public:
 
         activeGameObject = obj1;
 
-        GameObject *obj2 = new GameObject(
+        auto *obj2 = new GameObject(
             "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
             0);
-        SpriteRenderer *obj2SpriteRenderer = new SpriteRenderer();
-        Sprite *obj2Sprite = new Sprite();
+        auto *obj2SpriteRenderer = new SpriteRenderer();
+        auto *obj2Sprite = new Sprite();
         obj2Sprite->SetTexture(
             AssetPool::GetTexture("assets/image/blendImage2.png"));
         obj2SpriteRenderer->SetSprite(obj2Sprite);
@@ -57,10 +62,9 @@ public:
         obj2->AddComponent(obj2SpriteRenderer);
         AddGameObject(obj2);
 
-        std::string j = obj2->Serialize();
-//        util::Println(j);
+        json j = obj2->Serialize();
         auto obj3 = new GameObject();
-        obj3->Deserialize(json::parse(j));
+        obj3->Deserialize(j);
         assert(obj3 != nullptr);
         obj3->transform->position.y = 400;
         AddGameObject(obj3);
@@ -77,7 +81,7 @@ public:
                 26, 0));
     }
 
-    void Update(float dt) {
+    void Update(float dt) override {
         for (auto go : gameObjects) {
             go->Update(dt);
         }

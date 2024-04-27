@@ -49,7 +49,7 @@ public:
         }
     }
 
-    std::string Serialize() override;
+    json Serialize() override;
 
     SpriteRenderer *Deserialize(json j) override;
 };

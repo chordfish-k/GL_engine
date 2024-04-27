@@ -12,7 +12,7 @@ public:
 
     ~Texture();
 
-    void Init(std::string filePath);
+    bool Init(std::string filePath);
 
     void Bind();
 

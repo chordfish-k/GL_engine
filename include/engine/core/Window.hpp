@@ -3,9 +3,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "AbstractScene.hpp"
+#include "AScene.hpp"
 #include "ImguiLayer.hpp"
-#include "engine/core/AbstractScene.hpp"
+#include "engine/core/AScene.hpp"
 #include <cassert>
 #include <string>
 
@@ -16,7 +16,7 @@ public:
 
 private:
     static Window *window; // 单例模式
-    static AbstractScene *currentScene;
+    static AScene *currentScene;
     ImguiLayer *imguiLayer = nullptr;
 
     int width;
@@ -51,7 +51,7 @@ public:
 
     static void SetHeight(int height) { Get()->height = height; }
 
-    static AbstractScene *GetScene() { return Get()->currentScene; }
+    static AScene *GetScene() { return Get()->currentScene; }
 
-    static AbstractScene *CurrentScene() { return Get()->currentScene; }
+    static AScene *CurrentScene() { return Get()->currentScene; }
 };
