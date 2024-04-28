@@ -4,8 +4,7 @@
 #include "engine/util/Print.hpp"
 
 int main() {
-    Window::SetWidth(1920 * 0.5);
-    Window::SetHeight(1080 * 0.5);
-    Window::Run();
+    Window *window = Window::Get();
+    window->Run();
     return 0;
 }

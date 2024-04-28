@@ -9,6 +9,22 @@
 
 #include "engine/renderer/Texture.hpp"
 
+Texture::Texture(int width, int height) {
+    this->filePath = "null";
+
+    // 让GPU生成材质
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+}
+
 bool Texture::Init(std::string filePath) {
     bool succeed = true;
     this->filePath = filePath;
@@ -65,8 +81,4 @@ void Texture::Bind() {
 
 void Texture::Unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-const std::string &Texture::GetFilePath() const {
-    return filePath;
 }

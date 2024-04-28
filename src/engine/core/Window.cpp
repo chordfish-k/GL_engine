@@ -16,6 +16,8 @@ AScene *Window::currentScene = nullptr;
 
 Window::~Window() {
     AssetPool::Clear();
+    delete imguiLayer;
+    delete frameBuffer;
 }
 
 Window *Window::Get() {
@@ -34,13 +36,18 @@ void Window::Loop() {
         // 轮询事件
         glfwPollEvents();
 
+        frameBuffer->Bind();
+
         // 设置清屏颜色
         glClearColor(r, g, b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+
         // 更新当前场景
         if (dt >= 0)
             currentScene->Update(dt);
+
+        frameBuffer->Unbind();
 
         // 更新gui
         imguiLayer->Update(dt);
@@ -73,7 +80,7 @@ void Window::Init() {
 #endif
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-//    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
     // 创建一个窗口
     glfwWindow = glfwCreateWindow(this->width, this->height,
@@ -117,6 +124,10 @@ void Window::Init() {
     // 初始化gui
     imguiLayer = new ImguiLayer(glfwWindow);
     imguiLayer->InitImgui();
+
+    // 帧缓冲
+    frameBuffer = new FrameBuffer(3840, 2160);
+    glViewport(0, 0, 3840, 2160);
 
     // 默认场景
     Window::ChangeScene(0);

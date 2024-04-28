@@ -8,7 +8,9 @@ private:
     int width, height;
 
 public:
-    Texture() {};
+    Texture() :texID(-1), width(-1), height(-1){};
+
+    Texture(int width, int height);
 
     ~Texture();
 
@@ -23,6 +25,7 @@ public:
 
     int GetHeight() { return height; }
 
-    const std::string &GetFilePath() const;
+    const std::string &GetFilePath() const { return filePath; }
 
+    unsigned int GetId() const { return texID; }
 };

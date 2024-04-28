@@ -6,6 +6,7 @@
 #include "AScene.hpp"
 #include "ImguiLayer.hpp"
 #include "engine/core/AScene.hpp"
+#include "engine/renderer/FrameBuffer.hpp"
 #include <cassert>
 #include <string>
 
@@ -18,13 +19,14 @@ private:
     static Window *window; // 单例模式
     static AScene *currentScene;
     ImguiLayer *imguiLayer = nullptr;
+    FrameBuffer *frameBuffer = nullptr;
 
     int width;
     int height;
     std::string title;
     GLFWwindow *glfwWindow; // 窗口句柄
 
-    Window() : width(1920), height(1080), title("Window") {
+    Window() : width(3840), height(2160), title("Window") {
         r = g = b = 0.2f;
         fadeToBlack = false;
     }
@@ -34,7 +36,7 @@ public:
 
     static Window *Get();
 
-    static void Run();
+    void Run();
 
     void Init();
 
@@ -54,4 +56,12 @@ public:
     static AScene *GetScene() { return Get()->currentScene; }
 
     static AScene *CurrentScene() { return Get()->currentScene; }
+
+    static FrameBuffer *GetFrameBuffer() {
+        return Get()->frameBuffer;
+    }
+
+    static float GetTargetAspectRatio() {
+        return 16.0f / 9.0f;
+    }
 };

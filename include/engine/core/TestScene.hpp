@@ -32,7 +32,8 @@ public:
         this->camera = new Camera(glm::vec2(-250, 0));
 
         if (sceneLoaded) {
-            this->activeGameObject = gameObjects[0];
+            if (!gameObjects.empty())
+                activeGameObject = gameObjects[0];
             return;
         }
 

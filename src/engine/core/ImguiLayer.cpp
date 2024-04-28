@@ -3,6 +3,7 @@
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/Window.hpp"
 #include "engine/util/Print.hpp"
+#include "engine/editor/GameViewWindow.hpp"
 #include <imgui.h>
 
 ImguiLayer::ImguiLayer(GLFWwindow *glfwWindow) : glfwWindow(glfwWindow) {}
@@ -14,9 +15,9 @@ void ImguiLayer::InitImgui() {
     ImGuiIO &io = ImGui::GetIO();
     io.IniFilename = "imgui.ini";
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-//    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendPlatformName = "imgui_impl_glfw";
 
 /*
@@ -105,27 +106,53 @@ void ImguiLayer::InitImgui() {
 
 void ImguiLayer::Update(float dt) {
     StartFrame(dt);
-    // SetupDockspace();
+
+    SetupDockspace();
     if (Window::CurrentScene() != nullptr)
         Window::CurrentScene()->SceneImgui();
 //    ImGui::ShowDemoWindow();
+    GameViewWindow::Imgui();
+
     EndFrame();
 }
 
 void ImguiLayer::StartFrame(float dt) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-
     ImGui::NewFrame();
+//
+//
+//    // Get window properties and mouse position
+//    int winWidth = Window::GetWidth();
+//    int winHeight = Window::GetHeight();
+//
+//    double mousePosX = 0;
+//    double mousePosY = 0;
+//    glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
+//
+//    // We SHOULD call those methods to update Dear ImGui state for the current frame
+//    ImGuiIO &io = ImGui::GetIO();
+//    io.DisplaySize = ImVec2((float)winWidth, (float)winHeight);
+//    //.S大化窗口大小可能小于设定的帧缓冲区大小，调整偏移的坐标
+//    io.DisplayFramebufferScale = ImVec2(1.f, 1.f);
+//    io.MousePos = ImVec2((float) mousePosX, (float) mousePosY);
+//    io.DeltaTime = dt;
+//
+//    // Update the mouse cursor
+//    ImGuiMouseCursor imguiCursor = ImGui::GetMouseCursor();
+//    glfwSetCursor(glfwWindow, mouseCursors[imguiCursor]);
+//    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void ImguiLayer::EndFrame() {
 
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, Window::GetWidth(), Window::GetHeight());
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     ImGui::Render();
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    // glViewport(0, 0, Window::GetWidth(), Window::GetHeight());
-    // glClearColor(0, 0, 0, 1);
-    // glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     ImGuiIO &io = ImGui::GetIO();

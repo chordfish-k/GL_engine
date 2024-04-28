@@ -36,6 +36,8 @@ public:
 
     Texture *GetTexture() { return sprite->GetTexture(); }
 
+    void SetTexture(Texture *texture) { this->sprite->SetTexture(texture); }
+
     std::vector<glm::vec2> GetTexCoords() { return sprite->GetTexCoords(); }
 
     void SetSprite(Sprite *sprite);
