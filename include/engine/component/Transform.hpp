@@ -18,19 +18,22 @@ public:
 
     void Init();
 
-    void Start();
+    void Start() override;
 
-    void Update(float dt);
+    void Update(float dt) override;
 
-    Transform *Copy();
+    Transform *Copy() const;
 
-    void CopyTo(Transform *to);
+    void CopyTo(Transform *to) const;
 
-    Transform &operator=(Transform &t);
+    Transform &operator=(const Transform &t);
 
     bool Equals(Transform &t);
 
     json Serialize() override;
 
     Transform *Deserialize(json j) override;
+
+    void Imgui();
 };
+

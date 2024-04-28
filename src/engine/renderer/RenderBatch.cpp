@@ -1,5 +1,4 @@
 ﻿#include <algorithm>
-#include <cstdlib>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/ext/vector_float2.hpp>
@@ -7,11 +6,8 @@
 #include <vector>
 
 #include "engine/renderer/RenderBatch.hpp"
-#include "engine/component/SpriteRenderer.hpp"
 #include "engine/core/Window.hpp"
 #include "engine/core/Camera.hpp"
-#include "engine/core/GameObject.hpp"
-#include "engine/renderer/Shader.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Common.hpp"
 

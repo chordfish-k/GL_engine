@@ -41,7 +41,7 @@ public:
 
     void SceneImgui();
 
-    void Imgui();
+    virtual void Imgui();
 
     json Serialize() override;
 

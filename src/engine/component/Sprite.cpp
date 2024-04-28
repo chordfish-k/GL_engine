@@ -28,7 +28,7 @@ json Sprite::Serialize() {
     for (int i=0; i<texCoords.size(); i++) {
         j["texCoords"][i] = {texCoords[i].x, texCoords[i].y};
     }
-    j["texture"] = texture ? texture->GetFilePath() : "";
+  j["texture"] = texture ? texture->GetFilePath() : "";
 
     return j;
 }

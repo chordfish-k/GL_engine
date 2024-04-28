@@ -12,16 +12,16 @@ void Transform::Start() {}
 
 void Transform::Update(float dt) {}
 
-Transform *Transform::Copy() {
+Transform *Transform::Copy() const {
     return new Transform(glm::vec2(position), glm::vec2(scale));
 }
 
-void Transform::CopyTo(Transform *to) {
+void Transform::CopyTo(Transform *to) const {
     to->position = position;
     to->scale = scale;
 }
 
-Transform &Transform::operator=(Transform &t) {
+Transform &Transform::operator=(const Transform &t) {
     this->position = t.position;
     this->scale = t.scale;
     return *this;
@@ -33,7 +33,7 @@ bool Transform::Equals(Transform &t) {
 
 json Transform::Serialize() {
     json j;
-    j["component"] = componentName;
+    j["component"] = GetComponentName();
     j["position"] = {position.x, position.y};
     j["scale"] = {scale.x, scale.y};
     return j;
@@ -49,4 +49,8 @@ Transform *Transform::Deserialize(json j) {
     scale.y = s[1];
 
     return this;
+}
+
+void Transform::Imgui() {
+    Component::Imgui<Transform>();
 }

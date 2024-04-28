@@ -64,3 +64,4 @@ private:
 
     std::vector<unsigned int> GenerateIndices();
 };
+

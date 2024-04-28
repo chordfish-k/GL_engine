@@ -87,4 +87,10 @@ public:
         }
         this->renderer->Render();
     }
+
+    void Imgui() override {
+        ImGui::Begin("Test Window");
+        ImGui::Text("Some text");
+        ImGui::End();
+    }
 };

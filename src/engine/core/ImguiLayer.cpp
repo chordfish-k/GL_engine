@@ -15,17 +15,11 @@ void ImguiLayer::InitImgui() {
     io.IniFilename = "imgui.ini";
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    // io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+//    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendPlatformName = "imgui_impl_glfw";
 
-    ImGui::StyleColorsDark();
-    ImGuiStyle &style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
-
+/*
     // 回调
     glfwSetKeyCallback(glfwWindow, [](auto w, auto key, auto scancode,
                                       auto action, auto mods) {
@@ -36,14 +30,10 @@ void ImguiLayer::InitImgui() {
             io.KeysDown[key] = false;
         }
 
-        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] ||
-                     io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] ||
-                      io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-        io.KeyAlt =
-            io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] ||
-                      io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+        io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 
         if (!io.WantCaptureKeyboard) {
             KeyListener::KeyCallback(w, key, scancode, action, mods);
@@ -60,7 +50,7 @@ void ImguiLayer::InitImgui() {
     glfwSetMouseButtonCallback(
         glfwWindow, [](auto w, auto button, auto action, auto mods) {
             ImGuiIO &io = ImGui::GetIO();
-            
+
             io.MouseDown[0] =
                 button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE;
             io.MouseDown[1] =
@@ -72,11 +62,12 @@ void ImguiLayer::InitImgui() {
             io.MouseDown[4] =
                 button == GLFW_MOUSE_BUTTON_5 && action != GLFW_RELEASE;
 
+
             if (!io.WantCaptureMouse && io.MouseDown[1]) {
                 ImGui::SetWindowFocus(nullptr);
             }
 
-            if (!io.WantCaptureMouse) {
+            if (!io.WantCaptureMouse || (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE)) {
                 MouseListener::MouseButtonCallback(w, button, action, mods);
             }
         });
@@ -98,8 +89,9 @@ void ImguiLayer::InitImgui() {
     io.GetClipboardTextFn = [](auto user_data) {
         return glfwGetClipboardString((GLFWwindow *)user_data);
     };
-
+*/
     // Fonts
+
     auto fontAtlas = io.Fonts;
     auto fontConfig = ImFontConfig();
     fontConfig.GlyphRanges = fontAtlas->GetGlyphRangesChineseSimplifiedCommon();
@@ -107,7 +99,7 @@ void ImguiLayer::InitImgui() {
     fontConfig.PixelSnapH = true;
     fontAtlas->AddFontFromFileTTF("assets/font/msyh.ttc", 22);
 
-    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, false);
+    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
@@ -116,7 +108,7 @@ void ImguiLayer::Update(float dt) {
     // SetupDockspace();
     if (Window::CurrentScene() != nullptr)
         Window::CurrentScene()->SceneImgui();
-    ImGui::ShowDemoWindow();
+//    ImGui::ShowDemoWindow();
     EndFrame();
 }
 

@@ -6,6 +6,7 @@
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <rttr/registration.h>
 #include <imgui.h>
 
 class Texture;
@@ -24,12 +25,14 @@ public:
 
     // SpriteRenderer(Sprite *sprite);
 
-    void Start();
+    void Start() override;
 
-    void Update(float dt);
+    void Update(float dt) override;
 
     // 属性
     glm::vec4 GetColor() { return color; }
+
+    void SetColor(glm::vec4 color);
 
     Texture *GetTexture() { return sprite->GetTexture(); }
 
@@ -37,17 +40,11 @@ public:
 
     void SetSprite(Sprite *sprite);
 
-    void SetColor(glm::vec4 color);
-
-    bool IsDirty() { return isDirty; }
+    bool IsDirty() const { return isDirty; }
 
     void SetClean() { isDirty = false; }
 
-    void Imgui() {
-        if (ImGui::ColorPicker4("Color Picker:", glm::value_ptr(color))) {
-            isDirty = true;
-        }
-    }
+    void Imgui();
 
     json Serialize() override;
 

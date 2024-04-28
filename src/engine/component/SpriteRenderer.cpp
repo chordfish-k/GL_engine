@@ -4,6 +4,8 @@
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 
+
+
 // SpriteRenderer::SpriteRenderer() : SpriteRenderer(glm::vec4()) {}
 
 // SpriteRenderer::SpriteRenderer(glm::vec4 color)
@@ -37,10 +39,9 @@ void SpriteRenderer::SetColor(glm::vec4 color) {
 
 json SpriteRenderer::Serialize() {
     json j;
-    j["component"] = componentName;
+    j["component"] = GetComponentName();;
     j["color"] = {color.x, color.y, color.z, color.w};
     j["sprite"] = sprite->Serialize();
-
     return j;
 }
 
@@ -52,3 +53,8 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
     SetSprite(sprite);
     return this;
 }
+
+void SpriteRenderer::Imgui() {
+    Component::Imgui<SpriteRenderer>();
+}
+

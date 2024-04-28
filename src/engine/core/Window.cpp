@@ -8,6 +8,7 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Print.hpp"
 #include <GLFW/glfw3.h>
+#include "engine/reflect/Reflect.hpp"
 
 Window *Window::window = nullptr;
 
@@ -72,13 +73,13 @@ void Window::Init() {
 #endif
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+//    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
     // 创建一个窗口
-    this->glfwWindow = glfwCreateWindow(this->width, this->height,
+    glfwWindow = glfwCreateWindow(this->width, this->height,
                                         this->title.c_str(), nullptr, nullptr);
     // assert(this->glfwWindow != nullptr);
-    if (window == NULL) {
+    if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
     }
@@ -96,7 +97,7 @@ void Window::Init() {
         });
 
     // 使opengl上下文成为当前上下文
-    glfwMakeContextCurrent(this->glfwWindow);
+    glfwMakeContextCurrent(glfwWindow);
     // 启用v-sync垂直同步，帧刷新率尽量高
     glfwSwapInterval(1);
 
