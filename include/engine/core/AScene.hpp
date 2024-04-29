@@ -15,7 +15,6 @@ class AScene : public ASerializableObj{
 protected:
     Renderer *renderer = nullptr;
     Camera *camera = nullptr;
-    GameObject *activeGameObject = nullptr;
     std::vector<GameObject *> gameObjects;
 
     bool sceneLoaded = false;
@@ -52,4 +51,6 @@ public:
     void Save();
 
     void Load();
+
+    std::vector<GameObject *> GetGameObjects();
 };

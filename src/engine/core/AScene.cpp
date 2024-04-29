@@ -39,11 +39,11 @@ Camera *AScene::GetCamera() {
 }
 
 void AScene::SceneImgui() {
-    if (activeGameObject != nullptr) {
-        ImGui::Begin("Inspector");
-        activeGameObject->Imgui();
-        ImGui::End();
-    }
+//    if (activeGameObject != nullptr) {
+//        ImGui::Begin("Inspector");
+//        activeGameObject->Imgui();
+//        ImGui::End();
+//    }
     Imgui();
 }
 
@@ -92,4 +92,8 @@ void AScene::Load() {
 
     Deserialize(Str2Json(jsonText));
     sceneLoaded = true;
+}
+
+std::vector<GameObject *> AScene::GetGameObjects() {
+    return gameObjects;
 }

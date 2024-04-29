@@ -5,6 +5,8 @@
 #include <cassert>
 #include <string>
 
+int GameObject::ID_COUNTER = 0;
+
 GameObject::GameObject(std::string name)
     : GameObject(name, new Transform(), 0) {}
 
@@ -12,7 +14,7 @@ GameObject::GameObject(std::string name, Transform *transform)
     : GameObject(name, transform, 0) {}
 
 GameObject::GameObject(std::string name, Transform *transform, int zIndex)
-    : name(name), transform(transform), zIndex(zIndex) {
+    : name(name), transform(transform){
     this->components.push_back(transform);
 }
 
@@ -43,7 +45,6 @@ void GameObject::Imgui() {
 json GameObject::Serialize() {
     json j;
     j["name"] = name;
-    j["zIndex"] = zIndex;
     for (int i = 0; i < components.size(); ++i) {
         j["components"][i] = components[i]->Serialize();
     }
@@ -52,7 +53,6 @@ json GameObject::Serialize() {
 
 ASerializableObj *GameObject::Deserialize(json j) {
     name = j["name"];
-    zIndex = j["zIndex"];
     RemoveAllComponent();
     auto &comp = j["components"];
     for (auto &c : comp) {
@@ -77,4 +77,34 @@ void GameObject::RemoveAllComponent() {
         delete c;
     }
     components.clear();
+}
+
+int GameObject::GetUid() const {
+    return uid;
+}
+
+bool GameObject::IsDead() const {
+    return isDead;
+}
+
+bool GameObject::IsDoSerialization() const {
+    return doSerialization;
+}
+void GameObject::SetNoSerialization() {
+    GameObject::doSerialization = false;
+}
+
+void GameObject::GenerateUid() {
+    this->uid = ID_COUNTER++;
+}
+void GameObject::Destroy() {
+    this->isDead = true;
+    for (auto c : components) {
+        c->Destroy();
+    }
+}
+
+void GameObject::init(int maxId) {
+    // 加载一个go后，没有go会获得与之相同的id
+    ID_COUNTER = maxId;
 }

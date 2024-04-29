@@ -2,12 +2,26 @@
 #include "engine/core/Window.hpp"
 #include <imgui.h>
 
+bool GameViewWindow::isPlaying = false;
 
 void GameViewWindow::Imgui() {
     bool open = true;
     ImGui::Begin("Game Viewport", &open,
                  ImGuiWindowFlags_NoScrollbar |
-                     ImGuiWindowFlags_NoScrollWithMouse);
+                     ImGuiWindowFlags_NoScrollWithMouse |
+                     ImGuiWindowFlags_MenuBar);
+
+    // 菜单
+    ImGui::BeginMenuBar();
+    if (ImGui::MenuItem("Play", "", isPlaying, !isPlaying)) {
+        isPlaying = true;
+//        EventSystem.notify(null, new Event(EventType.GameEngineStartPlay));
+    }
+    if (ImGui::MenuItem("Stop", "", !isPlaying, isPlaying)) {
+        isPlaying = false;
+//        EventSystem.notify(null, new Event(EventType.GameEngineStopPlay));
+    }
+    ImGui::EndMenuBar();
 
     ImVec2 windowSize = GetLargestSizeForViewport();
     ImVec2 windowPos = GetCenterPositionForViewport(windowSize);

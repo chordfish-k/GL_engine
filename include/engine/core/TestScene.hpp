@@ -11,6 +11,7 @@
 #include "engine/component/Spritesheet.hpp"
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/util/AssetPool.hpp"
+#include "engine/editor/PropertiesWindow.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -35,7 +36,7 @@ public:
 
         if (sceneLoaded) {
             if (!gameObjects.empty())
-                activeGameObject = gameObjects[0];
+                PropertiesWindow::SetActiveGameObject(gameObjects[0]);
             return;
         }
 
@@ -49,8 +50,6 @@ public:
 
         obj1->AddComponent(obj1SpriteRenderer);
         AddGameObject(obj1);
-
-        activeGameObject = obj1;
 
         auto *obj2 = new GameObject(
             "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
@@ -71,7 +70,7 @@ public:
         obj3->transform->position.y = 400;
         AddGameObject(obj3);
 
-        activeGameObject = obj1;
+        PropertiesWindow::SetActiveGameObject(obj1);
     }
 
     void InitResources() {

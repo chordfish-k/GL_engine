@@ -10,24 +10,37 @@
 class GameObject;
 
 class Component : public ASerializableObj{
+private:
+    static int ID_COUNTER;
+    int uid = -1;
+
 public:
     GameObject *gameObject = nullptr;
     const std::string componentName = "Component";
+
 public:
     Component() {};
     virtual std::string GetComponentName() {return componentName;}
     virtual void Start() {};
     virtual void Update(float dt) {};
     virtual void Imgui() {};
+    virtual void Destroy() {}
+    static void Init(int maxId) {ID_COUNTER = maxId; }
 
     virtual json Serialize() {
         json j;
         j["component"] = GetComponentName();
         return j;
     };
-    virtual ASerializableObj *Deserialize(json j) {return nullptr;} ;
+    virtual ASerializableObj *Deserialize(json j) {return nullptr;}
 
-    ;
+    void GeneratedId() {
+        if (this->uid == -1) {
+            this->uid = ID_COUNTER++;
+        }
+    }
+
+    int GetUid() const { return uid; }
 
 protected:
     // TODO 补全所有类型

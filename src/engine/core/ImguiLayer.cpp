@@ -4,6 +4,9 @@
 #include "engine/core/Window.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/editor/GameViewWindow.hpp"
+#include "engine/editor/SceneHierarchyWindow.hpp"
+#include "engine/editor/PropertiesWindow.hpp"
+#include "engine/editor/MenuBar.hpp"
 #include <imgui.h>
 
 ImguiLayer::ImguiLayer(GLFWwindow *glfwWindow) : glfwWindow(glfwWindow) {}
@@ -14,7 +17,7 @@ void ImguiLayer::InitImgui() {
 
     ImGuiIO &io = ImGui::GetIO();
     io.IniFilename = "imgui.ini";
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+//    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
@@ -112,6 +115,8 @@ void ImguiLayer::Update(float dt) {
         Window::CurrentScene()->SceneImgui();
 //    ImGui::ShowDemoWindow();
     GameViewWindow::Imgui();
+    PropertiesWindow::Imgui();
+    SceneHierarchyWindow::Imgui();
 
     EndFrame();
 }
@@ -191,6 +196,8 @@ void ImguiLayer::SetupDockspace() {
 
     // Dockspace
     ImGui::DockSpace(ImGui::GetID("Dockspace"));
+
+    MenuBar::Imgui();
 
     ImGui::End();
 }

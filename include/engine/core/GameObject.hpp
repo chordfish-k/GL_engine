@@ -9,11 +9,15 @@
 #include <vector>
 
 class GameObject : public ASerializableObj{
-public:
-    std::string name;
+private:
     std::vector<Component *> components;
+    static int ID_COUNTER;
+    int uid = -1;
+    bool doSerialization = true;
+    bool isDead = false;
 
 public:
+    std::string name;
     Transform *transform;
 
     int zIndex;
@@ -30,6 +34,10 @@ public:
     ~GameObject();
 
     void RemoveAllComponent();
+
+    void Destroy();
+
+    static void init(int maxId);
 
     template <typename T>
     std::enable_if_t<std::is_base_of<Component, T>::value, T *> GetComponent() {
@@ -82,4 +90,14 @@ public:
     json Serialize() override;
 
     ASerializableObj *Deserialize(json j) override;
+
+    int GetUid() const;
+
+    bool IsDead() const;
+
+    bool IsDoSerialization() const;
+
+    void SetNoSerialization();
+
+    void GenerateUid();
 };
