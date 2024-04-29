@@ -25,6 +25,8 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
         };
         Sprite *sprite = new Sprite();
         sprite->SetTexture(texture);
+        sprite->SetWidth(spriteWidth);
+        sprite->SetHeight(spriteHeight);
         sprite->SetTexCoords(texCoords);
         sprites.push_back(sprite);
         // 移动当前坐标指针

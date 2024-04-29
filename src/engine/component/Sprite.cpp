@@ -43,3 +43,18 @@ Sprite *Sprite::Deserialize(json j) {
     SetTexCoords(list);
     return this;
 }
+float Sprite::GetWidth() const {
+    return width;
+}
+
+void Sprite::SetWidth(float width) {
+    Sprite::width = width;
+}
+
+float Sprite::GetHeight() const {
+    return height;
+}
+
+void Sprite::SetHeight(float height) {
+    Sprite::height = height;
+}

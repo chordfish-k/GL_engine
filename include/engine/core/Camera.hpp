@@ -7,7 +7,7 @@
 
 class Camera {
 private:
-    glm::mat4 projectionMatrix, viewMatrix;
+    glm::mat4 projectionMatrix, viewMatrix, invProjection, invView;
     // 定义摄像机朝向、上轴
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -25,4 +25,8 @@ public:
     glm::mat4 GetViewMatrix();
 
     glm::mat4 GetProjMatrix();
+
+    glm::mat4 &GetInvProjection();
+
+    glm::mat4 &GetInvView();
 };

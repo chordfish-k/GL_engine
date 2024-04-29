@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #define MOUSE_NUM 3
@@ -31,8 +32,13 @@ public:
 
     static bool IsMouseButtonDown(int button);
 
+    static float GetOrthoX();
+
+    static float GetOrthoY();
+
+
     // 属性
-    static float GgetX() { return (float)Get()->xPos; };
+    static float GetX() { return (float)Get()->xPos; };
 
     static float GetY() { return (float)Get()->yPos; };
 

@@ -14,4 +14,10 @@ public:
                 int numSprite, int spacing);
 
     Sprite *GetSprite(unsigned int index);
+
+    // 属性
+    
+    int Size() {
+        return sprites.size();
+    }
 };

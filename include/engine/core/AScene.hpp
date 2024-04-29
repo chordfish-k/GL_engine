@@ -1,12 +1,14 @@
 ﻿#pragma once
 
 #include "engine/renderer/Renderer.hpp"
+#include "engine/core/Camera.hpp"
+
 #include <imgui.h>
 #include <vector>
 #include <fstream>
 
 class GameObject;
-class Camera;
+//class Camera;
 // class Renderer;
 
 class AScene : public ASerializableObj{

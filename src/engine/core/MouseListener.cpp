@@ -1,4 +1,5 @@
 ﻿#include "engine/core/MouseListener.hpp"
+#include "engine/core/Window.hpp"
 
 MouseListener *MouseListener::instance = nullptr;
 
@@ -55,3 +56,24 @@ bool MouseListener::IsMouseButtonDown(int button) {
         return false;
     }
 }
+
+float MouseListener::GetOrthoX() {
+    float currentX = GetX();
+    currentX = (currentX / (float) Window::GetWidth()) * 2.f - 1.f;
+    glm::vec4 tmp = {currentX, 0, 0, 1};
+    tmp = tmp * Window::GetScene()->GetCamera()->GetInvProjection();
+    currentX = tmp.x;
+    util::Println("currentX: ", currentX);
+    return currentX;
+}
+
+float MouseListener::GetOrthoY() {
+    float currentY = GetY();
+    currentY = (currentY / (float) Window::GetHeight()) * 2.f - 1.f;
+    glm::vec4 tmp = {currentY, 0, 0, 1};
+    tmp = tmp * Window::GetScene()->GetCamera()->GetInvProjection();
+    currentY = tmp.y;
+    util::Println("currentY: ", currentY);
+    return currentY;
+}
+
