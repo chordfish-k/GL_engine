@@ -42,7 +42,7 @@ public:
 
 
         obj1 = new GameObject(
-            "Object 1", new Transform(glm::vec2(200, 200), glm::vec2(256, 256)),
+            "Object 1", new Transform(glm::vec2(100, 100), glm::vec2(100, 100)),
             1);
         auto *obj1SpriteRenderer = new SpriteRenderer();
         
@@ -52,7 +52,7 @@ public:
         AddGameObject(obj1);
 
         auto *obj2 = new GameObject(
-            "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
+            "Object 2", new Transform(glm::vec2(0, 0), glm::vec2(1, 1)),
             0);
         auto *obj2SpriteRenderer = new SpriteRenderer();
         auto *obj2Sprite = new Sprite();
@@ -63,12 +63,21 @@ public:
         obj2->AddComponent(obj2SpriteRenderer);
         AddGameObject(obj2);
 
-        json j = obj2->Serialize();
-        auto obj3 = new GameObject();
-        obj3->Deserialize(j);
-        assert(obj3 != nullptr);
-        obj3->transform->position.y = 400;
+        auto *obj3 = new GameObject(
+            "Object 3", new Transform(glm::vec2(1, 0), glm::vec2(1, 1)),
+            0);
+        auto *obj3SpriteRenderer = new SpriteRenderer();
+        auto *obj3Sprite = new Sprite();
+        obj3Sprite->SetTexture(
+            AssetPool::GetTexture("assets/image/blendImage2.png"));
+        obj3SpriteRenderer->SetSprite(obj3Sprite);
+
+        obj3->AddComponent(obj3SpriteRenderer);
         AddGameObject(obj3);
+
+        obj2->AddChild(obj3);
+
+        obj1->AddChild(obj2);
 
         PropertiesWindow::SetActiveGameObject(obj1);
     }

@@ -35,12 +35,15 @@ public:
 
     void RemoveAllComponent();
 
+    std::vector<Component *> &GetComponents();
+
     void Destroy();
 
     static void init(int maxId);
 
     template <typename T>
-    std::enable_if_t<std::is_base_of<Component, T>::value, T *> GetComponent() {
+    std::enable_if_t<std::is_base_of<Component, T>::value, T *>
+    GetComponent() {
         for (auto c : components) {
             T *res = dynamic_cast<T *>(c);
             if (res) {
@@ -66,17 +69,18 @@ public:
     }
 
     template <typename T>
-    std::enable_if_t<std::is_base_of<Component, T>::value, T *> AddComponent() {
+    std::enable_if_t<std::is_base_of<Component, T>::value, T *>
+    AddComponent() {
         T *comp = new T();
         AddComponent(comp);
         return comp;
     }
 
-    Component *AddComponent(Component *comp) {
-        components.push_back(comp);
-        comp->gameObject = this;
-        return comp;
-    }
+    Component *AddComponent(Component *comp);
+
+    void AddChild(GameObject *ch);
+
+    void RemoveChild(GameObject *ch);
 
     void Update(float dt);
 

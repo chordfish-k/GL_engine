@@ -19,6 +19,9 @@ protected:
 
     bool sceneLoaded = false;
 
+public:
+    Transform *root = nullptr;
+
 private:
     bool isRunning = false;
 

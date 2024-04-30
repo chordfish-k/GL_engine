@@ -14,13 +14,22 @@
 // SpriteRenderer::SpriteRenderer(Sprite *sprite)
 //     : color(glm::vec4(1, 1, 1, 1)), sprite(sprite) {}
 
+SpriteRenderer::~SpriteRenderer() {
+    delete lastTransform;
+    delete lastParentTransform;
+}
+
 void SpriteRenderer::Start() {
     lastTransform = gameObject->transform->Copy();
+    lastParentTransform = gameObject->transform->parent ? gameObject->transform->parent : new Transform();
 }
 
 void SpriteRenderer::Update(float dt) {
-    if (!lastTransform->Equals(*gameObject->transform)) {
+    if (!lastTransform->Equals(*gameObject->transform) || !lastParentTransform ||
+        !lastParentTransform->Equals(*gameObject->transform)) {
         gameObject->transform->CopyTo(lastTransform);
+        if (gameObject->transform->parent)
+            gameObject->transform->parent->CopyTo(lastParentTransform);
         isDirty = true;
     }
 }
@@ -39,22 +48,33 @@ void SpriteRenderer::SetColor(glm::vec4 color) {
 
 json SpriteRenderer::Serialize() {
     json j;
-    j["component"] = GetComponentName();;
+    j["component"] = GetComponentName();
+    j["uid"] = GetUid();
     j["color"] = {color.x, color.y, color.z, color.w};
+    j["offset"] = {offset.x, offset.y};
     j["sprite"] = sprite->Serialize();
     return j;
 }
 
 SpriteRenderer *SpriteRenderer::Deserialize(json j) {
+    Component::Deserialize(j);
+
     auto &c = j["color"];
-    SetColor(glm::vec4(c[0], c[1], c[2], c[3]));
+    if (!c.empty()) SetColor(glm::vec4(c[0], c[1], c[2], c[3]));
+
+    auto &o = j["offset"];
+    if (!o.empty()) SetOffset(glm::vec2(o[0], o[1]));
+
     auto *sprite = new Sprite();
-    sprite->Deserialize(j["sprite"]);
+    auto &s = j["sprite"];
+    if (!s.empty()) sprite->Deserialize(s);
     SetSprite(sprite);
+
     return this;
 }
 
 void SpriteRenderer::Imgui() {
     Component::Imgui<SpriteRenderer>();
 }
+
 

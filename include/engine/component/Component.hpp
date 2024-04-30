@@ -32,17 +32,26 @@ public:
         j["component"] = GetComponentName();
         return j;
     };
-    virtual ASerializableObj *Deserialize(json j) {return nullptr;}
+    virtual ASerializableObj *Deserialize(json j) {
+        auto uid = j["uid"];
+        if (uid < Component::ID_COUNTER) uid = GetUid();
+        SetUid(uid);
+        return this;
+    }
 
-    void GeneratedId() {
+    int GeneratedId() {
         if (this->uid == -1) {
             this->uid = ID_COUNTER++;
         }
+        return this->uid;
     }
 
     int GetUid() const { return uid; }
 
 protected:
+
+    void SetUid(int uid) { this->uid = uid; }
+
     // TODO 补全所有类型
     template <typename T>
     std::enable_if_t<std::is_base_of<Component, T>::value, void>
@@ -75,7 +84,7 @@ protected:
                 else if (value.is_type<float>()) {
                     auto v = value.get_value<float>();
                     if (ImGui::DragFloat(std::string(p.get_name()).c_str(),
-                                         &v)) {
+                                         &v, 0.005f)) {
                         p.set_value(obj, v);
                     }
                 }
@@ -91,7 +100,7 @@ protected:
                 else if (value.is_type<glm::vec2>()) {
                     auto v2 = value.get_value<glm::vec2>();
                     if (ImGui::DragFloat2(std::string(p.get_name()).c_str(),
-                                          glm::value_ptr(v2))) {
+                                          glm::value_ptr(v2), 0.05f)) {
                         p.set_value(obj, glm::vec2(v2.x, v2.y));
                     }
                 }
@@ -99,7 +108,7 @@ protected:
                 else if (value.is_type<glm::vec3>()) {
                     auto v3 = value.get_value<glm::vec3>();
                     if (ImGui::DragFloat3(std::string(p.get_name()).c_str(),
-                                          glm::value_ptr(v3))) {
+                                          glm::value_ptr(v3), 0.05f)) {
                         p.set_value(obj, glm::vec3(v3.x, v3.y, v3.z));
                     }
                 }
@@ -107,7 +116,7 @@ protected:
                 else if (value.is_type<glm::vec4>()) {
                     auto v4 = value.get_value<glm::vec4>();
                     if (ImGui::DragFloat4(std::string(p.get_name()).c_str(),
-                                          glm::value_ptr(v4))) {
+                                          glm::value_ptr(v4)), 0.05f) {
                         p.set_value(obj, glm::vec4(v4.x, v4.y, v4.z, v4.w));
                     }
                 }
@@ -117,6 +126,8 @@ protected:
         }
     }
 };
+
+
 
 #define COMPONENT(name)                             \
     class name : public Component {                 \

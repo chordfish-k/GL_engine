@@ -1,6 +1,7 @@
 ﻿#include "engine/core/GameObject.hpp"
 #include "engine/component/SpriteRenderer.hpp"
 #include "engine/component/Transform.hpp"
+#include "engine/core/Window.hpp"
 
 #include <cassert>
 #include <string>
@@ -15,7 +16,8 @@ GameObject::GameObject(std::string name, Transform *transform)
 
 GameObject::GameObject(std::string name, Transform *transform, int zIndex)
     : name(name), transform(transform){
-    this->components.push_back(transform);
+    AddComponent(transform);
+    Window::GetScene()->root->AddChild(transform);
 }
 
 GameObject::~GameObject() {
@@ -67,7 +69,7 @@ ASerializableObj *GameObject::Deserialize(json j) {
             auto *cc = (SpriteRenderer*)component;
             cc->Deserialize(c)->gameObject = this;
         }
-        components.push_back(component);
+        AddComponent(component);
     }
     return this;
 }
@@ -78,6 +80,14 @@ void GameObject::RemoveAllComponent() {
     }
     components.clear();
 }
+
+Component *GameObject::AddComponent(Component *comp) {
+    components.push_back(comp);
+    comp->gameObject = this;
+    comp->GeneratedId();
+    return comp;
+}
+
 
 int GameObject::GetUid() const {
     return uid;
@@ -107,4 +117,29 @@ void GameObject::Destroy() {
 void GameObject::init(int maxId) {
     // 加载一个go后，没有go会获得与之相同的id
     ID_COUNTER = maxId;
+}
+
+void GameObject::AddChild(GameObject *ch) {
+    if (ch == this) return;
+
+    if (ch->transform->parent)
+        ch->transform->parent->RemoveChild(ch->transform);
+
+    auto &child = transform->children;
+    auto it = std::find(child.begin(), child.end(), ch->transform);
+    if (it == child.end()) {
+        transform->AddChild(ch->transform);
+    }
+}
+
+void GameObject::RemoveChild(GameObject *ch) {
+    auto &child = ch->transform->children;
+    auto it = std::find(child.begin(), child.end(), ch->transform);
+    if (it != child.end()) {
+        child.erase(it);
+    }
+}
+
+std::vector<Component *> &GameObject::GetComponents() {
+    return components;
 }
