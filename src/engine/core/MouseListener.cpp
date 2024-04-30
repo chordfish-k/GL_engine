@@ -1,5 +1,7 @@
-﻿#include "engine/core/MouseListener.hpp"
+﻿#include <glm/vec4.hpp>
+#include "engine/core/MouseListener.hpp"
 #include "engine/core/Window.hpp"
+#include "engine/core/Camera.hpp"
 
 MouseListener *MouseListener::instance = nullptr;
 
@@ -63,7 +65,6 @@ float MouseListener::GetOrthoX() {
     glm::vec4 tmp = {currentX, 0, 0, 1};
     tmp = tmp * Window::GetScene()->GetCamera()->GetInvProjection();
     currentX = tmp.x;
-    util::Println("currentX: ", currentX);
     return currentX;
 }
 
@@ -73,7 +74,6 @@ float MouseListener::GetOrthoY() {
     glm::vec4 tmp = {currentY, 0, 0, 1};
     tmp = tmp * Window::GetScene()->GetCamera()->GetInvProjection();
     currentY = tmp.y;
-    util::Println("currentY: ", currentY);
     return currentY;
 }
 

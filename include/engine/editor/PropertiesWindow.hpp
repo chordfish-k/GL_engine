@@ -1,28 +1,29 @@
 #pragma once
 
-#include "engine/core/GameObject.hpp"
+#include "engine/node/Node.hpp"
 
 class PropertiesWindow {
 private:
-    static GameObject * activeGameObject;
+    static Node *activeNode;
 
 public:
     static void Imgui() {
-        if (activeGameObject != nullptr) {
+        if (activeNode != nullptr) {
             ImGui::Begin("Properties");
 
             // TODO right click menu
 
-            activeGameObject->Imgui();
+            activeNode->Imgui();
             ImGui::End();
         }
     }
 
-    static GameObject *GetActiveGameObject() {
-        return activeGameObject;
+    static Node *GetActiveNode() {
+        return activeNode;
     }
 
-    static void SetActiveGameObject(GameObject *go) {
-        activeGameObject = go;
+    static void SetActiveNode(Node *go) { activeNode = go;
     }
 };
+
+

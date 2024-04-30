@@ -1,4 +1,4 @@
-﻿#include "engine/component/Sprite.hpp"
+﻿#include "engine/node/Sprite.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/AssetPool.hpp"
 
@@ -30,7 +30,7 @@ json Sprite::Serialize() {
     }
   j["texture"] = texture ? texture->GetFilePath() : "";
 
-    return j;
+  return j;
 }
 
 Sprite *Sprite::Deserialize(json j) {

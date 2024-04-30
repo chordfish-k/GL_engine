@@ -6,49 +6,117 @@
 #include <rttr/registration>
 #include "engine/core/ASerializableObj.hpp"
 #include "engine/util/Print.hpp"
+#include "engine/core/Transform.hpp"
+#include "engine/core/Window.hpp"
+#include "engine/renderer/Renderer.hpp"
 
 class GameObject;
 
-class Component : public ASerializableObj{
+class Node : public ASerializableObj{
 private:
     static int ID_COUNTER;
     int uid = -1;
 
-public:
-    GameObject *gameObject = nullptr;
-    const std::string componentName = "Component";
+    int zIndex = 0;
+    bool doSerialization = true;
+    bool shouldDestroy = false;
 
 public:
-    Component() {};
-    virtual std::string GetComponentName() {return componentName;}
-    virtual void Start() {};
-    virtual void Update(float dt) {};
-    virtual void Imgui() {};
+    Node *parent = nullptr;
+    std::vector<Node *> children;
+    Transform transform;
+    const std::string nodeType = "Node";
+    std::string name = nodeType;
+
+public:
+    Node() : Node(glm::vec2(), glm::vec2(1,1)){}
+
+    Node(glm::vec2 position, glm::vec2 scale = glm::vec2(1,1))
+        : transform(Transform(position, scale)) {}
+
+    ~Node();
+
+    virtual std::string GetNodeType() {return nodeType;}
+
+    virtual void Start();
+
+    virtual void Update(float dt);
+
+    virtual void Imgui();
+
     virtual void Destroy() {}
     static void Init(int maxId) {ID_COUNTER = maxId; }
 
-    virtual json Serialize() {
-        json j;
-        j["component"] = GetComponentName();
-        return j;
-    };
-    virtual ASerializableObj *Deserialize(json j) {return nullptr;}
+    bool IsDoSerialization() const { return doSerialization; }
 
-    void GeneratedId() {
-        if (this->uid == -1) {
-            this->uid = ID_COUNTER++;
-        }
+    Transform GetTransform() { return parent ? parent->GetTransform() + transform : transform;}
+
+    virtual std::string GetName() { return name; }
+
+
+    template <typename T>
+    std::enable_if_t<std::is_base_of<Node, T>::value, T *>
+    AddNode() {
+        T *comp = new T();
+        AddNode(comp);
+        return comp;
     }
 
+    Node *AddNode(Node *comp);
+
+    void RemoveAllNodes();
+
+
+    virtual json Serialize();
+
+    virtual Node *Deserialize(json j);
+
+    void TravelOnSubTree(std::function<void(Node*)>);
+
+    void GeneratedId();
+
     int GetUid() const { return uid; }
+
+    int GetZIndex() const { return zIndex; }
+
+    glm::mat4 Node::GetModelMatrix() ;
+
+    Node *SetZIndex(int zIndex) {
+        zIndex = zIndex;
+        return this;
+    }
+
+    Node *SetPosition(glm::vec2 position) {
+        transform.position = position;
+        return this;
+    }
+
+    Node *SetScale(glm::vec2 scale) {
+        transform.scale = scale;
+        return this;
+    }
+
+    Node *SetRotation(float rotation) {
+        transform.rotation = rotation;
+        return this;
+    }
+
+    Node *SetTransform(Transform t) {
+        transform = t;
+        return this;
+    }
 
 protected:
     // TODO 补全所有类型
     template <typename T>
-    std::enable_if_t<std::is_base_of<Component, T>::value, void>
+    std::enable_if_t<std::is_base_of<Node, T>::value, void>
     Imgui(){
+
+        ShowTransformProperties();
+
+
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::TreeNode(((T*)(this))->componentName.c_str())) {
+        if (ImGui::TreeNode("Properties")) {
 
             auto a = rttr::type::get<T>();
             auto props = a.get_properties();
@@ -116,11 +184,16 @@ protected:
             ImGui::TreePop();
         }
     }
+
+private:
+    void ShowTransformProperties();
 };
 
-#define COMPONENT(name)                             \
-    class name : public Component {                 \
+#define COMPONENT(name_)                             \
+    class name_ : public Node {                 \
         public:                                     \
-            const std::string componentName = #name;\
-            std::string GetComponentName() {return componentName;}
+            const std::string nodeType = #name_;     \
+            std::string name = #name_;                                       \
+            std::string GetNodeType() {return nodeType;}\
+            std::string GetName() {return name;}
 

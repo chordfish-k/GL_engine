@@ -15156,7 +15156,7 @@ class basic_json
     [RFC 7159](http://rfc7159.net/rfc7159) describes numbers as follows:
     > The representation of numbers is similar to that used in most
     > programming languages. A number is represented in base 10 using decimal
-    > digits. It contains an integer component that may be prefixed with an
+    > digits. It contains an integer node that may be prefixed with an
     > optional minus sign, which may be followed by a fraction part and/or an
     > exponent part. Leading zeros are not allowed. (...) Numeric values that
     > cannot be represented in the grammar below (such as Infinity and NaN)
@@ -15228,7 +15228,7 @@ class basic_json
     [RFC 7159](http://rfc7159.net/rfc7159) describes numbers as follows:
     > The representation of numbers is similar to that used in most
     > programming languages. A number is represented in base 10 using decimal
-    > digits. It contains an integer component that may be prefixed with an
+    > digits. It contains an integer node that may be prefixed with an
     > optional minus sign, which may be followed by a fraction part and/or an
     > exponent part. Leading zeros are not allowed. (...) Numeric values that
     > cannot be represented in the grammar below (such as Infinity and NaN)
@@ -15299,7 +15299,7 @@ class basic_json
     [RFC 7159](http://rfc7159.net/rfc7159) describes numbers as follows:
     > The representation of numbers is similar to that used in most
     > programming languages. A number is represented in base 10 using decimal
-    > digits. It contains an integer component that may be prefixed with an
+    > digits. It contains an integer node that may be prefixed with an
     > optional minus sign, which may be followed by a fraction part and/or an
     > exponent part. Leading zeros are not allowed. (...) Numeric values that
     > cannot be represented in the grammar below (such as Infinity and NaN)

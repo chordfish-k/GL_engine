@@ -1,3 +1,3 @@
 #include "engine/editor/PropertiesWindow.hpp"
 
-GameObject * PropertiesWindow::activeGameObject = nullptr;
+Node *PropertiesWindow::activeNode = nullptr;

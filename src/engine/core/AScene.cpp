@@ -2,36 +2,47 @@
 
 #include "engine/renderer/Renderer.hpp"
 #include "engine/core/AScene.hpp"
+#include "engine/node/Node.hpp"
 
 AScene::AScene() {
     renderer = new Renderer();
+    root = new Node();
+    root->name = "Root";
 }
 
 AScene::~AScene() {
     delete renderer;
     renderer = nullptr;
-    RemoveAllGameObject();
+    delete root;
+    root = nullptr;
 }
 
 void AScene::Start() {
-    for (auto go : gameObjects) {
-        go->Start();
-        renderer->Add(go);
+    if (!root) return;
+    for (auto go : root->children) {
+        if (go) go->Start();
     }
     isRunning = true;
 }
 
-void AScene::AddGameObject(GameObject *go) {
-    gameObjects.push_back(go);
+void AScene::Update(float dt) {}
+
+void AScene::AddNode(Node *n) const {
+    root->AddNode(n);
     if (isRunning) {
-        go->Start();
+        n->Start();
     }
 }
 
-void AScene::RemoveAllGameObject() {
-    for (auto go : gameObjects) {
-        delete go;
+void AScene::AddNodeAsChild(Node *parent, Node *n) const {
+    parent->AddNode(n);
+    if (isRunning) {
+        n->Start();
     }
+}
+
+void AScene::RemoveAllNodes() const {
+    root->RemoveAllNodes();
 }
 
 Camera *AScene::GetCamera() {
@@ -39,38 +50,27 @@ Camera *AScene::GetCamera() {
 }
 
 void AScene::SceneImgui() {
-//    if (activeGameObject != nullptr) {
-//        ImGui::Begin("Inspector");
-//        activeGameObject->Imgui();
-//        ImGui::End();
-//    }
     Imgui();
 }
 
 void AScene::Imgui() {}
 
-json AScene::Serialize() {
+json AScene::Serialize() const {
     json j;
-    for (int i = 0; i < gameObjects.size(); ++i) {
-        j["gameObjects"][i] = gameObjects[i]->Serialize();
-    }
+    j = root->Serialize();
     return j;
 }
 
-ASerializableObj *AScene::Deserialize(json j) {
-    RemoveAllGameObject();
-    auto &gos = j["gameObjects"];
-    for (auto &go : gos) {
-        auto *goImpl = new GameObject();
-        gameObjects.push_back((GameObject*)goImpl->Deserialize(go));
-    }
-    return this;
+Node *AScene::Deserialize(json j) const {
+    RemoveAllNodes();
+    root->Deserialize(j);
+    return root;
 }
 
 void AScene::Save() {
     {
         std::string jsonText = Serialize().dump(2);
-        std::ofstream out("scene.txt", std::ios::trunc);
+        std::ofstream out("scene.json", std::ios::trunc);
         if (out.is_open()){
             out << jsonText;
             out.close();
@@ -81,7 +81,7 @@ void AScene::Save() {
 }
 
 void AScene::Load() {
-    std::ifstream fin("scene.txt");
+    std::ifstream fin("scene.json");
     std::string jsonText;
     if (fin.is_open()) {
         std::stringstream ss;
@@ -90,10 +90,10 @@ void AScene::Load() {
     }
     if (jsonText.empty()) return;
 
-    Deserialize(Str2Json(jsonText));
+    root->Deserialize(Str2Json(jsonText));
     sceneLoaded = true;
 }
 
-std::vector<GameObject *> AScene::GetGameObjects() {
-    return gameObjects;
+Renderer *AScene::GetRenderer() const {
+    return renderer;
 }

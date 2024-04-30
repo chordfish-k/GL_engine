@@ -172,10 +172,16 @@ void RenderBatch::LoadVertexProperties(int index) {
             yAdd = 1.f;
         }
 
-        // 载入位置信息，根据为题中心进行偏移
-        auto tr = sprite->gameObject->transform;
-        vertices[offset + 0] = tr->position.x + (xAdd * tr->scale.x);
-        vertices[offset + 1] = tr->position.y + (yAdd * tr->scale.y);
+        // 载入位置信息，根据中心进行偏移
+        auto tr = sprite->GetTransform();
+        auto modelMat = sprite->GetModelMatrix();
+        auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
+
+//        vertices[offset + 0] = tr.position.x + (xAdd * tr.scale.x);
+//        vertices[offset + 1] = tr.position.y + (yAdd * tr.scale.y);
+
+        vertices[offset + 0] = pos.x;
+        vertices[offset + 1] = pos.y;
 
         // 载入颜色信息
         vertices[offset + 2] = color.x;

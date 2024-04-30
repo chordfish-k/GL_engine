@@ -4,12 +4,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "engine/component/Sprite.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/core/AScene.hpp"
-#include "engine/core/GameObject.hpp"
-#include "engine/component/Spritesheet.hpp"
-#include "engine/component/SpriteRenderer.hpp"
+#include "engine/node/Spritesheet.hpp"
+#include "engine/node/SpriteRenderer.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
 
@@ -20,7 +18,6 @@
 class TestScene : public AScene {
 private:
     Spritesheet *sprites = nullptr;
-    GameObject *obj1 = nullptr;
 
 public:
     TestScene() = default;
@@ -33,44 +30,25 @@ public:
         camera = new Camera(glm::vec2(-250, 0));
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheets/decorationsAndBlocks.png");
 
-
         if (sceneLoaded) {
-            if (!gameObjects.empty())
-                PropertiesWindow::SetActiveGameObject(gameObjects[0]);
+            if (!Window::GetScene()->root->children.empty())
+//                PropertiesWindow::SetActiveNode(Window::GetScene()->root->children[0]);
             return;
         }
 
+        auto node = root->AddNode<Node>()
+                ->SetTransform({glm::vec2(200, 200), glm::vec2(1, 1)});
+        auto obj1 = node->AddNode<SpriteRenderer>()
+                ->SetColor({1, 0, 0, 0.1})
+                ->SetTransform({glm::vec2(0, 0), glm::vec2(200, 200)});
+        auto obj2 = node->AddNode<SpriteRenderer>()
+                ->SetColor({0, 1, 0, 0.1})
+                ->SetTransform({glm::vec2(200, 0), glm::vec2(200, 200)});
+        auto obj3 = obj1->AddNode<SpriteRenderer>()
+                        ->SetColor({0, 0, 1, 0.1})
+                        ->SetTransform({glm::vec2(0, 200), glm::vec2(1, 1)});
 
-        obj1 = new GameObject(
-            "Object 1", new Transform(glm::vec2(200, 200), glm::vec2(256, 256)),
-            1);
-        auto *obj1SpriteRenderer = new SpriteRenderer();
-        
-        obj1SpriteRenderer->SetColor(glm::vec4(1, 0, 0, 1));
-
-        obj1->AddComponent(obj1SpriteRenderer);
-        AddGameObject(obj1);
-
-        auto *obj2 = new GameObject(
-            "Object 2", new Transform(glm::vec2(400, 200), glm::vec2(256, 256)),
-            0);
-        auto *obj2SpriteRenderer = new SpriteRenderer();
-        auto *obj2Sprite = new Sprite();
-        obj2Sprite->SetTexture(
-            AssetPool::GetTexture("assets/image/blendImage2.png"));
-        obj2SpriteRenderer->SetSprite(obj2Sprite);
-
-        obj2->AddComponent(obj2SpriteRenderer);
-        AddGameObject(obj2);
-
-        json j = obj2->Serialize();
-        auto obj3 = new GameObject();
-        obj3->Deserialize(j);
-        assert(obj3 != nullptr);
-        obj3->transform->position.y = 400;
-        AddGameObject(obj3);
-
-        PropertiesWindow::SetActiveGameObject(obj1);
+        PropertiesWindow::SetActiveNode(obj1);
     }
 
     void InitResources() {
@@ -89,7 +67,7 @@ public:
     }
 
     void Update(float dt) override {
-        for (auto go : gameObjects) {
+        for (auto go : root->children) {
             go->Update(dt);
         }
         this->renderer->Render();

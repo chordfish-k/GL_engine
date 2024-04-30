@@ -1,14 +1,21 @@
 #pragma once
 
 #include <rttr/registration>
-#include "engine/component/Transform.hpp"
-#include "engine/component/SpriteRenderer.hpp"
+#include "engine/core/Transform.hpp"
+#include "engine/node/SpriteRenderer.hpp"
 
 RTTR_REGISTRATION  {
-    rttr::registration::class_<Transform>("Transform")
-        .property("position", &Transform::position)
-        .property("scale", &Transform::scale);
+
+    rttr::registration::class_<Node>("Node")
+        .constructor<>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        )
+        .method("Deserialize", &SpriteRenderer::Deserialize);
 
     rttr::registration::class_<SpriteRenderer>("SpriteRenderer")
+        .constructor<>()(
+                rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+            )
         .property("color", &SpriteRenderer::GetColor, &SpriteRenderer::SetColor);
+//        .method("Deserialize", &SpriteRenderer::Deserialize);
 }

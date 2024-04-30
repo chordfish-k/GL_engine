@@ -1,13 +1,13 @@
 #pragma once
 
-#include "engine/core/GameObject.hpp"
+//#include "engine/node/Node.hpp"
 #include <vector>
 
 #define MAX_BATCH_SIZE 1000
 
 class SpriteRenderer;
 class RenderBatch;
-class GameObject;
+class Node;
 
 class Renderer {
 private:
@@ -18,11 +18,9 @@ public:
 
     ~Renderer();
 
-    // 将GameObject添加到渲染器
-    void Add(GameObject *go);
+    // 将Node添加到渲染器
 
     void Render();
 
-private:
     void Add(SpriteRenderer *sprite);
 };

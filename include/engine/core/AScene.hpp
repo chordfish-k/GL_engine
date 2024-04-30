@@ -1,22 +1,24 @@
 ﻿#pragma once
 
 #include "engine/renderer/Renderer.hpp"
-#include "engine/core/Camera.hpp"
+#include "engine/core/ASerializableObj.hpp"
+// #include "engine/core/Camera.hpp"
 
 #include <imgui.h>
 #include <vector>
 #include <fstream>
 
-class GameObject;
-//class Camera;
-// class Renderer;
+class Camera;
+class Node;
+//class Renderer;
 
-class AScene : public ASerializableObj{
+class AScene {
+public:
+    Node *root = nullptr;
+
 protected:
     Renderer *renderer = nullptr;
     Camera *camera = nullptr;
-    std::vector<GameObject *> gameObjects;
-
     bool sceneLoaded = false;
 
 private:
@@ -32,25 +34,28 @@ public:
 
     void Start();
 
-    void AddGameObject(GameObject *go);
+    void AddNode(Node *n) const;
 
-    void RemoveAllGameObject();
+    void AddNodeAsChild(Node *parent, Node *n) const;
+
+    void RemoveAllNodes() const;
 
     Camera *GetCamera();
 
-    virtual void Update(float dt) = 0;
+    virtual void Update(float dt);
 
     void SceneImgui();
 
     virtual void Imgui();
 
-    json Serialize() override;
+    json Serialize() const;
 
-    ASerializableObj *Deserialize(json j) override;
+    Node *Deserialize(json j) const;
 
     void Save();
 
     void Load();
 
-    std::vector<GameObject *> GetGameObjects();
+    Renderer *GetRenderer() const;
+
 };

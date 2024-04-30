@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "engine/component/Spritesheet.hpp"
+#include "engine/node/Spritesheet.hpp"
 #include "engine/renderer/Shader.hpp"
 #include "engine/renderer/Texture.hpp"
 #include <string>

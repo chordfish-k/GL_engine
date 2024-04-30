@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "engine/component/SpriteRenderer.hpp"
+#include "engine/node/SpriteRenderer.hpp"
 #include "engine/renderer/Shader.hpp"
 #include "engine/renderer/Texture.hpp"
 #include <vector>

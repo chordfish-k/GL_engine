@@ -13,7 +13,6 @@
 class Window {
 public:
     float r, g, b;
-    bool fadeToBlack;
 
 private:
     static Window *window; // 单例模式
@@ -23,12 +22,15 @@ private:
 
     int width;
     int height;
+    const int buffWidth;
+    const int buffHeight;
     std::string title;
     GLFWwindow *glfwWindow; // 窗口句柄
 
-    Window() : width(3840), height(2160), title("Window") {
+    Window()
+        : width(1920), height(1080),
+          buffWidth(width<<1), buffHeight(height<<1), title("Window") {
         r = g = b = 0.2f;
-        fadeToBlack = false;
     }
 
 public:
