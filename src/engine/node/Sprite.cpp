@@ -1,4 +1,4 @@
-﻿#include "engine/component/Sprite.hpp"
+﻿#include "engine/node/Sprite.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/AssetPool.hpp"
 
@@ -29,18 +29,31 @@ json Sprite::Serialize() {
         j["texCoords"][i] = {texCoords[i].x, texCoords[i].y};
     }
   j["texture"] = texture ? texture->GetFilePath() : "";
+  j["size"] = {width, height};
 
-    return j;
+  return j;
 }
 
 Sprite *Sprite::Deserialize(json j) {
-    SetTexture(AssetPool::GetTexture(j["texture"]));
+    auto &t = j["texture"];
+    if (!t.empty()) SetTexture(AssetPool::GetTexture(t));
+
     auto &tc = j["texCoords"];
-    std::vector<glm::vec2> list;
-    for (auto &t : tc) {
-        list.emplace_back(t[0], t[1]);
+    if (!tc.empty()) {
+        std::vector<glm::vec2> list;
+        for (auto &t : tc) {
+            if (!t.empty() && t.size() == 2)
+                list.emplace_back(t[0], t[1]);
+        }
+        SetTexCoords(list);
     }
-    SetTexCoords(list);
+
+    auto &s = j["size"];
+    if (!s.empty() && s.size() == 2) {
+        width = s[0];
+        height = s[1];
+    }
+
     return this;
 }
 float Sprite::GetWidth() const {

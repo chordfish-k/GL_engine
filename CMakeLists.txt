@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 aux_source_directory(src SOURCES)
 aux_source_directory(src/engine/core SOURCES)
 aux_source_directory(src/engine/renderer SOURCES)
-aux_source_directory(src/engine/component SOURCES)
+aux_source_directory(src/engine/node SOURCES)
 aux_source_directory(src/engine/editor SOURCES)
 
 file(GLOB_RECURSE HEADERS "./include/*.hpp")

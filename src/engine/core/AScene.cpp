@@ -2,38 +2,47 @@
 
 #include "engine/renderer/Renderer.hpp"
 #include "engine/core/AScene.hpp"
-#include "engine/core/Window.hpp"
+#include "engine/node/Node.hpp"
 
 AScene::AScene() {
     renderer = new Renderer();
-    root = new Transform();
+    root = new Node();
+    root->name = "Root";
 }
 
 AScene::~AScene() {
     delete renderer;
+    renderer = nullptr;
     delete root;
-    RemoveAllGameObject();
+    root = nullptr;
 }
 
 void AScene::Start() {
-    for (auto go : gameObjects) {
-        go->Start();
-        renderer->Add(go);
+    if (!root) return;
+    for (auto go : root->children) {
+        if (go) go->Start();
     }
     isRunning = true;
 }
 
-void AScene::AddGameObject(GameObject *go) {
-    gameObjects.push_back(go);
+void AScene::Update(float dt) {}
+
+void AScene::AddNode(Node *n) const {
+    root->AddNode(n);
     if (isRunning) {
-        go->Start();
+        n->Start();
     }
 }
 
-void AScene::RemoveAllGameObject() {
-    for (auto go : gameObjects) {
-        delete go;
+void AScene::AddNodeAsChild(Node *parent, Node *n) const {
+    parent->AddNode(n);
+    if (isRunning) {
+        n->Start();
     }
+}
+
+void AScene::RemoveAllNodes() const {
+    root->RemoveAllNodes();
 }
 
 Camera *AScene::GetCamera() {
@@ -41,57 +50,21 @@ Camera *AScene::GetCamera() {
 }
 
 void AScene::SceneImgui() {
-//    if (activeGameObject != nullptr) {
-//        ImGui::Begin("Inspector");
-//        activeGameObject->Imgui();
-//        ImGui::End();
-//    }
     Imgui();
 }
 
 void AScene::Imgui() {}
 
-json AScene::Serialize() {
+json AScene::Serialize() const {
     json j;
-    for (int i = 0; i < gameObjects.size(); ++i) {
-        if (gameObjects[i]->IsDoSerialization())
-            j["gameObjects"][i] = gameObjects[i]->Serialize();
-    }
+    j = root->Serialize();
     return j;
 }
 
-ASerializableObj *AScene::Deserialize(json j) {
-    RemoveAllGameObject();
-
-    std::vector<Component *> components;
-
-    auto &gos = j["gameObjects"];
-    for (auto &go : gos) {
-        auto *goImpl = new GameObject();
-        AddGameObject((GameObject*)goImpl->Deserialize(go));
-        auto comp = goImpl->GetComponents();
-        components.insert(components.end(), comp.begin(), comp.end());
-    }
-
-    std::sort(components.begin(), components.end(), [](auto &a, auto &b) {
-        return a->GetUid() < b->GetUid();
-    });
-
-    // 构建Transform树
-    for (auto go : gameObjects) {
-        auto tr = go->transform;
-        if (tr->parentUid == -1) {
-            Window::GetScene()->root->children.push_back(tr);
-        }
-        for (auto id : tr->childrenUid) {
-            if (components[id]->GetComponentName() != "Transform")
-                continue;
-            go->AddChild(components[id]->gameObject);
-
-            ((Transform*)components[id])->parent = tr;
-        }
-    }
-    return this;
+Node *AScene::Deserialize(json j) const {
+    RemoveAllNodes();
+    root->Deserialize(j);
+    return root;
 }
 
 void AScene::Save() {
@@ -117,12 +90,10 @@ void AScene::Load() {
     }
     if (jsonText.empty()) return;
 
-    Deserialize(Str2Json(jsonText));
+    root->Deserialize(Str2Json(jsonText));
     sceneLoaded = true;
 }
 
-std::vector<GameObject *> AScene::GetGameObjects() {
-    return gameObjects;
+Renderer *AScene::GetRenderer() const {
+    return renderer;
 }
-
-

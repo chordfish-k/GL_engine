@@ -1,5 +1,4 @@
-﻿#include "engine/component/Spritesheet.hpp"
-#include "engine/component/Sprite.hpp"
+﻿#include "engine/node/Spritesheet.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <vector>
 

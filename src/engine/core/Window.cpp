@@ -39,6 +39,7 @@ void Window::Loop() {
         frameBuffer->Bind();
 
         // 设置清屏颜色
+        glViewport(0, 0, 3840, 2160);
         glClearColor(r, g, b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 

@@ -4,6 +4,7 @@
 #include "engine/core/ASerializableObj.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <vector>
+
 class Sprite : ASerializableObj{
 private:
     float width, height;
@@ -41,6 +42,10 @@ public:
     float GetHeight() const;
 
     void SetHeight(float height);
+
+    glm::vec2 GetSize() {
+        return {width, height};
+    }
 
     unsigned int GetTexId() {
         return texture == nullptr ? 0 : texture->GetId();
