@@ -65,11 +65,6 @@ Node *Node::Deserialize(json j){
             if (!rotation.empty()) {
                 transform.rotation = rotation;
             }
-
-            auto &offset = t["offset"];
-            if (!offset.empty()) {
-                transform.offset = {offset[0], offset[1]};
-            }
         }
     }
 
@@ -140,33 +135,21 @@ void Node::ShowTransformProperties() {
         if (ImGui::DragFloat("rotation", &rotation)) {
             transform.rotation = rotation;
         }
-
-        auto offset = transform.offset;
-        if (ImGui::DragFloat2("offset", glm::value_ptr(offset), 0.05f)) {
-            transform.offset = offset;
-        }
         ImGui::TreePop();
     }
 }
 
 glm::mat4 Node::GetModelMatrix() {
-    auto modelMat = glm::mat4(1.f);
-    Node *n = this;
+    // 构建当前节点的变换矩阵
+    auto M = glm::mat4(1);
 
-    while (n != nullptr) {
-        Transform &t = n->transform;
-        auto tt = n->GetTransform();
-        auto M = glm::mat4(1.f);
-        M = glm::translate(M, {t.position.x + tt.scale.x * t.offset.x, t.position.y + tt.scale.y * t.offset.y, 0});
-        M = glm::rotate(M, glm::radians(t.rotation), {0, 0, 1});
-        M = glm::translate(M, {-tt.scale.x * t.offset.x , -tt.scale.y * t.offset.y , 0});
+    auto t = GetTransform();
+    M = glm::scale(M, {transform.scale, 1});
+    M = glm::translate(M, {transform.position, 0});
+    M = glm::rotate(M, glm::radians(transform.rotation), {0,0,1});
 
-        modelMat = M * modelMat;
+    // 累积变换矩阵
+    M = parent ? parent->GetModelMatrix() *M : M;
 
-        n = n->parent;
-    }
-    auto tt = GetTransform();
-    modelMat = glm::scale(modelMat, {tt.scale.x, tt.scale.y, 1});
-
-    return modelMat;
+    return M;
 }

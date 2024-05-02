@@ -161,27 +161,29 @@ void RenderBatch::LoadVertexProperties(int index) {
     }
 
     // 根据相关属性添加顶点
-    float xAdd = 1.f;
-    float yAdd = 1.f;
+    auto t = sprite->GetTransform();
+    auto size = sprite->GetSize();// * t.scale;
+    auto offset_ = sprite->GetOffset();
+    float xAdd = size.x * 0.5f;
+    float yAdd = size.y * 0.5f;
     for (int i = 0; i < 4; i++) {
         if (i == 1) {
-            yAdd = 0.f;
+            yAdd = -size.y * 0.5f;
         } else if (i == 2) {
-            xAdd = 0.f;
+            xAdd = -size.x * 0.5f;
         } else if (i == 3) {
-            yAdd = 1.f;
+            yAdd = size.y * 0.5f;
         }
 
         // 载入位置信息，根据中心进行偏移
-        auto tr = sprite->GetTransform();
-        auto modelMat = sprite->GetModelMatrix();
-        auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
-
-//        vertices[offset + 0] = tr.position.x + (xAdd * tr.scale.x);
-//        vertices[offset + 1] = tr.position.y + (yAdd * tr.scale.y);
+        auto pos = sprite->GetModelMatrix()
+                   * glm::translate(glm::mat4(1), {offset_, 0})
+                   * glm::vec4(xAdd, yAdd, 0, 1);
 
         vertices[offset + 0] = pos.x;
         vertices[offset + 1] = pos.y;
+
+        util::Println( pos.x, ", ",  pos.y);
 
         // 载入颜色信息
         vertices[offset + 2] = color.x;

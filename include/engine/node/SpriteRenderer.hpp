@@ -15,6 +15,7 @@ COMPONENT(SpriteRenderer)
 private:
     glm::vec4 color = glm::vec4(1,1,1,1);
     Sprite *sprite = new Sprite();
+    glm::vec2 offset = glm::vec2(0, 0);
     Transform lastTransform;
     bool isDirty = true; // 脏标记，表示数据有变化
 
@@ -29,6 +30,12 @@ public:
     glm::vec4 GetColor() { return color; }
 
     SpriteRenderer *SetColor(glm::vec4 color);
+
+    glm::vec2 GetOffset() {return offset; };
+
+    SpriteRenderer *SetOffset(glm::vec2 offset);
+
+    glm::vec2 GetSize() {return sprite->GetSize();}
 
     Texture *GetTexture() { return sprite->GetTexture(); }
 

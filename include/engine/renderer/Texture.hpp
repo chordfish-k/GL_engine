@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <string>
+#include <glm/vec2.hpp>
 class Texture {
 private:
     std::string filePath;
@@ -24,6 +25,8 @@ public:
     int GetWidth() { return width; }
 
     int GetHeight() { return height; }
+
+    glm::vec2 GetSize() {return {width, height};}
 
     const std::string &GetFilePath() const { return filePath; }
 

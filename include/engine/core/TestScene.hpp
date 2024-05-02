@@ -27,7 +27,7 @@ public:
     void Init() override {
         InitResources();
 
-        camera = new Camera(glm::vec2(-250, 0));
+        camera = new Camera(glm::vec2(-Window::GetWidth() * 0.5, -Window::GetHeight() * 0.5));
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheets/decorationsAndBlocks.png");
 
         if (sceneLoaded) {
@@ -37,18 +37,21 @@ public:
         }
 
         auto node = root->AddNode<Node>()
-                ->SetTransform({glm::vec2(200, 200), glm::vec2(1, 1)});
+            ->SetTransform({glm::vec2(0, 0), glm::vec2(5, 5)});
         auto obj1 = node->AddNode<SpriteRenderer>()
-                ->SetColor({1, 0, 0, 0.1})
-                ->SetTransform({glm::vec2(0, 0), glm::vec2(200, 200)});
+            ->SetColor({1, 1, 1, 1})
+                        ->SetSprite(sprites->GetSprite(0))
+                        ->SetTransform({glm::vec2(0, 0), glm::vec2(1, 1)});
         auto obj2 = node->AddNode<SpriteRenderer>()
-                ->SetColor({0, 1, 0, 0.1})
-                ->SetTransform({glm::vec2(200, 0), glm::vec2(200, 200)});
+            ->SetColor({1, 1, 1, 1})
+                        ->SetSprite(sprites->GetSprite(1))
+                        ->SetTransform({glm::vec2(16, 0), glm::vec2(1, 1)});
         auto obj3 = obj1->AddNode<SpriteRenderer>()
-                        ->SetColor({0, 0, 1, 0.1})
-                        ->SetTransform({glm::vec2(0, 200), glm::vec2(1, 1)});
+            ->SetColor({1, 1, 1, 1})
+                        ->SetSprite(sprites->GetSprite(2))
+                        ->SetTransform({glm::vec2(0, 16), glm::vec2(1, 1)});
 
-        PropertiesWindow::SetActiveNode(obj1);
+//        PropertiesWindow::SetActiveNode(obj1);
     }
 
     void InitResources() {

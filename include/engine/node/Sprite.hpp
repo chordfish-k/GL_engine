@@ -43,6 +43,10 @@ public:
 
     void SetHeight(float height);
 
+    glm::vec2 GetSize() {
+        return {width, height};
+    }
+
     unsigned int GetTexId() {
         return texture == nullptr ? 0 : texture->GetId();
     }

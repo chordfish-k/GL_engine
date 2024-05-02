@@ -19,8 +19,10 @@ void SpriteRenderer::Update(float dt) {
 }
 
 SpriteRenderer *SpriteRenderer::SetSprite(Sprite *sprite) {
-    this->sprite = sprite;
-    this->isDirty = true;
+    if (this->sprite != sprite) {
+        this->sprite = sprite;
+        this->isDirty = true;
+    }
     return this;
 }
 
@@ -32,14 +34,27 @@ SpriteRenderer *SpriteRenderer::SetColor(glm::vec4 color) {
     return this;
 }
 
+SpriteRenderer *SpriteRenderer::SetOffset(glm::vec2 offset) {
+    if (this->offset != offset) {
+        this->offset = offset;
+        this->isDirty = true;
+    }
+    return this;
+
+}
+
 SpriteRenderer *SpriteRenderer::SetTexture(Texture *texture) {
-    this->sprite->SetTexture(texture);
+    if (this->sprite->GetTexture() != texture) {
+        this->sprite->SetTexture(texture);
+        this->isDirty = true;
+    }
     return this;
 }
 
 json SpriteRenderer::Serialize() {
     json j = Node::Serialize();
     j["data"]["color"] = {color.x, color.y, color.z, color.w};
+    j["data"]["offset"] = {offset.x, offset.y};
     j["data"]["sprite"] = sprite->Serialize();
     return j;
 }
@@ -47,20 +62,24 @@ json SpriteRenderer::Serialize() {
 SpriteRenderer *SpriteRenderer::Deserialize(json j) {
     Node::Deserialize(j);
     auto &data = j["data"];
-    if (!data.empty()) {
-        Node::Deserialize(data);
+    if (data.empty()) return this;
 
-        auto &c = data["color"];
-        if (!c.empty())
-            SetColor(glm::vec4(c[0], c[1], c[2], c[3]));
+    Node::Deserialize(data);
 
-        auto &sp = data["sprite"];
-        auto *sprite = new Sprite();
-        if (!sp.empty())
-            sprite->Deserialize(sp);
+    auto &c = data["color"];
+    if (!c.empty())
+        SetColor(glm::vec4(c[0], c[1], c[2], c[3]));
 
-        SetSprite(sprite);
-    }
+    auto &o = data["offset"];
+    if (!o.empty())
+        SetOffset(glm::vec2(o[0], o[1]));
+
+    auto &sp = data["sprite"];
+    auto *sprite = new Sprite();
+    if (!sp.empty())
+        sprite->Deserialize(sp);
+
+    SetSprite(sprite);
 
     return this;
 }
