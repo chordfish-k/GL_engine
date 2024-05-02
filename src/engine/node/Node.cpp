@@ -1,4 +1,4 @@
-#include "engine/node/Node.hpp"
+﻿#include "engine/node/Node.hpp"
 #include "engine/node/SpriteRenderer.hpp"
 
 int Node::ID_COUNTER = 0;
@@ -16,8 +16,8 @@ void Node::Start() {
 }
 
 void Node::Update(float dt) {
-    for (int i = 0; i < children.size(); i++) {
-        children[i]->Update(dt);
+    for (auto n : children) {
+        n->Update(dt);
     }
 }
 
@@ -37,8 +37,9 @@ json Node::Serialize() {
     j["data"]["transform"]["position"] = {pos.x, pos.y};
     j["data"]["transform"]["scale"] = {scale.x, scale.y};
     j["data"]["transform"]["rotation"] = rotation;
-    for (int i = 0; i < children.size(); i++) {
-        j["children"][i] = children[i]->Serialize();
+    int i = 0;
+    for (auto n : children) {
+        j["children"][i++] = n->Serialize();
     }
     return j;
 };
@@ -46,7 +47,7 @@ json Node::Serialize() {
 Node *Node::Deserialize(json j){
     auto &n = j["name"];
     if (!n.empty())
-        name = n;
+        SetName(n);
 
     auto &data = j["data"];
     if (!data.empty()) {
@@ -99,6 +100,12 @@ void Node::TravelOnSubTree(std::function<void(Node*)> func) {
     for (auto n : children) {
         n->TravelOnSubTree(func);
     }
+}
+
+bool Node::IsChildOf(Node *p) {
+    if (!parent) return false;
+    if (parent == p) return true;
+    return parent->IsChildOf(p);
 }
 
 void Node::Imgui() {

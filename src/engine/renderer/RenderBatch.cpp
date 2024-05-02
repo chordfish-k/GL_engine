@@ -183,7 +183,7 @@ void RenderBatch::LoadVertexProperties(int index) {
         vertices[offset + 0] = pos.x;
         vertices[offset + 1] = pos.y;
 
-        util::Println( pos.x, ", ",  pos.y);
+//        util::Println( pos.x, ", ",  pos.y);
 
         // 载入颜色信息
         vertices[offset + 2] = color.x;

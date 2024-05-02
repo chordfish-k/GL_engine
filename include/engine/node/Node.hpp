@@ -23,10 +23,10 @@ private:
 
 public:
     Node *parent = nullptr;
-    std::vector<Node *> children;
+    std::list<Node *> children;
     Transform transform;
     const std::string nodeType = "Node";
-    std::string name = nodeType;
+    std::string name = "";
 
 public:
     Node() : Node(glm::vec2(), glm::vec2(1,1)){}
@@ -51,13 +51,14 @@ public:
 
     Transform GetTransform() { return parent ? parent->GetTransform() + transform : transform;}
 
-    virtual std::string GetName() { return name; }
+    virtual std::string GetName() { return name == "" ? GetNodeType() : name; }
 
 
     template <typename T>
     std::enable_if_t<std::is_base_of<Node, T>::value, T *>
-    AddNode() {
+    AddNode(const std::string &name_ = "") {
         T *comp = new T();
+        comp->name = name_;
         AddNode(comp);
         return comp;
     }
@@ -73,6 +74,8 @@ public:
 
     void TravelOnSubTree(std::function<void(Node*)>);
 
+    bool IsChildOf(Node *p);
+
     void GeneratedId();
 
     int GetUid() const { return uid; }
@@ -80,6 +83,11 @@ public:
     int GetZIndex() const { return zIndex; }
 
     glm::mat4 Node::GetModelMatrix() ;
+
+    Node *SetName(const std::string &name) {
+        this->name = name;
+        return this;
+    }
 
     Node *SetZIndex(int zIndex) {
         zIndex = zIndex;
@@ -116,7 +124,7 @@ protected:
 
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::TreeNode("Properties")) {
+        if (ImGui::TreeNode(GetNodeType().c_str())) {
 
             auto a = rttr::type::get<T>();
             auto props = a.get_properties();
@@ -193,7 +201,5 @@ private:
     class name_ : public Node {                 \
         public:                                     \
             const std::string nodeType = #name_;     \
-            std::string name = #name_;                                       \
-            std::string GetNodeType() {return nodeType;}\
-            std::string GetName() {return name;}
+            std::string GetNodeType() {return nodeType;}
 

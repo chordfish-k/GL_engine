@@ -21,9 +21,6 @@ protected:
     Camera *camera = nullptr;
     bool sceneLoaded = false;
 
-public:
-    Transform *root = nullptr;
-
 private:
     bool isRunning = false;
 

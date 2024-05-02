@@ -101,7 +101,7 @@ void ImguiLayer::InitImgui() {
     fontConfig.GlyphRanges = fontAtlas->GetGlyphRangesChineseSimplifiedCommon();
 
     fontConfig.PixelSnapH = true;
-    fontAtlas->AddFontFromFileTTF("assets/font/msyh.ttc", 22);
+    fontAtlas->AddFontFromFileTTF("assets/font/msyh.ttc", 18);
 
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
@@ -113,7 +113,7 @@ void ImguiLayer::Update(float dt) {
     SetupDockspace();
     if (Window::CurrentScene() != nullptr)
         Window::CurrentScene()->SceneImgui();
-//    ImGui::ShowDemoWindow();
+
     GameViewWindow::Imgui();
     PropertiesWindow::Imgui();
     SceneHierarchyWindow::Imgui();
@@ -125,28 +125,7 @@ void ImguiLayer::StartFrame(float dt) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-//
-//
-//    // Get window properties and mouse position
-//    int winWidth = Window::GetWidth();
-//    int winHeight = Window::GetHeight();
-//
-//    double mousePosX = 0;
-//    double mousePosY = 0;
-//    glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
-//
-//    // We SHOULD call those methods to update Dear ImGui state for the current frame
-//    ImGuiIO &io = ImGui::GetIO();
-//    io.DisplaySize = ImVec2((float)winWidth, (float)winHeight);
-//    //.S大化窗口大小可能小于设定的帧缓冲区大小，调整偏移的坐标
-//    io.DisplayFramebufferScale = ImVec2(1.f, 1.f);
-//    io.MousePos = ImVec2((float) mousePosX, (float) mousePosY);
-//    io.DeltaTime = dt;
-//
-//    // Update the mouse cursor
-//    ImGuiMouseCursor imguiCursor = ImGui::GetMouseCursor();
-//    glfwSetCursor(glfwWindow, mouseCursors[imguiCursor]);
-//    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
 }
 
 void ImguiLayer::EndFrame() {

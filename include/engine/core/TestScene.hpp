@@ -36,22 +36,20 @@ public:
             return;
         }
 
-        auto node = root->AddNode<Node>()
+        auto node = root->AddNode<Node>("Group")
             ->SetTransform({glm::vec2(0, 0), glm::vec2(5, 5)});
-        auto obj1 = node->AddNode<SpriteRenderer>()
+        auto obj1 = node->AddNode<SpriteRenderer>("SpriteRenderer 1")
             ->SetColor({1, 1, 1, 1})
                         ->SetSprite(sprites->GetSprite(0))
                         ->SetTransform({glm::vec2(0, 0), glm::vec2(1, 1)});
-        auto obj2 = node->AddNode<SpriteRenderer>()
+        node->AddNode<SpriteRenderer>("SpriteRenderer 2")
             ->SetColor({1, 1, 1, 1})
                         ->SetSprite(sprites->GetSprite(1))
                         ->SetTransform({glm::vec2(16, 0), glm::vec2(1, 1)});
-        auto obj3 = obj1->AddNode<SpriteRenderer>()
+        obj1->AddNode<SpriteRenderer>("SpriteRenderer 3")
             ->SetColor({1, 1, 1, 1})
                         ->SetSprite(sprites->GetSprite(2))
                         ->SetTransform({glm::vec2(0, 16), glm::vec2(1, 1)});
-
-//        PropertiesWindow::SetActiveNode(obj1);
     }
 
     void InitResources() {
