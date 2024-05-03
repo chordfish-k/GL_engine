@@ -1,8 +1,14 @@
 ﻿#include "engine/editor/GameViewWindow.hpp"
 #include "engine/core/Window.hpp"
+#include "engine/core/MouseListener.hpp"
+#include "engine/util/Print.hpp"
 #include <imgui.h>
 
 bool GameViewWindow::isPlaying = false;
+float GameViewWindow::leftX = 0;
+float GameViewWindow::rightX = 0;
+float GameViewWindow::topY = 0;
+float GameViewWindow::bottomY = 0;
 
 void GameViewWindow::Imgui() {
     bool open = true;
@@ -23,23 +29,32 @@ void GameViewWindow::Imgui() {
     }
     ImGui::EndMenuBar();
 
+    ImGui::SetCursorPos(ImGui::GetCursorPos());
     ImVec2 windowSize = GetLargestSizeForViewport();
     ImVec2 windowPos = GetCenterPositionForViewport(windowSize);
+    ImGui::SetCursorPos(windowPos);
 
-    ImGui::SetCursorPos({windowPos.x, windowPos.y});
+    windowPos.x += ImGui::GetWindowPos().x;
+    windowPos.y += ImGui::GetWindowPos().y;
+
+    leftX = windowPos.x;
+    bottomY = windowPos.y;
+    rightX = windowPos.x + windowSize.x;
+    topY = windowPos.y + windowSize.y;
+
     auto textureId = Window::GetFrameBuffer()->GetTexture()->GetId();
     ImGui::Image((void*)(intptr_t)textureId,
                  {windowSize.x, windowSize.y},
                     {0,1}, {1, 0});
+
+    MouseListener::SetGameViewportPos({windowPos.x, windowPos.y});
+    MouseListener::SetGameViewportSize({windowSize.x, windowSize.y});
 
     ImGui::End();
 }
 
 ImVec2 GameViewWindow::GetLargestSizeForViewport() {
     ImVec2 windowSize = ImGui::GetContentRegionAvail(); // 获取可用的内容区域，不包括滚动的
-
-    windowSize.x -= ImGui::GetScrollX();
-    windowSize.y -= ImGui::GetScrollY();
 
     float aspectWidth = windowSize.x;
     float aspectHeight = aspectWidth / Window::GetTargetAspectRatio();
@@ -48,18 +63,22 @@ ImVec2 GameViewWindow::GetLargestSizeForViewport() {
         aspectHeight = windowSize.y;
         aspectWidth = aspectHeight * Window::GetTargetAspectRatio();
     }
-
-    return ImVec2(aspectWidth, aspectHeight);
+    return {aspectWidth, aspectHeight};
 }
 
 ImVec2 GameViewWindow::GetCenterPositionForViewport(ImVec2 aspectSize) {
     ImVec2 windowSize = ImGui::GetContentRegionAvail();
-    windowSize.x -= ImGui::GetScrollX();
-    windowSize.y -= ImGui::GetScrollY();
 
     float viewportX = (windowSize.x / 2.0f)  - (aspectSize.x / 2.0f);
     float viewportY = (windowSize.y / 2.0f)  - (aspectSize.y / 2.0f);
+//    util::Println(windowSize.x, ", ", aspectSize.x, ", ", viewportX);
+//    util::Println(windowSize.y, ", ", aspectSize.y, ", ", viewportY);
 
-    return ImVec2(viewportX + ImGui::GetCursorPosX(),
-                      viewportY + ImGui::GetCursorPosY());
+    return {viewportX + ImGui::GetCursorPosX(),
+                      viewportY + ImGui::GetCursorPosY()};
+}
+
+bool GameViewWindow::GetWantCaptureMouse() {
+    return MouseListener::GetX() >= leftX && MouseListener::GetX() <= rightX &&
+           MouseListener::GetY() >= bottomY && MouseListener::GetY() <= topY;
 }

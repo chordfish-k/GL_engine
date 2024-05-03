@@ -19,6 +19,7 @@ public:
 protected:
     Renderer *renderer = nullptr;
     Camera *camera = nullptr;
+    Node *sceneToolsRoot = nullptr;
     bool sceneLoaded = false;
 
 private:
@@ -57,5 +58,7 @@ public:
     void Load();
 
     Renderer *GetRenderer() const;
+
+    void Render();
 
 };

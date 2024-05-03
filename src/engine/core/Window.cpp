@@ -55,6 +55,8 @@ void Window::Loop() {
 
         glfwSwapBuffers(glfwWindow); // 双缓冲交换
 
+        MouseListener::EndFrame();
+
         // 计算dt
         endTime = (float)glfwGetTime();
         dt = endTime - beginTime;

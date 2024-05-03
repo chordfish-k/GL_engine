@@ -2,8 +2,9 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 
-#define MOUSE_NUM 3
+#define MOUSE_NUM 9
 
 class MouseListener {
 private:
@@ -11,8 +12,14 @@ private:
 
     double scrollX, scrollY;
     double xPos, yPos, lastX, lastY;
+    double worldX, worldY, lastWorldX, lastWorldY;
     bool mouseButtonPressed[MOUSE_NUM];
+    bool lastMouseButtonPressed[MOUSE_NUM];
+    int mouseButtonDown = 0;
     bool isDragging;
+
+    glm::vec2 gameViewportPos = {0, 0};
+    glm::vec2 gameViewportSize = {0, 0};
 
     MouseListener()
         : scrollX(0), scrollY(0), xPos(0), yPos(0), lastX(0), lastY(0) {}
@@ -32,12 +39,22 @@ public:
 
     static bool IsMouseButtonDown(int button);
 
-    static float GetOrthoX();
+    static float GetScreenX();
 
-    static float GetOrthoY();
+    static float GetScreenY();
 
+    static glm::vec2 GetScreenPos();
 
-    // 属性
+    static float GetWorldX();
+
+    static float GetWorldY();
+
+    static glm::vec2 GetWorldPos();
+
+    static void SetGameViewportPos(glm::vec2 gameViewportPos) {Get()->gameViewportPos = gameViewportPos;}
+
+    static void SetGameViewportSize(glm::vec2 gameViewportSize) {Get()->gameViewportSize = gameViewportSize;}
+
     static float GetX() { return (float)Get()->xPos; };
 
     static float GetY() { return (float)Get()->yPos; };

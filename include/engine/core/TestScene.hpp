@@ -10,6 +10,8 @@
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
+#include "engine/node/MouseControls.hpp"
+#include "Prefabs.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -18,16 +20,18 @@
 class TestScene : public AScene {
 private:
     Spritesheet *sprites = nullptr;
-
+    MouseControls *mouseControls = nullptr;
 public:
-    TestScene() = default;
+    TestScene() {
+        mouseControls = sceneToolsRoot->AddNode<MouseControls>();
+    }
 
     ~TestScene() = default;
 
     void Init() override {
         InitResources();
 
-        camera = new Camera(glm::vec2(-Window::GetWidth() * 0.5, -Window::GetHeight() * 0.5));
+        camera = new Camera(glm::vec2(0,0));
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheets/decorationsAndBlocks.png");
 
         if (sceneLoaded) {
@@ -68,10 +72,8 @@ public:
     }
 
     void Update(float dt) override {
-        for (auto go : root->children) {
-            go->Update(dt);
-        }
-        this->renderer->Render();
+        AScene::Update(dt);
+        Render();
     }
 
     void Imgui() override {
@@ -95,7 +97,9 @@ public:
             // 使用pushID和popID来给按钮特殊的id
             ImGui::PushID(i);
             if (ImGui::ImageButton((void*)(intptr_t)id, {spriteWidth, spriteHeight}, {texCoords[0].x, texCoords[0].y}, {texCoords[2].x, texCoords[2].y})) {
-                util::Println("Button" , i , " clicked");
+//                util::Println("Button" , i , " clicked");
+                Node *node = Prefabs::GenerateSpriteNode(sprite, {1, 1});
+                mouseControls->PickupNode(node);
             }
             ImGui::PopID();
 

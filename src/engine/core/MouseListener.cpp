@@ -2,6 +2,7 @@
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/Window.hpp"
 #include "engine/core/Camera.hpp"
+#include "engine/util/Print.hpp"
 
 MouseListener *MouseListener::instance = nullptr;
 
@@ -16,10 +17,14 @@ void MouseListener::MouseButtonCallback(GLFWwindow *window, int button,
                                         int action, int mods) {
 
     if (action == GLFW_PRESS) {
+        Get()->mouseButtonDown++;
+
         if (button < MOUSE_NUM) {
             Get()->mouseButtonPressed[button] = true;
         }
     } else if (action == GLFW_RELEASE) {
+        Get()->mouseButtonDown--;
+
         if (button < MOUSE_NUM) {
             Get()->mouseButtonPressed[button] = false;
             Get()->isDragging = false;
@@ -29,13 +34,20 @@ void MouseListener::MouseButtonCallback(GLFWwindow *window, int button,
 
 void MouseListener::MousePosCallback(GLFWwindow *window, double xPos,
                                      double yPos) {
+    if (Get()->mouseButtonDown > 0) {
+        Get()->isDragging = true;
+    }
     Get()->lastX = Get()->xPos;
     Get()->lastY = Get()->yPos;
-    Get()->xPos = xPos;
-    Get()->yPos = yPos;
-    Get()->isDragging = Get()->mouseButtonPressed[0] ||
-                        Get()->mouseButtonPressed[1] ||
-                        Get()->mouseButtonPressed[2];
+    Get()->lastWorldX = Get()->worldX;
+    Get()->lastWorldY = Get()->worldY;
+    Get()->xPos = xPos + ImGui::GetMainViewport()->Pos.x;
+    Get()->yPos = yPos + ImGui::GetMainViewport()->Pos.y;
+    GetWorldPos();
+
+//    Get()->isDragging = Get()->mouseButtonPressed[0] ||
+//                        Get()->mouseButtonPressed[1] ||
+//                        Get()->mouseButtonPressed[2];
 }
 
 void MouseListener::MouseScrollCallback(GLFWwindow *window, double xOffset,
@@ -49,6 +61,11 @@ void MouseListener::EndFrame() {
     Get()->scrollY = 0;
     Get()->lastX = Get()->xPos;
     Get()->lastY = Get()->yPos;
+    Get()->lastWorldX = Get()->worldX;
+    Get()->lastWorldY = Get()->worldY;
+    for (int i = 0; i < 9; i++) {
+        Get()->lastMouseButtonPressed[i] = Get()->mouseButtonPressed[i];
+    }
 }
 
 bool MouseListener::IsMouseButtonDown(int button) {
@@ -59,21 +76,46 @@ bool MouseListener::IsMouseButtonDown(int button) {
     }
 }
 
-float MouseListener::GetOrthoX() {
-    float currentX = GetX();
-    currentX = (currentX / (float) Window::GetWidth()) * 2.f - 1.f;
-    glm::vec4 tmp = {currentX, 0, 0, 1};
-    tmp = tmp * Window::GetScene()->GetCamera()->GetInvProjection();
-    currentX = tmp.x;
-    return currentX;
+float MouseListener::GetScreenX() {
+    return GetScreenPos().x;
 }
 
-float MouseListener::GetOrthoY() {
-    float currentY = GetY();
-    currentY = (currentY / (float) Window::GetHeight()) * 2.f - 1.f;
-    glm::vec4 tmp = {currentY, 0, 0, 1};
-    tmp = tmp * Window::GetScene()->GetCamera()->GetInvProjection();
-    currentY = tmp.y;
-    return currentY;
+float MouseListener::GetScreenY() {
+    return GetScreenPos().y;
+}
+
+glm::vec2 MouseListener::GetScreenPos() {
+    float currentX = GetX() - Get()->gameViewportPos.x;
+    currentX = (currentX / Get()->gameViewportSize.x) * 3840;
+    float currentY = GetY() - Get()->gameViewportPos.y;
+    currentY = 2160-((currentY / Get()->gameViewportSize.y) * 2160);
+    return {currentX, currentY};
+}
+
+float MouseListener::GetWorldX() {
+    return (float) Get()->worldX;
+}
+
+float MouseListener::GetWorldY() {
+    return (float) Get()->worldY;
+}
+
+glm::vec2 MouseListener::GetWorldPos(){
+    auto camera = Window::GetScene()->GetCamera();
+
+    float currentX = GetX() - Get()->gameViewportPos.x;
+    currentX = (currentX / Get()->gameViewportSize.x) * 2.f - 1.f + 1;
+    float currentY = GetY() - Get()->gameViewportPos.y;
+    currentY = -((currentY / Get()->gameViewportSize.y) * 2.f - 1.f) + 1;
+
+    glm::vec4 tmp = {currentX, currentY, 0, 1};
+
+    auto invView = camera->GetInvView();
+    auto invProj = camera->GetInvProjection();
+    tmp = tmp * invView * invProj;
+
+    Get()->worldX = tmp.x  + camera->position.x;
+    Get()->worldY = tmp.y  + camera->position.y;
+    return tmp;
 }
 

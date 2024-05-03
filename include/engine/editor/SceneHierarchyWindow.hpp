@@ -21,18 +21,17 @@ public:
                          ImGuiTreeNodeFlags_OpenOnArrow |
                          ImGuiTreeNodeFlags_SpanAvailWidth;
         int index = 0;
-        ImGui::PushID(index);
+
         bool treeNodeOpen = ImGui::TreeNodeEx(
             (void*)(intptr_t)index,
             baseFlags,
             root->GetName().c_str());
-        ImGui::PopID();
 
         DummyDropTarget(root);
 
         if (treeNodeOpen) {
             // sub
-            ShowSubNodes(root, index);
+            ShowSubNodes(root, index + 1);
             ImGui::TreePop();
         }
 

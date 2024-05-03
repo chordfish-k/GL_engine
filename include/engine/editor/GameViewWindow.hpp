@@ -6,6 +6,7 @@
 class GameViewWindow {
 public:
     static bool isPlaying;
+    static float leftX, rightX, topY, bottomY;
 
 public:
     static void Imgui();
@@ -14,6 +15,7 @@ public:
 
     static ImVec2 GetCenterPositionForViewport(ImVec2);
 
+    static bool GetWantCaptureMouse();
 };
 
 

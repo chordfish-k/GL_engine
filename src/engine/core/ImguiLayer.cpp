@@ -20,7 +20,7 @@ void ImguiLayer::InitImgui() {
 //    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+//    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendPlatformName = "imgui_impl_glfw";
 
 /*
@@ -129,8 +129,6 @@ void ImguiLayer::StartFrame(float dt) {
 }
 
 void ImguiLayer::EndFrame() {
-
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, Window::GetWidth(), Window::GetHeight());
     glClearColor(0, 0, 0, 1);
@@ -139,13 +137,11 @@ void ImguiLayer::EndFrame() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    ImGuiIO &io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow *backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }
+    auto backupWindowPtr = glfwGetCurrentContext();
+    ImGui::UpdatePlatformWindows();
+    ImGui::RenderPlatformWindowsDefault();
+    glfwMakeContextCurrent(backupWindowPtr);
+
 }
 
 void ImguiLayer::DestroyImgui() {
@@ -157,7 +153,10 @@ void ImguiLayer::DestroyImgui() {
 void ImguiLayer::SetupDockspace() {
     int windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
+    ImGuiViewport* viewport = ImGui::GetWindowViewport();
     ImGuiViewport *mainViewport = ImGui::GetMainViewport();
+    ImVec2 windowPos = ImVec2(viewport->Pos.x - mainViewport->Pos.x, viewport->Pos.y - mainViewport->Pos.y);
+
     ImGui::SetNextWindowPos(mainViewport->WorkPos);
     ImGui::SetNextWindowSize(mainViewport->WorkSize);
     ImGui::SetNextWindowViewport(mainViewport->ID);

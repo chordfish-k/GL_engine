@@ -7,6 +7,9 @@
 AScene::AScene() {
     renderer = new Renderer();
     root = new Node();
+    sceneToolsRoot = new Node();
+    sceneToolsRoot->SetDoSerialization(false);
+    root->AddNode(sceneToolsRoot);
     root->name = "Root";
 }
 
@@ -25,7 +28,11 @@ void AScene::Start() {
     isRunning = true;
 }
 
-void AScene::Update(float dt) {}
+void AScene::Update(float dt) {
+    for (auto go : root->children) {
+        go->Update(dt);
+    }
+}
 
 void AScene::AddNode(Node *n) const {
     root->AddNode(n);
@@ -96,4 +103,8 @@ void AScene::Load() {
 
 Renderer *AScene::GetRenderer() const {
     return renderer;
+}
+
+void AScene::Render() {
+    this->renderer->Render();
 }

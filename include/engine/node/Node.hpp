@@ -10,8 +10,6 @@
 #include "engine/core/Window.hpp"
 #include "engine/renderer/Renderer.hpp"
 
-class GameObject;
-
 class Node : public ASerializableObj{
 private:
     static int ID_COUNTER;
@@ -49,6 +47,8 @@ public:
 
     bool IsDoSerialization() const { return doSerialization; }
 
+    Node *SetDoSerialization(bool enable) { doSerialization = enable; return this; }
+
     Transform GetTransform() { return parent ? parent->GetTransform() + transform : transform;}
 
     virtual std::string GetName() { return name == "" ? GetNodeType() : name; }
@@ -66,7 +66,6 @@ public:
     Node *AddNode(Node *comp);
 
     void RemoveAllNodes();
-
 
     virtual json Serialize();
 

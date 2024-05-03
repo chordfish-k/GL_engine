@@ -29,18 +29,24 @@ void Node::GeneratedId() {
 
 json Node::Serialize() {
     json j;
-    j["type"] = GetNodeType();
-    auto &pos = transform.position;
-    auto &scale = transform.scale;
-    auto &rotation = transform.rotation;
-    j["name"] = GetName();
-    j["data"]["transform"]["position"] = {pos.x, pos.y};
-    j["data"]["transform"]["scale"] = {scale.x, scale.y};
-    j["data"]["transform"]["rotation"] = rotation;
-    int i = 0;
-    for (auto n : children) {
-        j["children"][i++] = n->Serialize();
+    if (IsDoSerialization()) {
+        j["type"] = GetNodeType();
+        auto &pos = transform.position;
+        auto &scale = transform.scale;
+        auto &rotation = transform.rotation;
+        j["name"] = GetName();
+        j["data"]["transform"]["position"] = {pos.x, pos.y};
+        j["data"]["transform"]["scale"] = {scale.x, scale.y};
+        j["data"]["transform"]["rotation"] = rotation;
+        int i = 0;
+        for (auto n : children) {
+            auto sub = n->Serialize();
+            if (sub.empty())
+                continue;
+            j["children"][i++] = sub;
+        }
     }
+
     return j;
 };
 
