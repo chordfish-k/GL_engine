@@ -3,6 +3,10 @@
 
 SpriteRenderer::SpriteRenderer() {}
 
+SpriteRenderer::~SpriteRenderer() {
+}
+
+
 void SpriteRenderer::Start() {
     lastTransform = GetTransform().Copy();
     Window::GetScene()->GetRenderer()->Add(this);
@@ -87,3 +91,4 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
 void SpriteRenderer::Imgui() {
     Node::Imgui<SpriteRenderer>();
 }
+

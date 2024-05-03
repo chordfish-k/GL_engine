@@ -1,11 +1,15 @@
 ﻿#include "engine/node/Node.hpp"
 #include "engine/node/SpriteRenderer.hpp"
+#include "engine/editor/PropertiesWindow.hpp"
 
 int Node::ID_COUNTER = 0;
 
 Node::~Node(){
     for (auto &c : children) {
         delete c;
+    }
+    if (PropertiesWindow::GetActiveNode() == this) {
+        PropertiesWindow::SetActiveNode(nullptr);
     }
 }
 
@@ -16,8 +20,27 @@ void Node::Start() {
 }
 
 void Node::Update(float dt) {
-    for (auto n : children) {
-        n->Update(dt);
+    for (auto go : children) {
+        go->Update(dt);
+    }
+}
+
+void Node::CheckDelete() {
+    auto renderer = Window::GetScene()->GetRenderer();
+    auto &ch = children;
+
+    for (auto it = ch.begin(); it != ch.end();) {
+        auto go = (*it);
+
+        go->CheckDelete();
+
+        if (go->ShouldDestroy()) {
+            renderer->DestroyNode(go);
+            it = ch.erase(it);
+            delete go;
+        } else {
+            ++it;
+        }
     }
 }
 
@@ -38,6 +61,7 @@ json Node::Serialize() {
         j["data"]["transform"]["position"] = {pos.x, pos.y};
         j["data"]["transform"]["scale"] = {scale.x, scale.y};
         j["data"]["transform"]["rotation"] = rotation;
+        j["data"]["zIndex"] = zIndex;
         int i = 0;
         for (auto n : children) {
             auto sub = n->Serialize();
@@ -72,6 +96,11 @@ Node *Node::Deserialize(json j){
             if (!rotation.empty()) {
                 transform.rotation = rotation;
             }
+        }
+
+        auto &z = data["zIndex"];
+        if (!z.empty()) {
+            zIndex = z;
         }
     }
 
@@ -115,7 +144,7 @@ bool Node::IsChildOf(Node *p) {
 }
 
 void Node::Imgui() {
-    ShowTransformProperties();
+    ShowNodeProperties();
 }
 
 Node *Node::AddNode(Node *comp) {
@@ -130,10 +159,14 @@ void Node::RemoveAllNodes() {
     }
 }
 
-void Node::ShowTransformProperties() {
+bool Node::ShouldDestroy() const {
+    return shouldDestroy;
+}
+
+void Node::ShowNodeProperties() {
     //每个Node都有的Transform
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Transform")) {
+    if (ImGui::TreeNode("Node")) {
         auto position = transform.position;
         if (ImGui::DragFloat2("position", glm::value_ptr(position), 0.5f)) {
             transform.position = position;
@@ -147,6 +180,15 @@ void Node::ShowTransformProperties() {
         auto rotation = transform.rotation;
         if (ImGui::DragFloat("rotation", &rotation)) {
             transform.rotation = rotation;
+        }
+        ImGui::TreePop();
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::TreeNode("ZIndex")) {
+        auto z = zIndex;
+        if (ImGui::DragInt("zIndex", &z, 1)) {
+            SetZIndex(z);
         }
         ImGui::TreePop();
     }

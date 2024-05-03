@@ -22,6 +22,8 @@ private:
 public:
     SpriteRenderer();
 
+    ~SpriteRenderer();
+
     void Start() override;
 
     void Update(float dt) override;
@@ -46,6 +48,8 @@ public:
     SpriteRenderer *SetSprite(Sprite *sprite);
 
     bool IsDirty() const { return isDirty; }
+
+    void SetDirty() { isDirty = true; }
 
     void SetClean() { isDirty = false; }
 

@@ -32,6 +32,8 @@ void Window::Loop() {
     float endTime;
     float dt = -1.f;
 
+    Shader *defaultShader = AssetPool::GetShader("assets/shader/default.glsl");
+
     while (!glfwWindowShouldClose(this->glfwWindow)) {
         // 轮询事件
         glfwPollEvents();
@@ -45,6 +47,7 @@ void Window::Loop() {
 
 
         // 更新当前场景
+        Renderer::BindShader(defaultShader);
         if (dt >= 0)
             currentScene->Update(dt);
 

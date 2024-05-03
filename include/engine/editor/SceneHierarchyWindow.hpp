@@ -74,6 +74,19 @@ public:
                 PropertiesWindow::SetActiveNode(obj);
             }
 
+            // 右键菜单
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+                // 打开一个弹出式菜单
+                ImGui::OpenPopup("Popup for Node");
+            }
+            if (ImGui::BeginPopupContextItem("Popup for Node")) {
+                // 添加菜单项
+                if (ImGui::MenuItem("Delete")) {
+                    // 删除该节点
+                    obj->Destroy();
+                }
+                ImGui::EndPopup();
+            }
 
 
             // 拖拽变更子节点相对位置

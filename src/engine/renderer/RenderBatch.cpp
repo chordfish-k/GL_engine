@@ -11,16 +11,16 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Common.hpp"
 
-RenderBatch::RenderBatch(int maxBatchSize, int zIndex)
-    : maxBatchSize(maxBatchSize), zIndex(zIndex) {
-    shader = AssetPool::GetShader("assets/shader/default.glsl");
-    shader->Compile();
+RenderBatch::RenderBatch(int maxBatchSize, int zIndex, Renderer *renderer)
+    : maxBatchSize(maxBatchSize), zIndex(zIndex), renderer(renderer) {
+
+    sprites = new SpriteRenderer*[maxBatchSize];
 
     // 二维引擎，渲染四边形
     verticesSize = maxBatchSize * 4 * VERTEX_SIZE;
     vertices = std::vector<float>(verticesSize, 0.f);
 
-    sprites.clear();
+    numSprites = 0;
     hasRoom = true;
 }
 
@@ -72,7 +72,9 @@ void RenderBatch::Start() {
 
 void RenderBatch::AddSprite(SpriteRenderer *spr) {
     // 添加SpriteRenderer并获取索引
-    sprites.push_back(spr);
+    int index = numSprites;
+    sprites[index] = spr;
+    numSprites++;
 
     // 将纹理添加到数组
     if (spr->GetTexture() != nullptr) {
@@ -83,23 +85,45 @@ void RenderBatch::AddSprite(SpriteRenderer *spr) {
     }
 
     // 将属性添加到本地顶点数组
-    LoadVertexProperties(sprites.size() - 1);
+    LoadVertexProperties(index);
 
     // 到达batch上限
-    if (sprites.size() >= maxBatchSize) {
+    if (numSprites >= maxBatchSize) {
         hasRoom = false;
     }
+}
+
+bool RenderBatch::DestroyIfExists(Node *pNode) {
+    for (int i = 0; i < numSprites; i++) {
+        if (sprites[i] == pNode) {
+            for (int j = i; j < numSprites - 1; j++) {
+                sprites[j] = sprites[j + 1];
+                sprites[j]->SetDirty();
+            }
+            numSprites--;
+            return true;
+        }
+    }
+    return false;
 }
 
 void RenderBatch::Render() {
     // 遍历这一批的sprite，根据脏标志重新载入贴图信息
     bool rebufferData = false;
-    for (int i = 0; i < sprites.size(); i++) {
+    for (int i = 0; i < numSprites; i++) {
         SpriteRenderer *spr = sprites[i];
         if (spr->IsDirty()) {
             LoadVertexProperties(i);
             spr->SetClean();
             rebufferData = true;
+        }
+
+        // z-index不对则删除，让它后续添加
+        if (spr->GetZIndex() != this->zIndex) {
+            DestroyIfExists(spr);
+            renderer->Add(spr);
+            spr->SetDirty();
+            i--;
         }
     }
 
@@ -111,7 +135,7 @@ void RenderBatch::Render() {
     }
 
     // 使用shader
-    shader->Use();
+    Shader *shader = Renderer::GetBoundShader();
     shader->UploadMat4("uProjection",
                        Window::GetScene()->GetCamera()->GetProjMatrix());
     shader->UploadMat4("uView",
@@ -127,7 +151,7 @@ void RenderBatch::Render() {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
-    glDrawElements(GL_TRIANGLES, sprites.size() * 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, numSprites * 6, GL_UNSIGNED_INT, 0);
 
     // 解绑
     glBindVertexArray(0);
@@ -227,4 +251,12 @@ std::vector<unsigned int> RenderBatch::GenerateIndices() {
         LoadElementProperties(elements, i);
     }
     return elements;
+}
+
+bool RenderBatch::HasTexture(Texture *pTexture) {
+    return 0 != std::count(textures.begin(), textures.end(), pTexture);
+}
+
+bool RenderBatch::HasTextureRoom() {
+    return textures.size() < 8;
 }

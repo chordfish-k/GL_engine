@@ -24,27 +24,30 @@ private:
     const int VERTEX_SIZE_BYTES = VERTEX_SIZE * sizeof(float);
 
 private:
-    std::vector<SpriteRenderer *> sprites; // Sprite组件数组
+    Renderer *renderer = nullptr;
+    SpriteRenderer **sprites; // Sprite组件数组
     bool hasRoom;                          // 该批次是否有剩余空间
     std::vector<float> vertices;           // 数据顶点数组
     int verticesSize;
     int maxBatchSize;
+    int numSprites;
 
     int texSlots[8] = {0, 1, 2, 3, 4, 5, 6, 7};
     std::vector<Texture *> textures;
 
     unsigned int vaoID, vboID;
-    Shader *shader = nullptr;
     int zIndex; // 用于确定渲染顺序
 
 public:
-    RenderBatch(int maxBatchSize, int zIndex);
+    RenderBatch(int maxBatchSize, int zIndex, Renderer *renderer);
 
     ~RenderBatch();
 
     void Start();
 
     void AddSprite(SpriteRenderer *spr);
+
+    bool DestroyIfExists(Node *pNode);
 
     void Render();
 
@@ -53,9 +56,13 @@ public:
 
     int ZIndex() { return zIndex; }
 
-    friend bool operator<(const RenderBatch &lhs, RenderBatch rhs) {
-        return lhs.zIndex < rhs.zIndex;
+    bool operator<(RenderBatch &rhs) {
+        return zIndex < rhs.zIndex;
     }
+
+    bool HasTexture(Texture *pTexture);
+
+    bool HasTextureRoom();
 
 private:
     void LoadVertexProperties(int index);

@@ -22,16 +22,13 @@ AScene::~AScene() {
 
 void AScene::Start() {
     if (!root) return;
-    for (auto go : root->children) {
-        if (go) go->Start();
-    }
+    root->Start();
     isRunning = true;
 }
 
 void AScene::Update(float dt) {
-    for (auto go : root->children) {
-        go->Update(dt);
-    }
+    root->Update(dt);
+    root->CheckDelete();
 }
 
 void AScene::AddNode(Node *n) const {
@@ -108,3 +105,4 @@ Renderer *AScene::GetRenderer() const {
 void AScene::Render() {
     this->renderer->Render();
 }
+

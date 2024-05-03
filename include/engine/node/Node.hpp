@@ -32,7 +32,7 @@ public:
     Node(glm::vec2 position, glm::vec2 scale = glm::vec2(1,1))
         : transform(Transform(position, scale)) {}
 
-    ~Node();
+    virtual ~Node();
 
     virtual std::string GetNodeType() {return nodeType;}
 
@@ -40,9 +40,14 @@ public:
 
     virtual void Update(float dt);
 
+    void CheckDelete();
+
     virtual void Imgui();
 
-    virtual void Destroy() {}
+    virtual void Destroy() {
+        shouldDestroy = true;
+    }
+
     static void Init(int maxId) {ID_COUNTER = maxId; }
 
     bool IsDoSerialization() const { return doSerialization; }
@@ -83,13 +88,16 @@ public:
 
     glm::mat4 Node::GetModelMatrix() ;
 
+    bool ShouldDestroy() const;
+
     Node *SetName(const std::string &name) {
         this->name = name;
         return this;
     }
 
     Node *SetZIndex(int zIndex) {
-        zIndex = zIndex;
+        zIndex = zIndex >= 0 ? zIndex : 0;
+        this->zIndex = zIndex <= 100 ? zIndex : 100;
         return this;
     }
 
@@ -119,7 +127,7 @@ protected:
     std::enable_if_t<std::is_base_of<Node, T>::value, void>
     Imgui(){
 
-        ShowTransformProperties();
+        ShowNodeProperties();
 
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
@@ -193,7 +201,7 @@ protected:
     }
 
 private:
-    void ShowTransformProperties();
+    void ShowNodeProperties();
 };
 
 #define COMPONENT(name_)                             \
