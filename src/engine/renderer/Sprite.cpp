@@ -1,4 +1,4 @@
-﻿#include "engine/node/Sprite.hpp"
+﻿#include "engine/renderer/Sprite.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/AssetPool.hpp"
 

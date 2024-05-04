@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "engine/node/Sprite.hpp"
+#include "engine/renderer/Sprite.hpp"
 #include "engine/node/Node.hpp"
 #include "engine/core/Transform.hpp"
 #include <glm/ext/vector_float2.hpp>

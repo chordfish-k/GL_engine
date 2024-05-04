@@ -5,7 +5,7 @@
 #include "engine/core/AScene.hpp"
 #include "engine/core/Camera.hpp"
 
-COMPONENT(GridLines)
+COMPONENT(EditorGridLines)
 public:
     void Update(float dt) override;
 };

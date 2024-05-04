@@ -13,8 +13,8 @@ private:
     double scrollX, scrollY;
     double xPos, yPos, lastX, lastY;
     double worldX, worldY, lastWorldX, lastWorldY;
-    bool mouseButtonPressed[MOUSE_NUM];
-    bool lastMouseButtonPressed[MOUSE_NUM];
+    bool mouseButtonPressed[MOUSE_NUM] = {false};
+    bool lastMouseButtonPressed[MOUSE_NUM] = {false};
     int mouseButtonDown = 0;
     bool isDragging;
 

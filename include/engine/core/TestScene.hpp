@@ -6,14 +6,15 @@
 
 #include "engine/core/Camera.hpp"
 #include "engine/core/AScene.hpp"
-#include "engine/node/Spritesheet.hpp"
+#include "engine/renderer/Spritesheet.hpp"
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
-#include "engine/node/MouseControls.hpp"
+#include "engine/node/EditorMouseControls.hpp"
 #include "Prefabs.hpp"
 #include "engine/renderer/DebugDraw.hpp"
-#include "engine/node/GridLines.hpp"
+#include "engine/node/EditorGridLines.hpp"
+#include "engine/node/EditorCameraControls.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -22,12 +23,14 @@
 class TestScene : public AScene {
 private:
     Spritesheet *sprites = nullptr;
-    MouseControls *mouseControls = nullptr;
-    GridLines *gridLines = nullptr;
+    EditorMouseControls *mouseControls = nullptr;
+    EditorGridLines *gridLines = nullptr;
+    EditorCameraControls *cameraControls = nullptr;
 public:
     TestScene() {
-        mouseControls = sceneToolsRoot->AddNode<MouseControls>();
-        gridLines = sceneToolsRoot->AddNode<GridLines>();
+        mouseControls = sceneToolsRoot->AddNode<EditorMouseControls>();
+        gridLines = sceneToolsRoot->AddNode<EditorGridLines>();
+        cameraControls = sceneToolsRoot->AddNode<EditorCameraControls>();
     }
 
     ~TestScene() = default;
@@ -36,6 +39,8 @@ public:
         InitResources();
 
         camera = new Camera(glm::vec2(0,0));
+        cameraControls->SetEditorCamera(camera);
+
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheets/decorationsAndBlocks.png");
 
         if (sceneLoaded) {
