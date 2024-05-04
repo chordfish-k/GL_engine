@@ -36,7 +36,7 @@ void DebugDraw::Start() {
     glEnableVertexAttribArray(1);
 
     // 设置线宽
-    glLineWidth(2.0f);
+    glLineWidth(2.5f);
 
     // 获取Shader
     shader = AssetPool::GetShader("assets/shader/debugLine2D.glsl");

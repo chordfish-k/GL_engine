@@ -40,3 +40,4 @@ glm::mat4 &Camera::GetInvProjection() {
 glm::mat4 &Camera::GetInvView()  {
     return invView;
 }
+

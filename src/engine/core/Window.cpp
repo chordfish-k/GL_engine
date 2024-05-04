@@ -51,8 +51,8 @@ void Window::Loop() {
         // 更新当前场景
         Renderer::BindShader(defaultShader);
         if (dt >= 0) {
-            DebugDraw::Draw();
             currentScene->Update(dt);
+            DebugDraw::Draw();
         }
 
         frameBuffer->Unbind();

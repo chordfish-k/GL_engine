@@ -34,6 +34,10 @@ public:
 
     glm::mat4 &GetInvView();
 
+    const glm::vec2 &GetProjectionSize() const {
+        return projectionSize;
+    }
+
     float GetZoom() {return zoom;}
 
     void SetZoom(float zoom) {this->zoom = zoom;}
