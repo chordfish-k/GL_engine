@@ -9,6 +9,7 @@
 #include "engine/util/Print.hpp"
 #include <GLFW/glfw3.h>
 #include "engine/reflect/Reflect.hpp"
+#include "engine/renderer/DebugDraw.hpp"
 
 Window *Window::window = nullptr;
 
@@ -45,11 +46,14 @@ void Window::Loop() {
         glClearColor(r, g, b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        DebugDraw::BeginFrame();
 
         // 更新当前场景
         Renderer::BindShader(defaultShader);
-        if (dt >= 0)
+        if (dt >= 0) {
+            DebugDraw::Draw();
             currentScene->Update(dt);
+        }
 
         frameBuffer->Unbind();
 

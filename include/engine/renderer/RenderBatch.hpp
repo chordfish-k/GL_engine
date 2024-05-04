@@ -5,24 +5,18 @@
 #include "engine/renderer/Texture.hpp"
 #include <vector>
 
+#define VERTEX_POS_SIZE 2
+#define VERTEX_COLOR_SIZE 4
+#define VERTEX_TEX_COORDS_SIZE 2
+#define VERTEX_TEX_ID_SIZE 1
+#define VERTEX_POS_OFFSET 0
+#define VERTEX_COLOR_OFFSET  (VERTEX_POS_OFFSET + VERTEX_POS_SIZE * sizeof(float))
+#define VERTEX_TEX_COORDS_OFFSET (VERTEX_COLOR_OFFSET + VERTEX_COLOR_SIZE * sizeof(float))
+#define VERTEX_TEX_ID_OFFSET (VERTEX_TEX_COORDS_OFFSET + VERTEX_TEX_COORDS_SIZE * sizeof(float))
+#define VERTEX_SIZE 9
+#define VERTEX_SIZE_BYTES VERTEX_SIZE * sizeof(float)
+
 class RenderBatch {
-private:
-    const int VERTEX_POS_SIZE = 2;
-    const int VERTEX_COLOR_SIZE = 4;
-    const int VERTEX_TEX_COORDS_SIZE = 2;
-    const int VERTEX_TEX_ID_SIZE = 1;
-
-    const int VERTEX_POS_OFFSET = 0;
-    const int VERTEX_COLOR_OFFSET =
-        VERTEX_POS_OFFSET + VERTEX_POS_SIZE * sizeof(float);
-    const int VERTEX_TEX_COORDS_OFFSET =
-        VERTEX_COLOR_OFFSET + VERTEX_COLOR_SIZE * sizeof(float);
-    const int VERTEX_TEX_ID_OFFSET =
-        VERTEX_TEX_COORDS_OFFSET + VERTEX_TEX_COORDS_SIZE * sizeof(float);
-
-    const int VERTEX_SIZE = 9;
-    const int VERTEX_SIZE_BYTES = VERTEX_SIZE * sizeof(float);
-
 private:
     Renderer *renderer = nullptr;
     SpriteRenderer **sprites; // Sprite组件数组

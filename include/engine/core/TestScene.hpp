@@ -12,6 +12,7 @@
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/node/MouseControls.hpp"
 #include "Prefabs.hpp"
+#include "engine/renderer/DebugDraw.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -72,6 +73,12 @@ public:
     }
 
     void Update(float dt) override {
+        static float t = 0.f;
+        float x = ((float) sin(t) * 200.0f) + 600;
+        float y = ((float) cos(t) * 200.0f) + 400;
+        t += 0.05f;
+        DebugDraw::AddLine2D({600, 400}, {x, y}, {0, 0, 1}, 10);
+
         AScene::Update(dt);
         Render();
     }
