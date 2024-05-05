@@ -5,25 +5,16 @@
 class PropertiesWindow {
 private:
     static Node *activeNode;
+    static float debounce;
 
 public:
-    static void Imgui() {
-        if (activeNode != nullptr) {
-            ImGui::Begin("Properties");
+    static void Imgui();
 
-            // TODO right click menu
+    static void Update(float dt);
 
-            activeNode->Imgui();
-            ImGui::End();
-        }
-    }
+    static Node *GetActiveNode();
 
-    static Node *GetActiveNode() {
-        return activeNode;
-    }
-
-    static void SetActiveNode(Node *go) { activeNode = go;
-    }
+    static void SetActiveNode(Node *go);
 };
 
 

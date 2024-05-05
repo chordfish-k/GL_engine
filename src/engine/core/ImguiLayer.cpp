@@ -110,6 +110,8 @@ void ImguiLayer::InitImgui() {
 void ImguiLayer::Update(float dt) {
     StartFrame(dt);
 
+    PropertiesWindow::Update(dt);
+
     SetupDockspace();
     if (Window::CurrentScene() != nullptr)
         Window::CurrentScene()->SceneImgui();

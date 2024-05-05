@@ -68,6 +68,10 @@ void RenderBatch::Start() {
     glVertexAttribPointer(3, VERTEX_TEX_ID_SIZE, GL_FLOAT, GL_FALSE,
                           VERTEX_SIZE_BYTES, (void *)(VERTEX_TEX_ID_OFFSET));
     glEnableVertexAttribArray(3);
+
+    glVertexAttribPointer(4, VERTEX_ENTITY_ID_SIZE, GL_FLOAT, GL_FALSE,
+                          VERTEX_SIZE_BYTES, (void *)(VERTEX_ENTITY_ID_OFFSET));
+    glEnableVertexAttribArray(4);
 }
 
 void RenderBatch::AddSprite(SpriteRenderer *spr) {
@@ -221,6 +225,9 @@ void RenderBatch::LoadVertexProperties(int index) {
 
         // 载入材质id
         vertices[offset + 8] = texId;
+
+        // 载入Sprite节点id
+        vertices[offset + 9] = sprite->GetUid();
 
         offset += VERTEX_SIZE;
     }

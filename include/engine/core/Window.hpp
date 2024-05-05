@@ -7,6 +7,7 @@
 #include "ImguiLayer.hpp"
 #include "engine/core/AScene.hpp"
 #include "engine/renderer/FrameBuffer.hpp"
+#include "engine/renderer/PickingTexture.hpp"
 #include <cassert>
 #include <string>
 
@@ -19,6 +20,7 @@ private:
     static AScene *currentScene;
     ImguiLayer *imguiLayer = nullptr;
     FrameBuffer *frameBuffer = nullptr;
+    PickingTexture *pickingTexture = nullptr;
 
     int width;
     int height;
@@ -61,6 +63,10 @@ public:
 
     static FrameBuffer *GetFrameBuffer() {
         return Get()->frameBuffer;
+    }
+
+    static PickingTexture *GetPickingTexture() {
+        return Get()->pickingTexture;
     }
 
     static float GetTargetAspectRatio() {

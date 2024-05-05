@@ -58,6 +58,7 @@ json Node::Serialize() {
         auto &scale = transform.scale;
         auto &rotation = transform.rotation;
         j["name"] = GetName();
+        j["uid"] = GetUid();
         j["data"]["transform"]["position"] = {pos.x, pos.y};
         j["data"]["transform"]["scale"] = {scale.x, scale.y};
         j["data"]["transform"]["rotation"] = rotation;
@@ -78,6 +79,14 @@ Node *Node::Deserialize(json j){
     auto &n = j["name"];
     if (!n.empty())
         SetName(n);
+
+    auto &id = j["uid"];
+    if (!id.empty()) {
+        uid = id;
+        if (uid > ID_COUNTER) {
+            ID_COUNTER = uid;
+        }
+    }
 
     auto &data = j["data"];
     if (!data.empty()) {
@@ -150,6 +159,7 @@ void Node::Imgui() {
 Node *Node::AddNode(Node *comp) {
     children.push_back(comp);
     comp->parent = this;
+    comp->GeneratedId();
     return comp;
 }
 
@@ -161,6 +171,14 @@ void Node::RemoveAllNodes() {
 
 bool Node::ShouldDestroy() const {
     return shouldDestroy;
+}
+
+bool Node::IsPickable() const {
+    return isPickable;
+}
+
+void Node::SetIsPickable(bool isPickable) {
+    Node::isPickable = isPickable;
 }
 
 void Node::ShowNodeProperties() {

@@ -17,6 +17,7 @@ private:
 
     int zIndex = 0;
     bool doSerialization = true;
+    bool isPickable = true;
     bool shouldDestroy = false;
 
 public:
@@ -89,6 +90,10 @@ public:
     glm::mat4 Node::GetModelMatrix() ;
 
     bool ShouldDestroy() const;
+
+    bool IsPickable() const;
+
+    void SetIsPickable(bool isPickable);
 
     Node *SetName(const std::string &name) {
         this->name = name;

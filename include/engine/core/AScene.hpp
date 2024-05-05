@@ -61,4 +61,5 @@ public:
 
     void Render();
 
+    Node *GetNodeByUid(int uid);
 };

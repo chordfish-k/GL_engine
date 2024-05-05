@@ -1,15 +1,11 @@
-﻿
-#include "engine/core/Window.hpp"
-#include "engine/core/AScene.hpp"
-#include "engine/core/ImguiLayer.hpp"
+﻿#include "engine/core/Window.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/TestScene.hpp"
-#include "engine/util/AssetPool.hpp"
-#include "engine/util/Print.hpp"
+
 #include <GLFW/glfw3.h>
 #include "engine/reflect/Reflect.hpp"
-#include "engine/renderer/DebugDraw.hpp"
+
 
 Window *Window::window = nullptr;
 
@@ -19,6 +15,7 @@ Window::~Window() {
     AssetPool::Clear();
     delete imguiLayer;
     delete frameBuffer;
+    delete pickingTexture;
 }
 
 Window *Window::Get() {
@@ -34,10 +31,32 @@ void Window::Loop() {
     float dt = -1.f;
 
     Shader *defaultShader = AssetPool::GetShader("assets/shader/default.glsl");
+    Shader *pickingShader = AssetPool::GetShader("assets/shader/pickingShader.glsl");
 
     while (!glfwWindowShouldClose(this->glfwWindow)) {
         // 轮询事件
         glfwPollEvents();
+
+        // 渲染到拾取纹理
+        glDisable(GL_BLEND);
+        pickingTexture->EnableWriting();
+
+        glViewport(0, 0, 3840, 2160);
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Renderer::BindShader(pickingShader);
+        currentScene->Render();
+
+//        if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+//            int x = (int) MouseListener::GetScreenX();
+//            int y = (int) MouseListener::GetScreenY();
+//            util::Println(pickingTexture->ReadPixel(x, y)-1);
+//        }
+
+        pickingTexture->DisableWriting();
+        glEnable(GL_BLEND);
+
 
         frameBuffer->Bind();
 
@@ -131,13 +150,15 @@ void Window::Init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
+    // 创建帧缓冲
+    frameBuffer = new FrameBuffer(3840, 2160);
+    // 创建拾取纹理
+    pickingTexture = new PickingTexture(3840, 2160);
+    glViewport(0, 0, 3840, 2160);
+
     // 初始化gui
     imguiLayer = new ImguiLayer(glfwWindow);
     imguiLayer->InitImgui();
-
-    // 帧缓冲
-    frameBuffer = new FrameBuffer(3840, 2160);
-    glViewport(0, 0, 3840, 2160);
 
     // 默认场景
     Window::ChangeScene(0);

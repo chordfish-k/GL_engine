@@ -106,3 +106,13 @@ void AScene::Render() {
     this->renderer->Render();
 }
 
+Node *AScene::GetNodeByUid(int uid) {
+    Node *node = nullptr;
+    root->TravelOnSubTree([&](auto n){
+        if (n->GetUid() == uid) {
+            node = n;
+            return;
+        }
+    });
+    return node;
+}
