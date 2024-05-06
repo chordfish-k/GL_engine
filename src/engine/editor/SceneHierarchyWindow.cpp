@@ -1,5 +1,7 @@
 #include "engine/editor/SceneHierarchyWindow.hpp"
 
+int SceneHierarchyWindow::selectingUid = -1;
+
 void SceneHierarchyWindow::Imgui() {
     ImGui::Begin("Scene Hierarchy");
 
@@ -13,18 +15,18 @@ void SceneHierarchyWindow::Imgui() {
                      ImGuiTreeNodeFlags_FramePadding |
                      ImGuiTreeNodeFlags_OpenOnArrow |
                      ImGuiTreeNodeFlags_SpanAvailWidth;
-    int index = 0;
+
 
     bool treeNodeOpen = ImGui::TreeNodeEx(
-        (void*)(intptr_t)index,
+        (void*)(intptr_t)(root->GetUid()),
         baseFlags,
-        root->GetName().c_str());
+        "%s", root->GetName().c_str());
 
     DummyDropTarget(root);
 
     if (treeNodeOpen) {
         // sub
-        ShowSubNodes(root, index + 1);
+        ShowSubNodes(root);
         ImGui::TreePop();
     }
 
@@ -33,10 +35,7 @@ void SceneHierarchyWindow::Imgui() {
     ImGui::End();
 }
 
-int SceneHierarchyWindow::ShowSubNodes(Node *root, int indexStart) {
-    static int selectIndex = 0;
-    int index = indexStart;
-
+void SceneHierarchyWindow::ShowSubNodes(Node *root) {
     auto baseFlags = ImGuiTreeNodeFlags_DefaultOpen |
                      ImGuiTreeNodeFlags_OpenOnArrow |
                      ImGuiTreeNodeFlags_FramePadding |
@@ -48,7 +47,7 @@ int SceneHierarchyWindow::ShowSubNodes(Node *root, int indexStart) {
         }
 
         auto nodeFlags = baseFlags;
-        if (selectIndex == index) {
+        if (selectingUid == obj->GetUid()) {
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
         }
 
@@ -57,13 +56,13 @@ int SceneHierarchyWindow::ShowSubNodes(Node *root, int indexStart) {
         }
 
         bool treeNodeOpen = ImGui::TreeNodeEx(
-            (void*)(intptr_t)index,
+            (void*)(intptr_t)(obj->GetUid()),
             nodeFlags,
-            obj->GetName().c_str());
+            "%s", obj->GetName().c_str());
 
         // select
         if (ImGui::IsItemClicked()) {
-            selectIndex = index;
+            selectingUid = obj->GetUid();
             PropertiesWindow::SetActiveNode(obj);
         }
 
@@ -100,6 +99,16 @@ int SceneHierarchyWindow::ShowSubNodes(Node *root, int indexStart) {
 
                 // 如果 s 是 t 直接子节点，或者 t 是 s 的直接子节点，不做任何事
                 if (source->parent != target && target->parent != source) {
+
+                    // 根据 s 的真实变换计算s相对t的相对变换
+                    auto sT = source->GetTransform();
+                    auto tT = target->GetTransform();
+                    Transform t;
+                    t.position = sT.position - tT.position;
+                    t.scale = sT.scale / tT.scale;
+                    t.rotation = sT.rotation - tT.rotation;
+                    source->transform = t;
+
                     // 将 s 移动到 t 的下面
                     source->parent->children.remove(source);
                     target->children.push_back(source);
@@ -111,18 +120,12 @@ int SceneHierarchyWindow::ShowSubNodes(Node *root, int indexStart) {
 
         DummyDropTarget(obj);
 
-        int subCnt = 0;
         if (treeNodeOpen) {
             // sub
-            subCnt = ShowSubNodes(obj, index + 1);
-
+            ShowSubNodes(obj);
             ImGui::TreePop();
-
         }
-
-        index += subCnt + 1;
     }
-    return index;
 }
 
 void SceneHierarchyWindow::DummyDropTarget(Node *target) {

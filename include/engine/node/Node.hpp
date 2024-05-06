@@ -37,6 +37,8 @@ public:
 
     virtual std::string GetNodeType() {return nodeType;}
 
+    static void Init(int maxId) {ID_COUNTER = maxId; }
+
     virtual void Start();
 
     virtual void Update(float dt);
@@ -48,17 +50,6 @@ public:
     virtual void Destroy() {
         shouldDestroy = true;
     }
-
-    static void Init(int maxId) {ID_COUNTER = maxId; }
-
-    bool IsDoSerialization() const { return doSerialization; }
-
-    Node *SetDoSerialization(bool enable) { doSerialization = enable; return this; }
-
-    Transform GetTransform() { return parent ? parent->GetTransform() + transform : transform;}
-
-    virtual std::string GetName() { return name == "" ? GetNodeType() : name; }
-
 
     template <typename T>
     std::enable_if_t<std::is_base_of<Node, T>::value, T *>
@@ -94,6 +85,14 @@ public:
     bool IsPickable() const;
 
     void SetIsPickable(bool isPickable);
+
+    bool IsDoSerialization() const { return doSerialization; }
+
+    Node *SetDoSerialization(bool enable) { doSerialization = enable; return this; }
+
+    Transform GetTransform() { return parent ? parent->GetTransform() + transform : transform;}
+
+    virtual std::string GetName() { return name == "" ? GetNodeType() : name; }
 
     Node *SetName(const std::string &name) {
         this->name = name;

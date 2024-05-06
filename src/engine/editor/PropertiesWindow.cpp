@@ -1,6 +1,7 @@
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/editor/GameViewWindow.hpp"
+#include "engine/editor/SceneHierarchyWindow.hpp"
 
 Node *PropertiesWindow::activeNode = nullptr;
 
@@ -33,7 +34,10 @@ void PropertiesWindow::Update(float dt) {
         int x = (int) MouseListener::GetScreenX();
         int y = (int) MouseListener::GetScreenY();
         int uid = Window::GetPickingTexture()->ReadPixel(x, y)+1;
-        util::Println(uid);
+
+        // 顺便改变层级树选择的节点
+        SceneHierarchyWindow::selectingUid = uid;
+
         Node *pickedNode = scene->GetNodeByUid(uid);
         if (pickedNode != nullptr && pickedNode->IsPickable()) {
             activeNode = pickedNode;
