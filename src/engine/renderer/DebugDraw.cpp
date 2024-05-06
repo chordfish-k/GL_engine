@@ -110,8 +110,78 @@ void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color) {
     AddLine2D(from, to, color, 1);
 }
 
+void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions,
+                         float rotation) {
+    AddBox2D(center, dimensions, rotation, {0, 1, 0}, 1);
+}
+
+void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
+                         glm::vec3 color) {
+    AddBox2D(center, dimensions, rotation, color, 1);
+}
+
 void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color,
                           int lifeTime) {
     if (lines.size() >= DEBUG_MAX_LINES) return;
     DebugDraw::lines.emplace_back(from, to, color, lifeTime);
+}
+
+void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
+                         glm::vec3 color, int lifetime) {
+    auto mMin = center - dimensions;
+    auto mMax = center + dimensions;
+
+    glm::vec2 vertices[4] = {
+        {mMin.x, mMin.y}, {mMin.x, mMax.y},
+        {mMax.x, mMax.y}, {mMax.x, mMin.y},
+    };
+
+    // 旋转
+    if (rotation != 0.f) {
+        for (auto &v : vertices) {
+            v = Rotate(v, rotation, center);
+        }
+    }
+
+    AddLine2D(vertices[0], vertices[1], color, lifetime);
+    AddLine2D(vertices[0], vertices[3], color, lifetime);
+    AddLine2D(vertices[1], vertices[2], color, lifetime);
+    AddLine2D(vertices[2], vertices[3], color, lifetime);
+}
+void DebugDraw::AddCircle(glm::vec2 center, float radius) {
+    AddCircle(center, radius, {0, 1, 0}, 1);
+}
+
+void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec3 color) {
+    AddCircle(center, radius, color, 1);
+}
+
+void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec3 color,
+                          int lifetime) {
+    int cnt = (int)(radius / 2);
+    int mMax = 8;
+    int lineCnt = cnt > mMax ? cnt : mMax;
+    std::vector<glm::vec2> points;
+    float increment = 360.0f / lineCnt;
+    float currentAngle = 0;
+
+    for (int i = 0; i < lineCnt; i++) {
+        glm::vec2 tmp = {0, radius};
+        tmp = Rotate(tmp, currentAngle);
+        points.push_back(tmp + center);
+
+        if (i > 0) {
+            AddLine2D(points[i - 1], points[i], color, lifetime);
+        }
+        currentAngle += increment;
+    }
+    AddLine2D(points[lineCnt-1], points[0], color, lifetime);
+}
+
+glm::vec2 DebugDraw::Rotate(glm::vec2 pos, float rotation, glm::vec2 center) {
+    auto mat = glm::translate(glm::mat4(1), {center, 0});
+    mat = glm::rotate(mat, glm::radians(rotation), {0, 0, 1});
+    mat = glm::translate(mat, {-center, 0});
+    auto vv = mat * glm::vec4(pos.x, pos.y, 0, 1);
+    return {vv.x, vv.y};
 }

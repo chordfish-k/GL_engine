@@ -19,7 +19,6 @@ void Camera::AdjustProjection() {
         glm::ortho(0.0f, projectionSize.x * zoom,
                    0.f, projectionSize.y * zoom, 0.f, 100.f);
     invProjection = glm::inverse(projectionMatrix);
-    util::Println(zoom);
 }
 
 glm::mat4 Camera::GetViewMatrix() {

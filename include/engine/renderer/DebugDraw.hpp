@@ -25,4 +25,16 @@ public:
     static void AddLine2D(glm::vec2 from, glm::vec2 to);
     static void AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color);
     static void AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color, int lifeTime);
+
+    static void AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation);
+    static void AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation, glm::vec3 color);
+    static void AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
+                         glm::vec3 color, int lifetime);
+
+    static void AddCircle(glm::vec2 center, float radius);
+    static void AddCircle(glm::vec2 center, float radius, glm::vec3 color);
+    static void AddCircle(glm::vec2 center, float radius, glm::vec3 color, int lifetime);
+
+private:
+    static glm::vec2 Rotate(glm::vec2 pos, float rotation, glm::vec2 center = {0, 0});
 };
