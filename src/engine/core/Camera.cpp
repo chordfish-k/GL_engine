@@ -1,5 +1,6 @@
 ﻿#include "engine/core/Camera.hpp"
 #include "engine/core/Window.hpp"
+#include "engine/util/Print.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -18,6 +19,7 @@ void Camera::AdjustProjection() {
         glm::ortho(0.0f, projectionSize.x * zoom,
                    0.f, projectionSize.y * zoom, 0.f, 100.f);
     invProjection = glm::inverse(projectionMatrix);
+    util::Println(zoom);
 }
 
 glm::mat4 Camera::GetViewMatrix() {

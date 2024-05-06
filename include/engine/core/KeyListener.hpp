@@ -8,8 +8,8 @@ class KeyListener {
 private:
     static KeyListener *instance; // 单例
 
-    bool keyPressed[KEY_NUM];
-    bool keyBeginPress[KEY_NUM];
+    bool keyPressed[KEY_NUM] = {false};
+    bool keyBeginPress[KEY_NUM] = {false};
 
     KeyListener() {}
 
