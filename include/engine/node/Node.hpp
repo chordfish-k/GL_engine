@@ -72,7 +72,7 @@ public:
 
     bool IsChildOf(Node *p);
 
-    void GeneratedId();
+    void GeneratedId(bool force=false);
 
     int GetUid() const { return uid; }
 

@@ -72,11 +72,7 @@ void SceneHierarchyWindow::ShowSubNodes(Node *root) {
             ImGui::OpenPopup("Popup for Node");
         }
         if (ImGui::BeginPopupContextItem("Popup for Node")) {
-            // 添加菜单项
-            if (ImGui::MenuItem("Delete")) {
-                // 删除该节点
-                obj->Destroy();
-            }
+            NodeMenu(obj);
             ImGui::EndPopup();
         }
 
@@ -153,5 +149,36 @@ void SceneHierarchyWindow::DummyDropTarget(Node *target) {
             source->parent = target->parent;
         }
         ImGui::EndDragDropTarget();
+    }
+}
+
+void SceneHierarchyWindow::NodeMenu(Node *node) {
+    // 添加菜单项
+    if (ImGui::MenuItem("Copy")) {
+        // 复制该节点，json存入剪贴板
+        json j;
+        j["type"] = "Node";
+        j["children"][0] = node->Serialize();
+        auto jsonText = j.dump(2);
+        glfwSetClipboardString(Window::GetGlfwWindow(), jsonText.c_str());
+    }
+    if (ImGui::MenuItem("Paste")) {
+        // 将剪贴板的文本作为json反序列化为节点，作为子节点添加到node下
+        auto jsonText = glfwGetClipboardString(Window::GetGlfwWindow());
+        auto j = Str2Json(jsonText);
+        Node *n = new Node();
+        Node *realNode = nullptr;
+        n = n->Deserialize(j);
+        if (!n->children.empty()) {
+            realNode = *n->children.begin();
+            node->AddNode(realNode);
+            realNode->TravelOnSubTree([](auto n) {
+                n->GeneratedId(true);
+            });
+        }
+    }
+    if (ImGui::MenuItem("Delete")) {
+        // 删除该节点
+        node->Destroy();
     }
 }

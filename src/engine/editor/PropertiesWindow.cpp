@@ -38,12 +38,14 @@ void PropertiesWindow::Update(float dt) {
         // 顺便改变层级树选择的节点
         SceneHierarchyWindow::selectingUid = uid;
 
-        Node *pickedNode = scene->GetNodeByUid(uid);
-        if (pickedNode != nullptr && pickedNode->IsPickable()) {
-            activeNode = pickedNode;
-        } else if (pickedNode == nullptr && !MouseListener::IsDragging()) {
-            activeNode = nullptr;
+        if (uid != 0) {
+            Node *pickedNode = scene->GetNodeByUid(uid);
+            if (pickedNode != nullptr && pickedNode->IsPickable()) {
+                activeNode = pickedNode;
+            } else if (pickedNode == nullptr && !MouseListener::IsDragging()) {
+                activeNode = nullptr;
+            }
+            debounce = 0.2f;
         }
-        debounce = 0.2f;
     }
 }

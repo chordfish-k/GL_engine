@@ -72,4 +72,6 @@ public:
     static float GetTargetAspectRatio() {
         return 16.0f / 9.0f;
     }
+
+    static GLFWwindow *GetGlfwWindow();
 };

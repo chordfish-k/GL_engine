@@ -33,6 +33,7 @@ void AScene::Update(float dt) {
 
 void AScene::AddNode(Node *n) const {
     root->AddNode(n);
+    n->GeneratedId();
     if (isRunning) {
         n->Start();
     }
@@ -40,6 +41,7 @@ void AScene::AddNode(Node *n) const {
 
 void AScene::AddNodeAsChild(Node *parent, Node *n) const {
     parent->AddNode(n);
+    n->GeneratedId();
     if (isRunning) {
         n->Start();
     }

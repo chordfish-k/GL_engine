@@ -44,8 +44,9 @@ void Node::CheckDelete() {
     }
 }
 
-void Node::GeneratedId() {
-    if (this->uid == -1) {
+void Node::GeneratedId(bool force) {
+    if (!IsDoSerialization()) return;
+    if (force || this->uid == -1) {
         this->uid = ID_COUNTER++;
     }
 }
@@ -58,7 +59,7 @@ json Node::Serialize() {
         auto &scale = transform.scale;
         auto &rotation = transform.rotation;
         j["name"] = GetName();
-        j["uid"] = GetUid();
+//        j["uid"] = GetUid();
         j["data"]["transform"]["position"] = {pos.x, pos.y};
         j["data"]["transform"]["scale"] = {scale.x, scale.y};
         j["data"]["transform"]["rotation"] = rotation;
@@ -76,17 +77,19 @@ json Node::Serialize() {
 };
 
 Node *Node::Deserialize(json j){
+    GeneratedId(true);
+
     auto &n = j["name"];
     if (!n.empty())
         SetName(n);
 
-    auto &id = j["uid"];
-    if (!id.empty()) {
-        uid = id;
-        if (uid > ID_COUNTER) {
-            ID_COUNTER = uid;
-        }
-    }
+//    auto &id = j["uid"];
+//    if (!id.empty()) {
+//        uid = id;
+//        if (uid > ID_COUNTER) {
+//            ID_COUNTER = uid;
+//        }
+//    }
 
     auto &data = j["data"];
     if (!data.empty()) {
@@ -183,24 +186,7 @@ void Node::SetIsPickable(bool isPickable) {
 
 void Node::ShowNodeProperties() {
     //每个Node都有的Transform
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Node")) {
-        auto position = transform.position;
-        if (ImGui::DragFloat2("position", glm::value_ptr(position), 0.5f)) {
-            transform.position = position;
-        }
-
-        auto scale = transform.scale;
-        if (ImGui::DragFloat2("scale", glm::value_ptr(scale), 0.05f)) {
-            transform.scale = scale;
-        }
-
-        auto rotation = transform.rotation;
-        if (ImGui::DragFloat("rotation", &rotation)) {
-            transform.rotation = rotation;
-        }
-        ImGui::TreePop();
-    }
+    transform.Imgui();
 
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("ZIndex")) {

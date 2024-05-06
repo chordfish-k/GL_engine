@@ -8,10 +8,14 @@
 class SceneHierarchyWindow {
 public:
     static int selectingUid;
+
 public:
     static void Imgui();
 
     static void ShowSubNodes(Node *root);
 
     static void DummyDropTarget(Node *target);
+
+private:
+    static void NodeMenu(Node *node);
 };

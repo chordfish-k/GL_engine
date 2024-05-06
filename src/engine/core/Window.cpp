@@ -195,3 +195,7 @@ void Window::ChangeScene(int newScene) {
     currentScene->Init();
     currentScene->Start();
 }
+
+GLFWwindow *Window::GetGlfwWindow(){
+    return Get()->glfwWindow;
+}
