@@ -15,6 +15,7 @@
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/node/EditorGridLines.hpp"
 #include "engine/node/EditorCameraControls.hpp"
+#include "engine/node/EditorSpriteGizmo.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
@@ -26,11 +27,14 @@ private:
     EditorMouseControls *mouseControls = nullptr;
     EditorGridLines *gridLines = nullptr;
     EditorCameraControls *cameraControls = nullptr;
+    EditorSpriteGizmo *spriteGizmo = nullptr;
+
 public:
     TestScene() {
         mouseControls = sceneToolsRoot->AddNode<EditorMouseControls>();
         gridLines = sceneToolsRoot->AddNode<EditorGridLines>();
         cameraControls = sceneToolsRoot->AddNode<EditorCameraControls>();
+        spriteGizmo = sceneToolsRoot->AddNode<EditorSpriteGizmo>();
     }
 
     ~TestScene() = default;

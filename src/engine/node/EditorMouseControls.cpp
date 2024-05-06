@@ -22,8 +22,7 @@ void EditorMouseControls::Update(float dt){
 
     auto &t = holdingNode->transform;
     t.position = {
-        MouseListener::GetWorldX(),
-        MouseListener::GetWorldY()
+        MouseListener::GetWorldX(), MouseListener::GetWorldY()
     };
     if (holdingNode->parent && holdingNode->parent != Window::GetScene()->root) {
 

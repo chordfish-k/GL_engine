@@ -19,16 +19,6 @@ void SpriteRenderer::Update(float dt) {
         isDirty = true;
     }
 
-    // 画外包围盒
-    if (PropertiesWindow::GetActiveNode() == this) {
-        auto scale = t.scale;
-        auto position = t.position;
-        auto d = GetSize();// * scale;
-        auto center = IsCentered() ? glm::vec2(0, 0) : d * 0.5f;
-        auto pos = GetModelMatrix() * (glm::vec4(center.x, center.y, 0, 1));
-        DebugDraw::AddBox2D(glm::vec2(pos.x, pos.y), d * scale * 0.5f, t.rotation);
-    }
-
     Node::Update(dt);
 }
 

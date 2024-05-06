@@ -101,7 +101,7 @@ void ImguiLayer::InitImgui() {
     fontConfig.GlyphRanges = fontAtlas->GetGlyphRangesChineseSimplifiedCommon();
 
     fontConfig.PixelSnapH = true;
-    fontAtlas->AddFontFromFileTTF("assets/font/msyh.ttc", 18);
+    fontAtlas->AddFontFromFileTTF("assets/font/msyh.ttc", 20);
 
     ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");

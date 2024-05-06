@@ -76,6 +76,14 @@ bool MouseListener::IsMouseButtonDown(int button) {
     }
 }
 
+bool MouseListener::IsMouseButtonPressed(int button) {
+    if (button < MOUSE_NUM) {
+        return !Get()->lastMouseButtonPressed[button] && Get()->mouseButtonPressed[button];
+    } else {
+        return false;
+    }
+}
+
 float MouseListener::GetScreenX() {
     return GetScreenPos().x;
 }
@@ -100,13 +108,21 @@ float MouseListener::GetWorldY() {
     return (float) Get()->worldY;
 }
 
+float MouseListener::GetWorldDx() {
+    return (float)(Get()->worldX - Get()->lastWorldX);
+}
+
+float MouseListener::GetWorldDy() {
+    return (float)(Get()->worldY - Get()->lastWorldY);
+}
+
 glm::vec2 MouseListener::GetWorldPos(){
     auto camera = Window::GetScene()->GetCamera();
 
     float currentX = GetX() - Get()->gameViewportPos.x;
-    currentX = (currentX / Get()->gameViewportSize.x) * 2.f - 1.f + 1;
+    currentX = (currentX / Get()->gameViewportSize.x) * 2.f - 1.f;
     float currentY = GetY() - Get()->gameViewportPos.y;
-    currentY = -((currentY / Get()->gameViewportSize.y) * 2.f - 1.f) + 1;
+    currentY = -((currentY / Get()->gameViewportSize.y) * 2.f - 1.f);
 
     glm::vec4 tmp = {currentX, currentY, 0, 1};
 
@@ -118,4 +134,3 @@ glm::vec2 MouseListener::GetWorldPos(){
     Get()->worldY = tmp.y  + camera->position.y;
     return tmp;
 }
-

@@ -39,6 +39,8 @@ public:
 
     static bool IsMouseButtonDown(int button);
 
+    static bool IsMouseButtonPressed(int button);
+
     static float GetScreenX();
 
     static float GetScreenY();
@@ -48,6 +50,10 @@ public:
     static float GetWorldX();
 
     static float GetWorldY();
+
+    static float GetWorldDx();
+
+    static float GetWorldDy();
 
     static glm::vec2 GetWorldPos();
 

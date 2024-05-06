@@ -96,14 +96,14 @@ void SceneHierarchyWindow::ShowSubNodes(Node *root) {
                 // 如果 s 是 t 直接子节点，或者 t 是 s 的直接子节点，不做任何事
                 if (source->parent != target && target->parent != source) {
 
-                    // 根据 s 的真实变换计算s相对t的相对变换
-                    auto sT = source->GetTransform();
-                    auto tT = target->GetTransform();
-                    Transform t;
-                    t.position = sT.position - tT.position;
-                    t.scale = sT.scale / tT.scale;
-                    t.rotation = sT.rotation - tT.rotation;
-                    source->transform = t;
+                    // TODO 根据 s 的真实变换计算s相对t的相对变换
+//                    auto sT = source->GetTransform();
+//                    auto tT = target->GetTransform();
+//                    Transform t;
+//                    t.position = sT.position - tT.position;
+//                    t.scale = sT.scale / tT.scale;
+//                    t.rotation = sT.rotation - tT.rotation;
+//                    source->transform = t;
 
                     // 将 s 移动到 t 的下面
                     source->parent->children.remove(source);

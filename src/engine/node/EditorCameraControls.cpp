@@ -1,6 +1,7 @@
 ﻿#include "engine/node/EditorCameraControls.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/KeyListener.hpp"
+#include "engine/editor/PropertiesWindow.hpp"
 
 EditorCameraControls::EditorCameraControls(Camera *editorCamera) {
     this->editorCamera = editorCamera;
@@ -11,13 +12,17 @@ void EditorCameraControls::Update(float dt) {
     if (!editorCamera)
         return;
 
+//    if (PropertiesWindow::GetActiveNode())
+//        return;
+
     // 中键拖动
     if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_MIDDLE) && dragDebounce > 0) {
         clickOrigin = {MouseListener::GetWorldX(), MouseListener::GetWorldY()};
         dragDebounce -= dt;
         return;
     } else if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_MIDDLE)) {
-        glm::vec2 mousePos = {MouseListener::GetWorldX(), MouseListener::GetWorldY()};
+        glm::vec2 mousePos = {MouseListener::GetWorldX(),
+                              MouseListener::GetWorldY()};
         glm::vec2 delta = mousePos - clickOrigin;
         auto x = dt * dragSensitivity;
         auto d = delta * glm::vec2(x);
