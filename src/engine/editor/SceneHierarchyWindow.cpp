@@ -1,4 +1,4 @@
-#include "engine/editor/SceneHierarchyWindow.hpp"
+﻿#include "engine/editor/SceneHierarchyWindow.hpp"
 
 int SceneHierarchyWindow::selectingUid = -1;
 

@@ -9,16 +9,21 @@
 #include "engine/core/Transform.hpp"
 #include "engine/core/Window.hpp"
 #include "engine/renderer/Renderer.hpp"
+#include "engine/editor/MyImGui.hpp"
+#include "engine/renderer/Color.hpp"
+#include "engine/core/ZIndex.hpp"
 
 class Node : public ASerializableObj{
 private:
     static int ID_COUNTER;
     int uid = -1;
 
-    int zIndex = 0;
     bool doSerialization = true;
     bool isPickable = true;
     bool shouldDestroy = false;
+
+protected:
+    ZIndex zIndex = 0;
 
 public:
     Node *parent = nullptr;
@@ -76,7 +81,7 @@ public:
 
     int GetUid() const { return uid; }
 
-    int GetZIndex() const { return zIndex; }
+    int GetZIndex() const { return zIndex.GetZIndex(); }
 
     glm::mat4 Node::GetModelMatrix() ;
 
@@ -154,48 +159,52 @@ protected:
                 // int
                 if (value.is_type<int>()) {
                     auto v = value.get_value<int>();
-                    if (ImGui::DragInt(std::string(p.get_name()).c_str(), &v)) {
+                    if (MyImGui::DrawIntControl(std::string(p.get_name()), v)) {
                         p.set_value(obj, v);
                     }
                 }
-                // int
+                // float
                 else if (value.is_type<float>()) {
                     auto v = value.get_value<float>();
-                    if (ImGui::DragFloat(std::string(p.get_name()).c_str(),
-                                         &v)) {
+                    if (MyImGui::DrawFloatControl(std::string(p.get_name()),v)) {
                         p.set_value(obj, v);
                     }
                 }
                 // bool
                 else if (value.is_type<bool>()) {
                     auto v = value.get_value<bool>();
-                    if (ImGui::Checkbox(std::string(p.get_name()).c_str(),
-                                        &v)) {
+                    if (MyImGui::DrawCheckbox(std::string(p.get_name()),v)) {
                         p.set_value(obj, v);
                     }
                 }
                 // vec2
                 else if (value.is_type<glm::vec2>()) {
                     auto v2 = value.get_value<glm::vec2>();
-                    if (ImGui::DragFloat2(std::string(p.get_name()).c_str(),
-                                          glm::value_ptr(v2))) {
-                        p.set_value(obj, glm::vec2(v2.x, v2.y));
+                    if (MyImGui::DrawVec2Control(std::string(p.get_name()), v2)) {
+                        p.set_value(obj, v2);
                     }
                 }
                 // vec3
                 else if (value.is_type<glm::vec3>()) {
                     auto v3 = value.get_value<glm::vec3>();
-                    if (ImGui::DragFloat3(std::string(p.get_name()).c_str(),
-                                          glm::value_ptr(v3))) {
-                        p.set_value(obj, glm::vec3(v3.x, v3.y, v3.z));
+                    if (MyImGui::DrawVec3Control(std::string(p.get_name()),v3)) {
+                        p.set_value(obj, v3);
                     }
                 }
                 // vec4
                 else if (value.is_type<glm::vec4>()) {
                     auto v4 = value.get_value<glm::vec4>();
-                    if (ImGui::DragFloat4(std::string(p.get_name()).c_str(),
-                                          glm::value_ptr(v4))) {
-                        p.set_value(obj, glm::vec4(v4.x, v4.y, v4.z, v4.w));
+                    if (MyImGui::DrawVec4Control(std::string(p.get_name()),
+                                          v4)) {
+                        p.set_value(obj, v4);
+                    }
+                }
+
+                else if (value.is_type<Color>()) {
+                    auto v4 = value.get_value<Color>().ToVec4();
+                    if (MyImGui::DrawColor4Control(std::string(p.get_name()),
+                                                   v4)) {
+                        p.set_value(obj, Color(v4.x, v4.y, v4.z, v4.w));
                     }
                 }
             }

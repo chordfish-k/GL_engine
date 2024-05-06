@@ -1,4 +1,4 @@
-#include "engine/editor/PropertiesWindow.hpp"
+﻿#include "engine/editor/PropertiesWindow.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/editor/GameViewWindow.hpp"
 #include "engine/editor/SceneHierarchyWindow.hpp"

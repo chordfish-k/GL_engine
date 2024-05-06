@@ -59,11 +59,10 @@ json Node::Serialize() {
         auto &scale = transform.scale;
         auto &rotation = transform.rotation;
         j["name"] = GetName();
-//        j["uid"] = GetUid();
         j["data"]["transform"]["position"] = {pos.x, pos.y};
         j["data"]["transform"]["scale"] = {scale.x, scale.y};
         j["data"]["transform"]["rotation"] = rotation;
-        j["data"]["zIndex"] = zIndex;
+        j["data"]["zIndex"] = zIndex.GetZIndex();
         int i = 0;
         for (auto n : children) {
             auto sub = n->Serialize();
@@ -82,14 +81,6 @@ Node *Node::Deserialize(json j){
     auto &n = j["name"];
     if (!n.empty())
         SetName(n);
-
-//    auto &id = j["uid"];
-//    if (!id.empty()) {
-//        uid = id;
-//        if (uid > ID_COUNTER) {
-//            ID_COUNTER = uid;
-//        }
-//    }
 
     auto &data = j["data"];
     if (!data.empty()) {
@@ -190,8 +181,8 @@ void Node::ShowNodeProperties() {
 
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("ZIndex")) {
-        auto z = zIndex;
-        if (ImGui::DragInt("zIndex", &z, 1)) {
+        auto z = zIndex.GetZIndex();
+        if (MyImGui::DrawIntControl("zIndex", z)) {
             SetZIndex(z);
         }
         ImGui::TreePop();

@@ -3,6 +3,7 @@
 #include "engine/renderer/Sprite.hpp"
 #include "engine/node/Node.hpp"
 #include "engine/core/Transform.hpp"
+#include "engine/renderer/Color.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -13,7 +14,7 @@ class Texture;
 
 COMPONENT(SpriteRenderer)
 private:
-    glm::vec4 color = glm::vec4(1,1,1,1);
+    Color color = {1, 1, 1, 1};
     Sprite *sprite = new Sprite();
     glm::vec2 offset = glm::vec2(0, 0);
     Transform lastTransform;
@@ -30,9 +31,9 @@ public:
     void Update(float dt) override;
 
     // 属性
-    glm::vec4 GetColor() { return color; }
+    Color GetColor() { return color; }
 
-    SpriteRenderer *SetColor(glm::vec4 color);
+    SpriteRenderer *SetColor(Color color);
 
     bool IsCentered();
 

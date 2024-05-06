@@ -39,7 +39,7 @@ SpriteRenderer *SpriteRenderer::SetSprite(Sprite *sprite) {
     return this;
 }
 
-SpriteRenderer *SpriteRenderer::SetColor(glm::vec4 color) {
+SpriteRenderer *SpriteRenderer::SetColor(Color color) {
     if (this->color == color) return this;
     this->color = color;
     this->isDirty = true;
@@ -74,7 +74,7 @@ SpriteRenderer *SpriteRenderer::SetTexture(Texture *texture) {
 json SpriteRenderer::Serialize() {
     json j = Node::Serialize();
     j["data"]["centered"] = IsCentered();
-    j["data"]["color"] = {color.x, color.y, color.z, color.w};
+    j["data"]["color"] = {color.r, color.g, color.b, color.a};
     j["data"]["offset"] = {offset.x, offset.y};
     j["data"]["sprite"] = sprite->Serialize();
     return j;
@@ -92,7 +92,7 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
 
     auto &c = data["color"];
     if (!c.empty())
-        SetColor(glm::vec4(c[0], c[1], c[2], c[3]));
+        SetColor(Color(c[0], c[1], c[2], c[3]));
 
     auto &o = data["offset"];
     if (!o.empty())
@@ -109,5 +109,22 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
 }
 
 void SpriteRenderer::Imgui() {
-    Node::Imgui<SpriteRenderer>();
+
+    transform.Imgui();
+    zIndex.Imgui();
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::TreeNode(GetNodeType().c_str())) {
+
+        auto c = color.ToVec4();
+        if (MyImGui::DrawColor4Control("color", c)) {
+            SetColor({c.x, c.y, c.z, c.w});
+        }
+
+        auto of = offset;
+        if (MyImGui::DrawVec2Control("offset", of)) {
+            SetOffset(of);
+        }
+        ImGui::TreePop();
+    }
 }
