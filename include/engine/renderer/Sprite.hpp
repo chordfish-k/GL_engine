@@ -13,13 +13,6 @@ private:
     Texture *texture = nullptr;
 
 public:
-    // Sprite(Texture *texture);
-
-    // // 可以选取材质的某一区域(材质UV)作为贴图
-    // Sprite(Texture *texture, std::vector<glm::vec2> texCoords);
-
-    ~Sprite();
-
     json Serialize() override;
 
     Sprite *Deserialize(json j) override;

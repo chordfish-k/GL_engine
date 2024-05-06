@@ -203,9 +203,9 @@ glm::mat4 Node::GetModelMatrix() {
     auto M = glm::mat4(1);
 
     auto t = GetTransform();
-    M = glm::scale(M, {transform.scale, 1});
     M = glm::translate(M, {transform.position, 0});
     M = glm::rotate(M, glm::radians(transform.rotation), {0,0,1});
+    M = glm::scale(M, {transform.scale, 1});
 
     // 累积变换矩阵
     M = parent ? parent->GetModelMatrix() *M : M;

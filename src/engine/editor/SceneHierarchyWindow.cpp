@@ -156,9 +156,7 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
     // 添加菜单项
     if (ImGui::MenuItem("Copy")) {
         // 复制该节点，json存入剪贴板
-        json j;
-        j["type"] = "Node";
-        j["children"][0] = node->Serialize();
+        json j = node->Serialize();
         auto jsonText = j.dump(2);
         glfwSetClipboardString(Window::GetGlfwWindow(), jsonText.c_str());
     }
@@ -166,15 +164,22 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
         // 将剪贴板的文本作为json反序列化为节点，作为子节点添加到node下
         auto jsonText = glfwGetClipboardString(Window::GetGlfwWindow());
         auto j = Str2Json(jsonText);
-        Node *n = new Node();
-        Node *realNode = nullptr;
-        n = n->Deserialize(j);
-        if (!n->children.empty()) {
-            realNode = *n->children.begin();
-            node->AddNode(realNode);
-            realNode->TravelOnSubTree([](auto n) {
-                n->GeneratedId(true);
-            });
+        auto &type = j["type"];
+
+        // 通过反射创建对应Node并序列化
+        auto t = rttr::type::get_by_name(type);
+        if (t.is_valid()) {
+            auto instance = t.create();
+            auto nodeClassPtr = rttr::type::get<Node*>();
+
+            if (nodeClassPtr.is_valid()) {
+                auto nodePtr = instance.get_value<Node*>();
+                nodePtr->Deserialize(j);
+                nodePtr->TravelOnSubTree([](auto n) {
+                    n->GeneratedId(true);
+                });
+                Window::GetScene()->AddNodeAsChild(node, nodePtr);
+            }
         }
     }
     if (ImGui::MenuItem("Delete")) {

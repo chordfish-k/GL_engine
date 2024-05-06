@@ -17,6 +17,7 @@ private:
     Sprite *sprite = new Sprite();
     glm::vec2 offset = glm::vec2(0, 0);
     Transform lastTransform;
+    bool centered = true; // 从纹理的正中心开始算offset
     bool isDirty = true; // 脏标记，表示数据有变化
 
 public:
@@ -32,6 +33,10 @@ public:
     glm::vec4 GetColor() { return color; }
 
     SpriteRenderer *SetColor(glm::vec4 color);
+
+    bool IsCentered();
+
+    SpriteRenderer *SetCentered(bool centered);
 
     glm::vec2 GetOffset() {return offset; };
 
@@ -56,6 +61,5 @@ public:
     void Imgui();
 
     json Serialize() override;
-
     SpriteRenderer *Deserialize(json j) override;
-};
+    };

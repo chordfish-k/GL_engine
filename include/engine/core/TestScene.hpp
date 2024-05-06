@@ -81,10 +81,6 @@ public:
     }
 
     void Update(float dt) override {
-        static float angle = 0;
-        DebugDraw::AddBox2D({400, 200}, {64, 32}, angle+=10.0f*dt, {0, 1, 0}, 1);
-        DebugDraw::AddCircle({600, 200}, 128);
-
         AScene::Update(dt);
         Render();
     }
