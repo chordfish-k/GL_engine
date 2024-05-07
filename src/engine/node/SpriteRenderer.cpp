@@ -99,22 +99,5 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
 }
 
 void SpriteRenderer::Imgui() {
-
-    transform.Imgui();
-    zIndex.Imgui();
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode(GetNodeType().c_str())) {
-
-        auto c = color.ToVec4();
-        if (MyImGui::DrawColor4Control("color", c)) {
-            SetColor({c.x, c.y, c.z, c.w});
-        }
-
-        auto of = offset;
-        if (MyImGui::DrawVec2Control("offset", of)) {
-            SetOffset(of);
-        }
-        ImGui::TreePop();
-    }
+    Node::Imgui<SpriteRenderer>();
 }

@@ -83,7 +83,11 @@ public:
 
     int GetZIndex() const { return zIndex.GetZIndex(); }
 
-    glm::mat4 Node::GetModelMatrix() ;
+    glm::mat4 GetModelMatrix();
+
+    glm::mat4 GetModelMatrixRelativeTo(Node *target);
+
+    Transform GetTransformByModelMatrix(const glm::mat4& mat);
 
     bool ShouldDestroy() const;
 
@@ -131,13 +135,11 @@ public:
     }
 
 protected:
-    // TODO 补全所有类型
     template <typename T>
     std::enable_if_t<std::is_base_of<Node, T>::value, void>
     Imgui(){
 
         ShowNodeProperties();
-
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::TreeNode(GetNodeType().c_str())) {

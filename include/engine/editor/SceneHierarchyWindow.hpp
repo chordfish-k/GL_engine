@@ -12,10 +12,12 @@ public:
 public:
     static void Imgui();
 
+private:
     static void ShowSubNodes(Node *root);
+
+    static void NodeDropTarget(Node *target);
 
     static void DummyDropTarget(Node *target);
 
-private:
     static void NodeMenu(Node *node);
 };

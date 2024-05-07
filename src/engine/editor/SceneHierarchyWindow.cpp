@@ -22,7 +22,7 @@ void SceneHierarchyWindow::Imgui() {
         baseFlags,
         "%s", root->GetName().c_str());
 
-    DummyDropTarget(root);
+    NodeDropTarget(root);
 
     if (treeNodeOpen) {
         // sub
@@ -85,34 +85,8 @@ void SceneHierarchyWindow::ShowSubNodes(Node *root) {
             ImGui::Text("%s", obj->GetName().c_str());
             ImGui::EndDragDropSource();
         }
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NODE"))
-            {
-                IM_ASSERT(payload->DataSize == sizeof(Node*));
-                Node *source = *((Node **)payload->Data);
-                Node *target = obj;
 
-                // 如果 s 是 t 直接子节点，或者 t 是 s 的直接子节点，不做任何事
-                if (source->parent != target && target->parent != source) {
-
-                    // TODO 根据 s 的真实变换计算s相对t的相对变换
-//                    auto sT = source->GetTransform();
-//                    auto tT = target->GetTransform();
-//                    Transform t;
-//                    t.position = sT.position - tT.position;
-//                    t.scale = sT.scale / tT.scale;
-//                    t.rotation = sT.rotation - tT.rotation;
-//                    source->transform = t;
-
-                    // 将 s 移动到 t 的下面
-                    source->parent->children.remove(source);
-                    target->children.push_back(source);
-                    source->parent = target;
-                }
-            }
-            ImGui::EndDragDropTarget();
-        }
+        NodeDropTarget(obj);
 
         DummyDropTarget(obj);
 
@@ -186,4 +160,29 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
         // 删除该节点
         node->Destroy();
     }
+}
+
+void SceneHierarchyWindow::NodeDropTarget(Node *target) {
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NODE"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(Node*));
+            Node *source = *((Node **)payload->Data);
+
+            // 如果 s 是 t 直接子节点，或者 t 是 s 的直接子节点，不做任何事
+            if (source->parent != target && target->parent != source) {
+
+                source->transform = source->GetTransformByModelMatrix(
+                                              source->GetModelMatrixRelativeTo(target));
+
+                // 将 s 移动到 t 的下面
+                source->parent->children.remove(source);
+                target->children.push_back(source);
+                source->parent = target;
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+
 }

@@ -193,8 +193,9 @@ void RenderBatch::LoadVertexProperties(int index) {
     auto size = sprite->GetSize();// * t.scale;
     auto offset_ = sprite->GetOffset();
     auto centered = sprite->IsCentered();
-
+    auto modelMat = sprite->GetModelMatrix();
     auto center = centered ? glm::vec2(0.5f, 0.5f) : glm::vec2(1, 1);
+
     float xAdd = size.x * center.x;
     float yAdd = size.y * center.y;
 
@@ -208,7 +209,7 @@ void RenderBatch::LoadVertexProperties(int index) {
         }
 
         // 载入位置信息，根据中心进行偏移
-        auto pos = sprite->GetModelMatrix()
+        auto pos = modelMat
                    * glm::translate(glm::mat4(1), {offset_, 0})
                    * glm::vec4(xAdd, yAdd, 0, 1);
 

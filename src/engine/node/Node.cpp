@@ -2,6 +2,9 @@
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
+
 int Node::ID_COUNTER = 0;
 
 Node::~Node(){
@@ -194,12 +197,37 @@ glm::mat4 Node::GetModelMatrix() {
     auto M = glm::mat4(1);
 
     auto t = GetTransform();
+
     M = glm::translate(M, {transform.position, 0});
     M = glm::rotate(M, glm::radians(transform.rotation), {0,0,1});
     M = glm::scale(M, {transform.scale, 1});
 
     // 累积变换矩阵
-    M = parent ? parent->GetModelMatrix() *M : M;
+    M = parent ? parent->GetModelMatrix() * M : M;
 
     return M;
+}
+
+
+glm::mat4 Node::GetModelMatrixRelativeTo(Node *target) {
+    auto absTransMat = GetModelMatrix();
+    auto newParentTransMat = target->GetModelMatrix();
+    return glm::inverse(newParentTransMat) * absTransMat;
+}
+
+Transform Node::GetTransformByModelMatrix(const glm::mat4 &mat) {
+    glm::vec3 newPosition, newScale, skew;
+    glm::vec4 perspective;
+    glm::quat newRotation;
+    glm::decompose(mat, newScale, newRotation, newPosition, skew, perspective);
+
+    glm::vec3 eulerAngleRadians = glm::eulerAngles(newRotation);
+    glm::vec3 eulerAngleDegrees = glm::degrees(eulerAngleRadians);
+
+    // 将新的变换数值赋值给s的transform
+    Transform t;
+    t.position = newPosition;
+    t.scale = newScale;
+    t.rotation = eulerAngleDegrees.z;
+    return t;
 }
