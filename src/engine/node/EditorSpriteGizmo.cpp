@@ -79,10 +79,8 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
         DebugDraw::AddLine2D(from, to);
 
         if (zoom < 3) {
-            // 线条中心的圆圈（缩放用）
-            auto n = glm::normalize(glm::cross(glm::vec3(to - from, 0), {0, 0, -1})); // 线条的法线
             auto cen = (from + to) * 0.5f; // 线条中心
-            cen = cen + glm::vec2(n) * circleR; // 往法线方向偏移
+            cen = cen + glm::vec2(glm::normalize(cen)) * circleR; // 往法线方向偏移
             scaleCircleCenter.push_back(cen);
             DebugDraw::AddCircle(cen, circleR);
             if (mode == SCALE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
@@ -130,24 +128,28 @@ void EditorSpriteGizmo::CheckAndApplyMove() {
 void EditorSpriteGizmo::CheckAndApplyRotation() {
     if (!activeNode) return;
 
-    if (mode != ROTATE && mode != SCALE && MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-        selectedPointIndex = -1;
-        auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
-
-        // 检测鼠标是否在某个旋转圈内(附近)
-        int index = -1;
-        for (auto &p : rotateCircleCenter) {
-            index++;
-            auto d = mp - p;
-            // 如果是，则进入旋转模式
-            if ((d.x*d.x+d.y*d.y) <= circleR*circleR) {
-                selectedPointIndex = index;
-                mode = ROTATE;
-                // 防止选择了另一个物体
-                PropertiesWindow::RemainActiveNode();
-                break;
-            }
+    // 检测鼠标是否在某个旋转圈内(附近)
+    auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
+    int index = -1;
+    bool find = false;
+    for (auto &p : rotateCircleCenter) {
+        index++;
+        auto d = mp - p;
+        // 如果是，则进入旋转模式
+        if ((d.x*d.x+d.y*d.y) <= circleR*circleR) {
+            find = true;
+            // 防止选择了另一个物体
+            PropertiesWindow::RemainActiveNode();
+            // 设置鼠标形状
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
+            break;
         }
+    }
+
+    if (find && mode != ROTATE && mode != SCALE
+        && MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        selectedPointIndex = index;
+        mode = ROTATE;
     }
 
 
@@ -155,6 +157,8 @@ void EditorSpriteGizmo::CheckAndApplyRotation() {
         if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
             // 鼠标位置可能在Sprite外，要防止目标丢失
             PropertiesWindow::RemainActiveNode();
+            // 设置鼠标形状
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
 
             auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
             auto dp = glm::vec2(MouseListener::GetWorldDx(), MouseListener::GetWorldDy());
@@ -185,28 +189,36 @@ void EditorSpriteGizmo::CheckAndApplyRotation() {
 void EditorSpriteGizmo::CheckAndApplyScale() {
     if (!activeNode) return;
 
-    if (mode != ROTATE && mode != SCALE && MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-        selectedPointIndex = -1;
-        auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
-
-        // 检测鼠标是否在某个旋转圈内(附近)
-        int index = -1;
-        for (auto &p : scaleCircleCenter) {
-            index++;
-            auto d = mp - p;
-            // 如果是，则进入缩放模式
-            if ((d.x*d.x+d.y*d.y) <= circleR*circleR) {
-                selectedPointIndex = index;
-                mode = SCALE;
-                break;
-            }
+    // 检测鼠标是否在某个旋转圈内(附近)
+    auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
+    int index = -1;
+    bool find = false;
+    for (auto &p : scaleCircleCenter) {
+        index++;
+        auto d = mp - p;
+        // 如果是，则进入缩放模式
+        if ((d.x*d.x+d.y*d.y) <= circleR*circleR) {
+            find = true;
+            // 防止选择了另一个物体
+            PropertiesWindow::RemainActiveNode();
+            // 设置鼠标形状
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
+            break;
         }
+    }
+
+    if (find && mode != ROTATE && mode != SCALE
+        && MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        selectedPointIndex = index;
+        mode = SCALE;
     }
 
     if (mode == SCALE && selectedPointIndex >= 0) {
         if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
             // 鼠标位置可能在Sprite外，要防止目标丢失
             PropertiesWindow::RemainActiveNode();
+            // 设置鼠标形状
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
 
             auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
             auto dp = glm::vec2(MouseListener::GetWorldDx(), MouseListener::GetWorldDy());
@@ -215,19 +227,20 @@ void EditorSpriteGizmo::CheckAndApplyScale() {
             auto AC = glm::vec3(dp, 0);
             // 检查AB和AC夹角
             float sign = 1;
-            auto angle = glm::degrees(glm::orientedAngle(glm::normalize(AB), glm::normalize(AC), {0, 0, 1}));
+            auto angle = glm::degrees(glm::orientedAngle(
+                glm::normalize(AB), glm::normalize(AC), {0, 0, 1}));
             auto fa = fabs(angle);
             if (fa >= 0.01f) {
                 if (fa > 90) sign = -1;
 
-                auto distance = sqrt(dp.x*dp.x + dp.y*dp.y) * 0.03;
+                auto distance = glm::sqrt(dp.x*dp.x + dp.y*dp.y) * 0.3f;
                 float value = sign * distance;
 
 
                 if (selectedPointIndex % 2 == 0)
-                    activeNode->transform.scale.x += value / activeNode->parent->transform.scale.x;
+                    activeNode->transform.scale.x += value / activeNode->GetTransform().scale.x;
                 else
-                    activeNode->transform.scale.y += value / activeNode->parent->transform.scale.y;
+                    activeNode->transform.scale.y += value / activeNode->GetTransform().scale.y;
             }
         }
         else {

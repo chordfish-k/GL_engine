@@ -183,12 +183,11 @@ void Node::ShowNodeProperties() {
     transform.Imgui();
 
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("ZIndex")) {
+    if (ImGui::CollapsingHeader("ZIndex")) {
         auto z = zIndex.GetZIndex();
         if (MyImGui::DrawIntControl("zIndex", z)) {
             SetZIndex(z);
         }
-        ImGui::TreePop();
     }
 }
 

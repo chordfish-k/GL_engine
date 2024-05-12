@@ -142,7 +142,7 @@ protected:
         ShowNodeProperties();
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::TreeNode(GetNodeType().c_str())) {
+        if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
 
             auto a = rttr::type::get<T>();
             auto props = a.get_properties();
@@ -210,8 +210,6 @@ protected:
                     }
                 }
             }
-
-            ImGui::TreePop();
         }
     }
 
