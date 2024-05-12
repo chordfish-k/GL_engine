@@ -7,6 +7,8 @@ Node *PropertiesWindow::activeNode = nullptr;
 
 float PropertiesWindow::debounce = 0.2f;
 
+bool PropertiesWindow::remainInThisFrame = false;
+
 void PropertiesWindow::Imgui() {
     if (activeNode != nullptr) {
         ImGui::Begin("Properties");
@@ -46,8 +48,13 @@ void PropertiesWindow::Update(float dt) {
                 activeNode = nullptr;
             }
             debounce = 0.2f;
-        } else {
+        } else if (!remainInThisFrame){
             activeNode = nullptr;
         }
     }
+    remainInThisFrame = false;
+}
+
+void PropertiesWindow::RemainActiveNode() {
+    remainInThisFrame = true;
 }

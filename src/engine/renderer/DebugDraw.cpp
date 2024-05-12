@@ -3,6 +3,9 @@
 #include "engine/core/Window.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/util/AssetPool.hpp"
+#include "engine/util/Print.hpp"
+
+#define DEBUG_DEFAULT_COLOR {1, 0.4, 0}
 
 std::vector<Line2D> DebugDraw::lines;
 
@@ -35,8 +38,7 @@ void DebugDraw::Start() {
                           reinterpret_cast<const void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // 设置线宽
-    glLineWidth(2.5f);
+
 
     // 获取Shader
     shader = AssetPool::GetShader("assets/shader/debugLine2D.glsl");
@@ -58,9 +60,8 @@ void DebugDraw::BeginFrame() {
 }
 
 void DebugDraw::Draw() {
-    if (lines.size() == 0) return;
-
     int index = 0;
+    memset(vertexArray, 0, sizeof(vertexArray));
     for (Line2D line : lines) {
         for (int i = 0; i < 2; i++) {
             glm::vec2 position = i == 0 ? line.GetFrom() : line.GetTo();
@@ -80,7 +81,7 @@ void DebugDraw::Draw() {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, lines.size() * 6 * 2 * sizeof(float), vertexArray);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, lines.capacity() * 6 * 2 * sizeof(float), vertexArray);
 
     // 使用shader
     shader->Use();
@@ -90,6 +91,9 @@ void DebugDraw::Draw() {
     glBindVertexArray(vaoID);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+
+    // 设置线宽
+    glLineWidth(4);
 
     // 绘画
     glDrawArrays(GL_LINES, 0, lines.size() * 6 * 2);
@@ -103,7 +107,7 @@ void DebugDraw::Draw() {
 }
 
 void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to) {
-    AddLine2D(from, to, {0, 1, 0}, 1);
+    AddLine2D(from, to, DEBUG_DEFAULT_COLOR, 1);
 }
 
 void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color) {
@@ -112,7 +116,7 @@ void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color) {
 
 void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions,
                          float rotation) {
-    AddBox2D(center, dimensions, rotation, {0, 1, 0}, 1);
+    AddBox2D(center, dimensions, rotation, DEBUG_DEFAULT_COLOR, 1);
 }
 
 void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
@@ -149,7 +153,7 @@ void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
     AddLine2D(vertices[2], vertices[3], color, lifetime);
 }
 void DebugDraw::AddCircle(glm::vec2 center, float radius) {
-    AddCircle(center, radius, {0, 1, 0}, 1);
+    AddCircle(center, radius, DEBUG_DEFAULT_COLOR, 1);
 }
 
 void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec3 color) {

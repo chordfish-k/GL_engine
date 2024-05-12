@@ -48,15 +48,8 @@ void Window::Loop() {
         Renderer::BindShader(pickingShader);
         currentScene->Render();
 
-//        if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
-//            int x = (int) MouseListener::GetScreenX();
-//            int y = (int) MouseListener::GetScreenY();
-//            util::Println(pickingTexture->ReadPixel(x, y)-1);
-//        }
-
         pickingTexture->DisableWriting();
         glEnable(GL_BLEND);
-
 
         frameBuffer->Bind();
 
