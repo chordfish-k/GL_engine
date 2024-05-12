@@ -12,12 +12,14 @@ public:
     };
     GizmoMode mode = NONE;
     Node *activeNode = nullptr;
+    Node *lastActiveNode = nullptr;
 
 private:
     std::vector<glm::vec2> scaleCircleCenter;
     std::vector<glm::vec2> rotateCircleCenter;
     glm::vec2 spriteCenter;
     float circleR = 4.f;
+    int selectedPointIndex = -1;
 
 public:
     void Update(float dt) override;
@@ -28,4 +30,5 @@ private:
     void CheckAndApplyMove();
 
     void CheckAndApplyRotation();
-};
+    void CheckAndApplyScale();
+    };

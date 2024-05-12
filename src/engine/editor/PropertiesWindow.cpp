@@ -32,7 +32,7 @@ void PropertiesWindow::Update(float dt) {
     debounce -= dt;
     auto scene = Window::GetScene();
 
-    if (MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+    if (MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && !remainInThisFrame) {
         int x = (int) MouseListener::GetScreenX();
         int y = (int) MouseListener::GetScreenY();
         int uid = Window::GetPickingTexture()->ReadPixel(x, y)+1;
@@ -48,9 +48,10 @@ void PropertiesWindow::Update(float dt) {
                 activeNode = nullptr;
             }
             debounce = 0.2f;
-        } else if (!remainInThisFrame){
-            activeNode = nullptr;
         }
+//        else if (!remainInThisFrame){
+//            activeNode = nullptr;
+//        }
     }
     remainInThisFrame = false;
 }

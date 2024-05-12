@@ -10,7 +10,13 @@
 #include <glm/gtx/vector_angle.hpp>
 
 void EditorSpriteGizmo::Update(float dt) {
+    lastActiveNode = activeNode;
     activeNode = PropertiesWindow::GetActiveNode();
+    if (lastActiveNode != activeNode) {
+        selectedPointIndex = -1;
+        mode = NONE;
+    }
+
     if (activeNode == nullptr || activeNode->GetNodeType() != "SpriteRenderer") {
         mode = NONE;
         return;
@@ -18,11 +24,13 @@ void EditorSpriteGizmo::Update(float dt) {
 
     if (!GameViewWindow::GetWantCaptureMouse()) return;
 
+
+
     DrawBorderAndPoints();
 
     CheckAndApplyMove();
     CheckAndApplyRotation();
-
+    CheckAndApplyScale();
     Node::Update(dt);
 }
 
@@ -77,6 +85,9 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
             cen = cen + glm::vec2(n) * circleR; // 往法线方向偏移
             scaleCircleCenter.push_back(cen);
             DebugDraw::AddCircle(cen, circleR);
+            if (mode == SCALE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
+                DebugDraw::AddCircle(cen, circleR * 0.5f);
+            }
 
             // 顶点的圆圈（旋转用）
             auto n2 = glm::normalize(from - spriteCenter);
@@ -84,6 +95,9 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
             cen2 = cen2 + n2 * circleR;
             rotateCircleCenter.push_back(cen2);
             DebugDraw::AddCircle(cen2, circleR, {1, 0, 0});
+            if (mode == ROTATE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
+                DebugDraw::AddCircle(cen2, circleR * 0.5f, {1, 0, 0});
+            }
         }
     }
 }
@@ -108,6 +122,7 @@ void EditorSpriteGizmo::CheckAndApplyMove() {
         }
         else {
             mode = NONE;
+            selectedPointIndex = -1;
         }
     }
 }
@@ -115,52 +130,109 @@ void EditorSpriteGizmo::CheckAndApplyMove() {
 void EditorSpriteGizmo::CheckAndApplyRotation() {
     if (!activeNode) return;
 
-    static int pointIndex = -1;
-    if (MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-        pointIndex = -1;
+    if (mode != ROTATE && mode != SCALE && MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        selectedPointIndex = -1;
         auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
 
         // 检测鼠标是否在某个旋转圈内(附近)
+        int index = -1;
         for (auto &p : rotateCircleCenter) {
-            pointIndex ++;
-
+            index++;
             auto d = mp - p;
-
             // 如果是，则进入旋转模式
             if ((d.x*d.x+d.y*d.y) <= circleR*circleR) {
+                selectedPointIndex = index;
                 mode = ROTATE;
+                // 防止选择了另一个物体
+                PropertiesWindow::RemainActiveNode();
                 break;
             }
         }
     }
 
-    if (mode == ROTATE) {
+
+    if (mode == ROTATE && selectedPointIndex >= 0) {
         if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
-            // 鼠标点击位置在Sprite外，要防止目标丢失
+            // 鼠标位置可能在Sprite外，要防止目标丢失
             PropertiesWindow::RemainActiveNode();
 
             auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
             auto dp = glm::vec2(MouseListener::GetWorldDx(), MouseListener::GetWorldDy());
-            auto dR = (dp.x*dp.x + dp.y*dp.y) * 0.2f;
-            if (dR >= 0.8f) {
-                // 判断mp 在 点到中心的连线 的哪一边：叉乘
-                auto AB = glm::vec3(rotateCircleCenter[pointIndex] - spriteCenter, 0);
-                auto AC = glm::vec3(mp - spriteCenter, 0);
-                auto axis = glm::vec3(0, 0, 1);
-                auto angle = glm::degrees(glm::orientedAngle(
-                    glm::normalize(AB),
-                    glm::normalize(AC), axis));
 
-                auto &rotation = activeNode->transform.rotation;
-                if (fabs(angle) >= 0.0001)
-                    rotation += angle;
-                if (rotation > 180) rotation = rotation - 360;
-                if (rotation < -180) rotation = rotation + 360;
-            }
-        }
-        else {
+            auto AB = glm::vec3(rotateCircleCenter[selectedPointIndex] - spriteCenter, 0);
+            auto AC = glm::vec3(AB + glm::vec3(dp, 0));
+            auto axis = glm::normalize(glm::cross(AB, AC));
+            auto sign = axis.z;
+            auto angle = sign * glm::degrees(glm::orientedAngle(
+                       glm::normalize(AB),
+                       glm::normalize(AC),
+                       axis));
+
+            auto &rotation = activeNode->transform.rotation;
+
+            if (fabs(angle) >= 0.0001)
+            rotation += angle;
+            if (rotation > 180) rotation = rotation - 360;
+            if (rotation < -180) rotation = rotation + 360;
+
+        } else {
+            selectedPointIndex = -1;
             mode = NONE;
         }
     }
 }
 
+void EditorSpriteGizmo::CheckAndApplyScale() {
+    if (!activeNode) return;
+
+    if (mode != ROTATE && mode != SCALE && MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        selectedPointIndex = -1;
+        auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
+
+        // 检测鼠标是否在某个旋转圈内(附近)
+        int index = -1;
+        for (auto &p : scaleCircleCenter) {
+            index++;
+            auto d = mp - p;
+            // 如果是，则进入缩放模式
+            if ((d.x*d.x+d.y*d.y) <= circleR*circleR) {
+                selectedPointIndex = index;
+                mode = SCALE;
+                break;
+            }
+        }
+    }
+
+    if (mode == SCALE && selectedPointIndex >= 0) {
+        if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            // 鼠标位置可能在Sprite外，要防止目标丢失
+            PropertiesWindow::RemainActiveNode();
+
+            auto mp = glm::vec2(MouseListener::GetWorldX(), MouseListener::GetWorldY());
+            auto dp = glm::vec2(MouseListener::GetWorldDx(), MouseListener::GetWorldDy());
+
+            auto AB = glm::vec3(scaleCircleCenter[selectedPointIndex] - spriteCenter, 0);
+            auto AC = glm::vec3(dp, 0);
+            // 检查AB和AC夹角
+            float sign = 1;
+            auto angle = glm::degrees(glm::orientedAngle(glm::normalize(AB), glm::normalize(AC), {0, 0, 1}));
+            auto fa = fabs(angle);
+            if (fa >= 0.01f) {
+                if (fa > 90) sign = -1;
+
+                auto distance = sqrt(dp.x*dp.x + dp.y*dp.y) * 0.03;
+                float value = sign * distance;
+
+
+                if (selectedPointIndex % 2 == 0)
+                    activeNode->transform.scale.x += value / activeNode->parent->transform.scale.x;
+                else
+                    activeNode->transform.scale.y += value / activeNode->parent->transform.scale.y;
+            }
+        }
+        else {
+            mode = NONE;
+            selectedPointIndex = -1;
+        }
+    }
+}
