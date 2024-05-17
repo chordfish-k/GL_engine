@@ -12,8 +12,11 @@
 #include "engine/editor/MyImGui.hpp"
 #include "engine/renderer/Color.hpp"
 #include "engine/core/ZIndex.hpp"
+#include "engine/util/AssetPool.hpp"
+#include "engine/core/AGuiObj.hpp"
 
-class Node : public ASerializableObj{
+class Node : public ASerializableObj, public AGuiObj{
+    RTTR_ENABLE(AGuiObj);
 private:
     static int ID_COUNTER;
     int uid = -1;
@@ -50,7 +53,7 @@ public:
 
     void CheckDelete();
 
-    virtual void Imgui();
+    void Imgui() override;
 
     virtual void Destroy() {
         shouldDestroy = true;
@@ -153,8 +156,8 @@ protected:
             ImGui::AlignTextToFramePadding();
 
             for (auto &p : props) {
-
-                auto value = p.get_value(obj);
+                rttr::type ptype = p.get_type();
+                rttr::variant value = p.get_value(obj);
 
                 if (!value)
                     continue;
@@ -209,6 +212,21 @@ protected:
                         p.set_value(obj, Color(v4.x, v4.y, v4.z, v4.w));
                     }
                 }
+//                else if (rttr::type::get_by_name("AGuiObj").is_base_of(ptype)) {
+//                    AGuiObj *t = value.get_value<AGuiObj*>();
+//                    if (t != nullptr) {
+//                        t->Imgui();
+//                    }
+//                }
+
+//                else if (value.is_type<Sprite*>()) {
+//                    Sprite *t = value.get_value<Sprite*>();
+//                    auto texture = t->GetTexture();
+//                    std::string path = texture ? texture->GetFilePath() : "";
+//                    if (MyImGui::DrawDragDropBox(std::string(p.get_name()), &path)) {
+//                        t->SetTexture(AssetPool::GetTexture(path));
+//                    }
+//                }
             }
         }
     }
@@ -217,9 +235,17 @@ private:
     void ShowNodeProperties();
 };
 
-#define COMPONENT(name_)                             \
-    class name_ : public Node {                 \
-        public:                                     \
-            const std::string nodeType = #name_;     \
-            std::string GetNodeType() {return nodeType;}
+#define COMPONENT(name_)                                \
+    class name_ : public Node {                         \
+    RTTR_ENABLE(Node)                                  \
+    public:                                             \
+        const std::string nodeType = #name_;            \
+        std::string GetNodeType() {return nodeType;}
+
+#define COMPONENT_E(name_, parent)                        \
+    class name_ : public Parent {                       \
+    RTTR_ENABLE(parent)                                \
+    public:                                             \
+        const std::string nodeType = #name_;            \
+        std::string GetNodeType() {return nodeType;}
 

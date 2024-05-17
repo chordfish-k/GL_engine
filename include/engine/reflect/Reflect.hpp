@@ -6,6 +6,8 @@
 
 RTTR_REGISTRATION  {
 
+    rttr::registration::class_<AGuiObj>("AGuiObj");
+
     rttr::registration::class_<Node>("Node")
         .constructor<>()(
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
@@ -19,5 +21,6 @@ RTTR_REGISTRATION  {
             )
         .property("centered", &SpriteRenderer::IsCentered, &SpriteRenderer::SetCentered)
         .property("color", &SpriteRenderer::GetColor, &SpriteRenderer::SetColor)
-        .property("offset", &SpriteRenderer::GetOffset, &SpriteRenderer::SetOffset);
+        .property("offset", &SpriteRenderer::GetOffset, &SpriteRenderer::SetOffset)
+        .property("sprite", &SpriteRenderer::GetSprite, &SpriteRenderer::SetSprite);
 }

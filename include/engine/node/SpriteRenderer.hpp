@@ -51,6 +51,8 @@ public:
 
     std::vector<glm::vec2> GetTexCoords() { return sprite->GetTexCoords(); }
 
+    Sprite *GetSprite() {return sprite;};
+
     SpriteRenderer *SetSprite(Sprite *sprite);
 
     bool IsDirty() const { return isDirty; }
@@ -59,8 +61,9 @@ public:
 
     void SetClean() { isDirty = false; }
 
-    void Imgui();
+    void Imgui() override;
 
     json Serialize() override;
+
     SpriteRenderer *Deserialize(json j) override;
-    };
+};

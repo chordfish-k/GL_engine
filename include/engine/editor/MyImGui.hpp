@@ -310,4 +310,28 @@ public:
         ImGui::PopID();
         return res;
     }
+
+    static bool DrawDragDropBox(std::string label, std::string *value) {
+        bool res = false;
+        auto lb = label.c_str();
+        ImGui::PushID(lb);
+
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+        ImGui::Text("%s", lb);
+        ImGui::NextColumn();
+
+        ImGui::PushItemWidth(-1);
+        static char buf[512];
+        if (value) {
+            strcpy_s(buf, value->c_str());
+        }
+        res = ImGui::InputText("##inputText", buf, IM_ARRAYSIZE(buf));
+        *value = buf;
+        ImGui::PopItemWidth();
+
+        ImGui::Columns(1);
+        ImGui::PopID();
+        return res;
+    }
 };

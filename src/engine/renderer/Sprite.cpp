@@ -1,6 +1,7 @@
 ﻿#include "engine/renderer/Sprite.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/util/AssetPool.hpp"
+#include "engine/editor/MyImGui.hpp"
 
 json Sprite::Serialize() {
     json j;
@@ -49,4 +50,12 @@ float Sprite::GetHeight() const {
 
 void Sprite::SetHeight(float height) {
     Sprite::height = height;
+}
+
+void Sprite::Imgui() {
+    auto texture = GetTexture();
+    std::string path = texture ? texture->GetFilePath() : "";
+    if (MyImGui::DrawDragDropBox("sprite", &path)) {
+        SetTexture(AssetPool::GetTexture(path));
+    }
 }
