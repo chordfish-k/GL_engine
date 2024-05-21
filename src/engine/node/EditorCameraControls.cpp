@@ -2,6 +2,7 @@
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
+#include "engine/editor/GameViewWindow.hpp"
 
 EditorCameraControls::EditorCameraControls(Camera *editorCamera) {
     this->editorCamera = editorCamera;
@@ -9,7 +10,7 @@ EditorCameraControls::EditorCameraControls(Camera *editorCamera) {
 }
 
 void EditorCameraControls::Update(float dt) {
-    if (!editorCamera)
+    if (!editorCamera || !GameViewWindow::GetWantCaptureMouse())
         return;
 
 //    if (PropertiesWindow::GetActiveNode())

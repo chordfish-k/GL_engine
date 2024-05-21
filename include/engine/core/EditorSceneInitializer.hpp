@@ -5,23 +5,24 @@
 #include <GLFW/glfw3.h>
 
 #include "engine/core/Camera.hpp"
-#include "engine/core/AScene.hpp"
+#include "engine/core/Scene.hpp"
 #include "engine/renderer/Spritesheet.hpp"
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/node/EditorMouseControls.hpp"
-#include "Prefabs.hpp"
+#include "engine/core/Prefabs.hpp"
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/node/EditorGridLines.hpp"
 #include "engine/node/EditorCameraControls.hpp"
 #include "engine/node/EditorSpriteGizmo.hpp"
+#include "engine/core/ASceneInitializer.hpp"
 
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <string>
 
-class TestScene : public AScene {
+class EditorSceneInitializer : public ASceneInitializer {
 private:
     Spritesheet *sprites = nullptr;
     EditorMouseControls *mouseControls = nullptr;
@@ -30,46 +31,39 @@ private:
     EditorSpriteGizmo *spriteGizmo = nullptr;
 
 public:
-    TestScene() {
-        mouseControls = sceneToolsRoot->AddNode<EditorMouseControls>();
-        gridLines = sceneToolsRoot->AddNode<EditorGridLines>();
-        cameraControls = sceneToolsRoot->AddNode<EditorCameraControls>();
-        spriteGizmo = sceneToolsRoot->AddNode<EditorSpriteGizmo>();
-    }
+    EditorSceneInitializer(const std::string &filePath = "")
+        : ASceneInitializer(filePath){};
 
-    ~TestScene() = default;
+    ~EditorSceneInitializer() = default;
 
-    void Init() override {
-        InitResources();
-
-        camera = new Camera(glm::vec2(0,0));
-        cameraControls->SetEditorCamera(camera);
-
+    void Init(Scene *scene) override {
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheets/decorationsAndBlocks.png");
 
-        if (sceneLoaded) {
-            if (!Window::GetScene()->root->children.empty())
-//                PropertiesWindow::SetActiveNode(Window::GetScene()->root->children[0]);
-            return;
-        }
+        auto r = scene->sceneToolsRoot;
+        mouseControls = r->AddNode<EditorMouseControls>();
+        gridLines = r->AddNode<EditorGridLines>();
+        cameraControls = r->AddNode<EditorCameraControls>();
+        cameraControls->SetEditorCamera(scene->GetCamera());
+        spriteGizmo = r->AddNode<EditorSpriteGizmo>();
+//
+//        auto node = scene->root->AddNode<Node>("Group")
+//                        ->SetTransform({glm::vec2(0, 0), glm::vec2(5, 5)});
+//        auto obj1 = node->AddNode<SpriteRenderer>("SpriteRenderer 1")
+//                        ->SetColor({1, 1, 1, 1})
+//                        ->SetSprite(sprites->GetSprite(0))
+//                        ->SetTransform({glm::vec2(0, 0), glm::vec2(1, 1)});
+//        node->AddNode<SpriteRenderer>("SpriteRenderer 2")
+//            ->SetColor({1, 1, 1, 1})
+//            ->SetSprite(sprites->GetSprite(1))
+//            ->SetTransform({glm::vec2(16, 0), glm::vec2(1, 1)});
+//        obj1->AddNode<SpriteRenderer>("SpriteRenderer 3")
+//            ->SetColor({1, 1, 1, 1})
+//            ->SetSprite(sprites->GetSprite(2))
+//            ->SetTransform({glm::vec2(0, 16), glm::vec2(1, 1)});
 
-        auto node = root->AddNode<Node>("Group")
-            ->SetTransform({glm::vec2(0, 0), glm::vec2(5, 5)});
-        auto obj1 = node->AddNode<SpriteRenderer>("SpriteRenderer 1")
-            ->SetColor({1, 1, 1, 1})
-                        ->SetSprite(sprites->GetSprite(0))
-                        ->SetTransform({glm::vec2(0, 0), glm::vec2(1, 1)});
-        node->AddNode<SpriteRenderer>("SpriteRenderer 2")
-            ->SetColor({1, 1, 1, 1})
-                        ->SetSprite(sprites->GetSprite(1))
-                        ->SetTransform({glm::vec2(16, 0), glm::vec2(1, 1)});
-        obj1->AddNode<SpriteRenderer>("SpriteRenderer 3")
-            ->SetColor({1, 1, 1, 1})
-                        ->SetSprite(sprites->GetSprite(2))
-                        ->SetTransform({glm::vec2(0, 16), glm::vec2(1, 1)});
     }
 
-    void InitResources() {
+    void LoadResources(Scene *scene) override {
         AssetPool::GetShader("assets/shader/default.glsl");
         AssetPool::AddSpritesheet(
             "assets/image/spritesheet.png",
@@ -84,11 +78,6 @@ public:
                 16, 16, 81, 0));
     }
 
-    void Update(float dt) override {
-        AScene::Update(dt);
-        Render();
-    }
-
     void Imgui() override {
         ImGui::Begin("Test Window");
 
@@ -97,7 +86,6 @@ public:
         ImVec2 itemSpacing = ImGui::GetStyle().ItemSpacing;
 
         float windowX2 = windowPos.x + windowSize.x;
-
 
         for (int i = 0; i < sprites->Size(); i++) {
             Sprite *sprite = sprites->GetSprite(i);

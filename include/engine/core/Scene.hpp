@@ -2,8 +2,7 @@
 
 #include "engine/renderer/Renderer.hpp"
 #include "engine/core/ASerializableObj.hpp"
-// #include "engine/core/Camera.hpp"
-
+#include "engine/core/ASceneInitializer.hpp"
 #include <imgui.h>
 #include <vector>
 #include <fstream>
@@ -12,26 +11,24 @@ class Camera;
 class Node;
 //class Renderer;
 
-class AScene {
+class Scene {
 public:
     Node *root = nullptr;
-
-protected:
-    Renderer *renderer = nullptr;
-    Camera *camera = nullptr;
     Node *sceneToolsRoot = nullptr;
-    bool sceneLoaded = false;
 
 private:
+    Renderer *renderer = nullptr;
+    Camera *camera = nullptr;
     bool isRunning = false;
-
-protected:
-    AScene();
+    ASceneInitializer *sceneInitializer = nullptr;
 
 public:
-    ~AScene();
 
-    virtual void Init() {};
+    Scene(ASceneInitializer *sceneInitializer);
+
+    ~Scene();
+
+    virtual void Init();
 
     void Start();
 
@@ -56,6 +53,8 @@ public:
     void Save();
 
     void Load();
+
+    void Destroy();
 
     Renderer *GetRenderer() const;
 

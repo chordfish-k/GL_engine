@@ -79,6 +79,7 @@ ImVec2 GameViewWindow::GetCenterPositionForViewport(ImVec2 aspectSize) {
 }
 
 bool GameViewWindow::GetWantCaptureMouse() {
-    return MouseListener::GetX() >= leftX && MouseListener::GetX() <= rightX &&
+    return !Window::IsShowingProjectManagerWindow() &&
+            MouseListener::GetX() >= leftX && MouseListener::GetX() <= rightX &&
            MouseListener::GetY() >= bottomY && MouseListener::GetY() <= topY;
 }

@@ -31,6 +31,7 @@ void PropertiesWindow::Update(float dt) {
 
     debounce -= dt;
     auto scene = Window::GetScene();
+    if (scene == nullptr) return;
 
     if (MouseListener::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && !remainInThisFrame) {
         int x = (int) MouseListener::GetScreenX();

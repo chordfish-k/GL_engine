@@ -117,7 +117,10 @@ float MouseListener::GetWorldDy() {
 }
 
 glm::vec2 MouseListener::GetWorldPos(){
-    auto camera = Window::GetScene()->GetCamera();
+    auto scene = Window::GetScene();
+    if (scene == nullptr) return {0, 0};
+
+    auto camera = scene->GetCamera();
 
     float currentX = GetX() - Get()->gameViewportPos.x;
     currentX = (currentX / Get()->gameViewportSize.x) * 2.f - 1.f;

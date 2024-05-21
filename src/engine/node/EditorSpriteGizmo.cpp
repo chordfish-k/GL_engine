@@ -77,7 +77,7 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
 
         if (zoom < 3) {
             auto cen = (from + to) * 0.5f; // 线条中心
-            cen = cen + glm::vec2(glm::normalize(cen)) * circleR; // 往法线方向偏移
+            cen = cen + glm::vec2(glm::normalize(cen- spriteCenter)) * circleR; // 往法线方向偏移
             scaleCircleCenter.push_back(cen);
             DebugDraw::AddCircle(cen, circleR);
             if (mode == SCALE && i-1 == selectedPointIndex) { // 同心圆表示强调选中

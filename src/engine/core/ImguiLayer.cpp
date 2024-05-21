@@ -6,7 +6,10 @@
 #include "engine/editor/GameViewWindow.hpp"
 #include "engine/editor/SceneHierarchyWindow.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
+#include "engine/editor/ProjectManagerWindow.hpp"
+#include "engine/editor/FileSystemWindow.hpp"
 #include "engine/editor/MenuBar.hpp"
+#include "engine/editor/FileDialog.hpp"
 #include <imgui.h>
 
 ImguiLayer::ImguiLayer(GLFWwindow *glfwWindow) : glfwWindow(glfwWindow) {}
@@ -112,13 +115,20 @@ void ImguiLayer::Update(float dt) {
 
     PropertiesWindow::Update(dt);
 
-    SetupDockspace();
-    if (Window::CurrentScene() != nullptr)
-        Window::CurrentScene()->SceneImgui();
+    if (Window::IsShowingProjectManagerWindow()) {
+        ProjectManagerWindow::Imgui();
+    } else {
+        SetupDockspace();
+        if (Window::CurrentScene() != nullptr)
+            Window::CurrentScene()->SceneImgui();
 
-    GameViewWindow::Imgui();
-    PropertiesWindow::Imgui();
-    SceneHierarchyWindow::Imgui();
+        GameViewWindow::Imgui();
+        PropertiesWindow::Imgui();
+        SceneHierarchyWindow::Imgui();
+        FileSystemWindow::Imgui();
+    }
+
+    FileDialog::Imgui();
 
     EndFrame();
 }

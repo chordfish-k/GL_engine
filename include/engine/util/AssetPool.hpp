@@ -24,6 +24,5 @@ public:
 
     static void Clear();
 
-private:
     static std::string GetAbsolutePath(std::string path);
 };

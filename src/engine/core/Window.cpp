@@ -1,15 +1,13 @@
 ﻿#include "engine/core/Window.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
-#include "engine/core/TestScene.hpp"
+#include "engine/core/EditorSceneInitializer.hpp"
 
 #include <GLFW/glfw3.h>
 #include "engine/reflect/Reflect.hpp"
-
+#include "engine/editor/ProjectManagerWindow.hpp"
 
 Window *Window::window = nullptr;
-
-AScene *Window::currentScene = nullptr;
 
 Window::~Window() {
     AssetPool::Clear();
@@ -54,7 +52,7 @@ void Window::Loop() {
         frameBuffer->Bind();
 
         // 设置清屏颜色
-        glViewport(0, 0, 3840, 2160);
+        glViewport(0, 0, Setting::GAME_VIEW_BUFFER_W, Setting::GAME_VIEW_BUFFER_H);
         glClearColor(r, g, b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -82,7 +80,7 @@ void Window::Loop() {
         beginTime = endTime;
     }
 
-    currentScene->Save();
+//    currentScene->Save();
 }
 
 void Window::Init() {
@@ -144,17 +142,17 @@ void Window::Init() {
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     // 创建帧缓冲
-    frameBuffer = new FrameBuffer(3840, 2160);
+    frameBuffer = new FrameBuffer(Setting::GAME_VIEW_BUFFER_W, Setting::GAME_VIEW_BUFFER_H);
     // 创建拾取纹理
-    pickingTexture = new PickingTexture(3840, 2160);
-    glViewport(0, 0, 3840, 2160);
+    pickingTexture = new PickingTexture(Setting::GAME_VIEW_BUFFER_W, Setting::GAME_VIEW_BUFFER_H);
+    glViewport(0, 0, Setting::GAME_VIEW_BUFFER_W, Setting::GAME_VIEW_BUFFER_H);
 
     // 初始化gui
     imguiLayer = new ImguiLayer(glfwWindow);
     imguiLayer->InitImgui();
 
     // 默认场景
-    Window::ChangeScene(0);
+    Window::ChangeScene(new EditorSceneInitializer());
 }
 
 void Window::Run() {
@@ -174,19 +172,16 @@ void Window::Run() {
     glfwSetErrorCallback(nullptr);
 }
 
-void Window::ChangeScene(int newScene) {
-    switch (newScene) {
-    case 0:
-        currentScene = new TestScene();
-        break;
-    default:
-        util::Print("Unknow scene ", newScene);
-        assert(false);
-        break;
+void Window::ChangeScene(ASceneInitializer *sceneInitializer) {
+    if (Get()->currentScene != nullptr) {
+        // 销毁当前场景
+        Get()->currentScene->Destroy();
     }
-    currentScene->Load();
-    currentScene->Init();
-    currentScene->Start();
+    PropertiesWindow::SetActiveNode(nullptr);
+    Get()->currentScene = new Scene(sceneInitializer);
+    Get()->currentScene->Load();
+    Get()->currentScene->Init();
+    Get()->currentScene->Start();
 }
 
 GLFWwindow *Window::GetGlfwWindow(){
