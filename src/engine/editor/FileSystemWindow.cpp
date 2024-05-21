@@ -52,8 +52,7 @@ void FileSystemWindow::ShowPath() {
             ss2 >> piece;
             if (!total.empty())
                 total += "\\";
-            total += piece;
-
+                total += piece;
 
 //            if (total == ProjectManagerWindow::projectLocation) {
                 ImGui::Text("/");
@@ -79,35 +78,35 @@ void FileSystemWindow::ShowPath() {
         total += "\\";
     total += piece;
 
+    const float height = ImGui::GetTextLineHeight()+4;
+
     ImGui::Text("/");
     ImGui::SameLine();
     std::string id = "pathBtn"+std::to_string(index);
 
     ImGui::PushID(id.c_str());
-    if (ImGui::Button(piece.c_str(), ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+    if (ImGui::Button(piece.c_str(), ImVec2(0, height))) {
         localPath = fs::path(total);
     }
     ImGui::PopID();
-    ImGui::SameLine();
 
     style = styleOrigin;
 
-    ImGui::NewLine();
+
     // 添加文件夹按钮和添加文件按钮
     static bool readyToAdd = false;
-    if (ImGui::Button("Add", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+    if (ImGui::Button("Add", ImVec2(0, height))) {
         readyToAdd = true;
     }
     if (readyToAdd) {
-        ImGui::SameLine();
         static char buf[128] = {0};
-
         ImGui::PushItemWidth(150);
+        ImGui::SameLine();
         ImGui::InputText("##input", buf, sizeof(buf));
         ImGui::PopItemWidth();
 
         ImGui::SameLine();
-        if (ImGui::Button("As folder", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+        if (ImGui::Button("As folder", ImVec2(0, height))) {
             std::string fileName = (fs::path(path) /  buf).string();
             try {
                 fs::create_directory(fileName);
@@ -118,7 +117,7 @@ void FileSystemWindow::ShowPath() {
             buf[0] = 0;
         }
         ImGui::SameLine();
-        if (ImGui::Button("As file", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+        if (ImGui::Button("As file", ImVec2(0, height))) {
             std::string fileName = (fs::path(path) /  buf).string();
             try {
                 std::ofstream file(fileName);
@@ -132,7 +131,7 @@ void FileSystemWindow::ShowPath() {
             buf[0] = 0;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Cancel", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+        if (ImGui::Button("Cancel", ImVec2(0, height))) {
             readyToAdd = false;
             buf[0] = 0;
         }
@@ -182,13 +181,67 @@ void FileSystemWindow::ShowFilesAndDirs() {
             }
             // 如果是文件
             else if (fs::is_regular_file(entry)) {
-                if (ImGui::Button(name.c_str(), size)) {
-                    // 如果是场景，则打开场景
-                    if (util::String::EndsWith(name, ".scene")) {
-                        Window::ChangeScene(new EditorSceneInitializer(
-                            (fs::path(path)/name).string()));
+                auto filePath = (fs::path(path)/name).string();
+                // 如果是场景文件，则打开场景
+                if (util::String::EndsWith(name, ".scene")) {
+                    if (ImGui::Button(name.c_str(), size)) {
+                        Window::ChangeScene(new EditorSceneInitializer(filePath));
                         util::Println("Open:", name);
                     }
+                }
+                // 如果是图像文件
+                else if (util::String::CheckSuffix(name, ".png|.jpg")) {
+                    auto tex = AssetPool::GetTexture(filePath);
+                    auto texId = tex->GetId();
+                    auto imageWidth = tex->GetWidth();
+                    auto imageHeight = tex->GetHeight();
+
+                    // 计算长宽比
+                    float aspectRatio = imageWidth / imageHeight;
+
+                    // 计算目标尺寸
+                    float targetWidth, targetHeight;
+                    if (size.x / size.y > aspectRatio)
+                    {
+                        // 按钮比较宽
+                        targetHeight = size.y;
+                        targetWidth = size.y * aspectRatio;
+                    }
+                    else
+                    {
+                        // 按钮比较高
+                        targetWidth = size.x;
+                        targetHeight = size.x / aspectRatio;
+                    }
+
+                    // 计算图像在按钮中的位置偏移，使其居中
+                    ImVec2 offset((size.x - targetWidth) * 0.5f, (size.y - targetHeight) * 0.5f);
+
+                    // 使用InvisibleButton来创建一个固定大小的按钮区域
+                    ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f });        // 按钮常态
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 1.0f, 1.0f, 1.0f, 0.1f }); // 鼠标悬停
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });  // 按钮单击
+                    if (ImGui::Button(("##btn"+name).c_str(), size))
+                    {
+                        // 处理按钮点击事件
+                        util::Println(name);
+
+                        // TODO 拖拽到SpriteRenderer属性面板，替换Sprite
+                    }
+                    ImGui::PopStyleColor(3);
+
+                    // 获取当前窗口绘制列表
+                    ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+                    // 获取按钮的绝对位置
+                    ImVec2 buttonPos = ImGui::GetItemRectMin();
+
+                    // 计算图片绘制区域的左上角和右下角坐标
+                    ImVec2 imageMin = ImVec2(buttonPos.x + offset.x, buttonPos.y + offset.y + targetHeight);
+                    ImVec2 imageMax = ImVec2(buttonPos.x + offset.x + targetWidth, buttonPos.y + offset.y);
+
+                    // 绘制图片
+                    drawList->AddImage((void*)(intptr_t)texId, imageMin, imageMax);
                 }
             }
             ImGui::PopID();

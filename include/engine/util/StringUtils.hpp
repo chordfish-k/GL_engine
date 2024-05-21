@@ -21,6 +21,17 @@ public:
                str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
     }
 
+    static bool CheckSuffix(const std::string& str, const std::string& suffix_list) {
+        auto suffix = Split(suffix_list, '|');
+        for (const auto& suf : suffix) {
+            if (str.size() >= suf.size() &&
+                str.compare(str.size() - suf.size(), suf.size(), suf) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // 按照指定的分隔符将字符串分割成多个部分
     static std::vector<std::string> Split(const std::string& str, char delimiter) {
         std::vector<std::string> tokens;
@@ -29,6 +40,20 @@ public:
         while (std::getline(tokenStream, token, delimiter)) {
             tokens.push_back(token);
         }
+        return tokens;
+    }
+
+    // 按照指定的字符串分隔符将字符串分割成多个部分
+    static std::vector<std::string> Split(const std::string& str, const std::string& delimiter) {
+        std::vector<std::string> tokens;
+        size_t start = 0;
+        size_t end = str.find(delimiter);
+        while (end != std::string::npos) {
+            tokens.push_back(str.substr(start, end - start));
+            start = end + delimiter.length();
+            end = str.find(delimiter, start);
+        }
+        tokens.push_back(str.substr(start));
         return tokens;
     }
 
