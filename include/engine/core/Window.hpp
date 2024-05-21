@@ -23,7 +23,7 @@ private:
     FrameBuffer *frameBuffer = nullptr;
     PickingTexture *pickingTexture = nullptr;
 
-    bool showingProjectManager = true;
+    bool showingTopWindow = true;
 
     int width;
     int height;
@@ -63,9 +63,9 @@ public:
 
     static Scene *CurrentScene() { return Get()->currentScene; }
 
-    static bool IsShowingProjectManagerWindow() {return Get()->showingProjectManager;}
+    static bool IsShowingTopWindow() {return Get()->showingTopWindow;}
 
-    static void SetShowingProjectManagerWindow(bool show) {Get()->showingProjectManager = show;}
+    static void SetShowingTopWindow(bool show) {Get()->showingTopWindow = show;}
 
     static FrameBuffer *GetFrameBuffer() {
         return Get()->frameBuffer;

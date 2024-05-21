@@ -115,18 +115,16 @@ void ImguiLayer::Update(float dt) {
 
     PropertiesWindow::Update(dt);
 
-    if (Window::IsShowingProjectManagerWindow()) {
-        ProjectManagerWindow::Imgui();
-    } else {
-        SetupDockspace();
-        if (Window::CurrentScene() != nullptr)
-            Window::CurrentScene()->SceneImgui();
+    ProjectManagerWindow::Imgui();
 
-        GameViewWindow::Imgui();
-        PropertiesWindow::Imgui();
-        SceneHierarchyWindow::Imgui();
-        FileSystemWindow::Imgui();
-    }
+    SetupDockspace();
+    if (Window::CurrentScene() != nullptr)
+        Window::CurrentScene()->SceneImgui();
+
+    GameViewWindow::Imgui();
+    PropertiesWindow::Imgui();
+    SceneHierarchyWindow::Imgui();
+    FileSystemWindow::Imgui();
 
     FileDialog::Imgui();
 

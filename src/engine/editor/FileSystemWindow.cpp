@@ -15,7 +15,7 @@ void FileSystemWindow::Imgui() {
     ImGui::Begin("Files");
 
     ShowPath();
-    ImGui::NewLine();
+
     ShowFilesAndDirs();
 
     ImGui::End();
@@ -91,6 +91,52 @@ void FileSystemWindow::ShowPath() {
     ImGui::SameLine();
 
     style = styleOrigin;
+
+    ImGui::NewLine();
+    // 添加文件夹按钮和添加文件按钮
+    static bool readyToAdd = false;
+    if (ImGui::Button("Add", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+        readyToAdd = true;
+    }
+    if (readyToAdd) {
+        ImGui::SameLine();
+        static char buf[128] = {0};
+
+        ImGui::PushItemWidth(150);
+        ImGui::InputText("##input", buf, sizeof(buf));
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
+        if (ImGui::Button("As folder", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+            std::string fileName = (fs::path(path) /  buf).string();
+            try {
+                fs::create_directory(fileName);
+            } catch (const fs::filesystem_error& e) {
+                util::Println("Error: ", e.what());
+            }
+            readyToAdd = false;
+            buf[0] = 0;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("As file", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+            std::string fileName = (fs::path(path) /  buf).string();
+            try {
+                std::ofstream file(fileName);
+                if (file.is_open()) {
+                    file.close();
+                }
+            } catch (const std::ofstream::failure& e) {
+                util::Println("Error: ", e.what());
+            }
+            readyToAdd = false;
+            buf[0] = 0;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(0, ImGui::GetTextLineHeight()+4))) {
+            readyToAdd = false;
+            buf[0] = 0;
+        }
+    }
 }
 
 void FileSystemWindow::ShowFilesAndDirs() {
@@ -101,6 +147,10 @@ void FileSystemWindow::ShowFilesAndDirs() {
     }
 
     try {
+        if (!fs::exists(path) || !fs::is_directory(path)) {
+            return;
+        }
+
         ImVec2 windowPos = ImGui::GetWindowPos();
         ImVec2 windowSize = ImGui::GetWindowSize();
         ImVec2 itemSpacing = ImGui::GetStyle().ItemSpacing;
@@ -111,6 +161,7 @@ void FileSystemWindow::ShowFilesAndDirs() {
         int fileNum = 0;
 
         // 获取文件夹和文件总数
+
         auto fit = fs::directory_iterator(path);
         for (const auto& entry : fit) {
             fileNum++;

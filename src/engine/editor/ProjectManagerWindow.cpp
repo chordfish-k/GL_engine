@@ -8,10 +8,14 @@
 std::string ProjectManagerWindow::projectLocation;
 
 void ProjectManagerWindow::Imgui() {
+
+    if (!ProjectManagerWindow::projectLocation.empty()) return;
+
     ImGui::Begin("Projects", NULL,
                  ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoScrollWithMouse |
-                     ImGuiWindowFlags_MenuBar);
+                     ImGuiWindowFlags_MenuBar |
+                     ImGuiWindowFlags_NoDocking);
     int w = (int)ImGui::GetContentRegionAvail().x;
     int h = (int)ImGui::GetContentRegionAvail().y;
     // 计算按钮的宽度，高度
@@ -22,8 +26,8 @@ void ProjectManagerWindow::Imgui() {
         FileDialog::DisplayWithCallback("Choose Dir",
                                         [](auto filePath, auto fileName)
         {
-            Window::SetShowingProjectManagerWindow(false);
-            util::Println("Open: ", filePath);
+                                            Window::SetShowingTopWindow(false);
+            util::Println("Open:", filePath);
             projectLocation = filePath;
         });
     }
@@ -33,8 +37,8 @@ void ProjectManagerWindow::Imgui() {
         FileDialog::DisplayWithCallback("Choose Dir",
                                         [](auto filePath, auto fileName)
         {
-            Window::SetShowingProjectManagerWindow(false);
-            util::Println("Load: ", filePath);
+                                            Window::SetShowingTopWindow(false);
+            util::Println("Load:", filePath);
             projectLocation = filePath;
         });
     }

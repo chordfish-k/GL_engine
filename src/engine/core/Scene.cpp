@@ -91,24 +91,11 @@ Node *Scene::Deserialize(json j) const {
 
 void Scene::Save() {
     auto path = sceneInitializer->GetFilePath();
-    util::Println("Save:", path);
 
-    if (path.empty()) {
-        FileDialog::DisplayWithCallback("save",
-                                        [=](auto filePath, auto name){
-            auto p = filePath;
-            sceneInitializer->SetFilePath(p);
-            std::string jsonText = Serialize().dump(2);
-            std::ofstream out(sceneInitializer->GetFilePath(), std::ios::trunc);
-            if (out.is_open()){
-                out << jsonText;
-                out.close();
-            } else {
-                util::Println("ERROR:Save Scene failed.");
-            }
-        }, "scene.json", ".json");
-    } else {
-        std::string jsonText = Serialize().dump(2);
+    auto save = [&](const std::string &path) {
+        util::Println("Save:", path);
+
+        std::string jsonText = this->Serialize().dump(2);
         std::ofstream out(path, std::ios::trunc);
         if (out.is_open()){
             out << jsonText;
@@ -116,6 +103,16 @@ void Scene::Save() {
         } else {
             util::Println("ERROR:Save Scene failed.");
         }
+    };
+
+    if (path.empty()) {
+        FileDialog::DisplayWithCallback("save",
+                                        [=](auto filePath, auto name){
+            sceneInitializer->SetFilePath(name);
+            save(name);
+        }, "scene.scene", ".scene");
+    } else {
+        save(path);
     }
 }
 

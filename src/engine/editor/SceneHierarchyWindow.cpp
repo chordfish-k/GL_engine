@@ -33,6 +33,8 @@ void SceneHierarchyWindow::ShowNodeTree() {
         baseFlags,
         "%s", root->GetName().c_str());
 
+    NodeMenu(root);
+
     NodeDropTarget(root);
 
     if (treeNodeOpen) {
