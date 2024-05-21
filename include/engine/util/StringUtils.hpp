@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <codecvt>
 
 namespace util {
 
@@ -72,6 +73,48 @@ public:
     template<typename... Args>
     static std::string Concat(const Args&... args) {
         return (args + ...);
+    }
+
+    static std::string GetSuffix(const std::string &str, char c) {
+        // 找到字符串中最后一个字符c的位置
+        size_t lastPos = str.find_last_of(c);
+
+        // 如果未找到字符c，返回空字符串
+        if (lastPos == std::string::npos) {
+            return "";
+        }
+
+        // 返回最后一个字符c后面的字符串
+        return str.substr(lastPos + 1);
+    }
+
+    // 将字符串的首字母转换为大写
+    static std::string CapitalizeFirst(const std::string& str) {
+        if (str.empty()) {
+            return str;
+        }
+
+        std::string result = str;
+        result[0] = std::toupper(result[0]);
+        return result;
+    }
+
+    // 将字符串的首字母转换为小写
+    static std::string LowercaseFirst(const std::string& str) {
+        if (str.empty()) {
+            return str;
+        }
+
+        std::string result = str;
+        result[0] = std::tolower(result[0]);
+        return result;
+    }
+
+    static std::string TBS(std::string str) {
+        typedef std::codecvt_byname<wchar_t, char, std::mbstate_t>F;
+        static std::wstring_convert<F>strC(new F("Chinese"));
+        static std::wstring_convert<std::codecvt_utf8<wchar_t>> strCnv;
+        return strCnv.to_bytes(strC.from_bytes(str));
     }
 };
 

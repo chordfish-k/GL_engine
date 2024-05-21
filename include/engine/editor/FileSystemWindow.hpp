@@ -14,4 +14,6 @@ private:
     static void ShowPath();
 
     static void ShowFilesAndDirs();
+
+    static std::string TruncateText(const std::string &text, float maxWidth);
 };

@@ -219,14 +219,14 @@ protected:
 //                    }
 //                }
 
-//                else if (value.is_type<Sprite*>()) {
-//                    Sprite *t = value.get_value<Sprite*>();
-//                    auto texture = t->GetTexture();
-//                    std::string path = texture ? texture->GetFilePath() : "";
-//                    if (MyImGui::DrawDragDropBox(std::string(p.get_name()), &path)) {
-//                        t->SetTexture(AssetPool::GetTexture(path));
-//                    }
-//                }
+                else if (value.is_type<Sprite*>()) {
+                    Sprite *t = value.get_value<Sprite*>();
+                    auto texture = t->GetTexture();
+                    std::string path = texture ? texture->GetFilePath() : "";
+                    if (MyImGui::DrawDragDropBox(std::string(p.get_name()), &path)) {
+                        t->SetTexture(AssetPool::GetTexture(path));
+                    }
+                }
             }
         }
     }

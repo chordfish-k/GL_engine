@@ -131,7 +131,8 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
     if (ImGui::IsMouseReleased(1) && ImGui::IsItemHovered()) {
         // 打开一个弹出式菜单
         selectingUid = node->GetUid();
-        PropertiesWindow::SetActiveNode(node);
+        if (node->parent != nullptr)
+            PropertiesWindow::SetActiveNode(node);
         ImGui::OpenPopup("Popup for Node");
     }
 

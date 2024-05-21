@@ -1,7 +1,6 @@
 #include <imgui.h>
 #include "engine/editor/ProjectManagerWindow.hpp"
 #include "engine/core/Window.hpp"
-#include "engine/editor/ImGuiFileDialog.h"
 #include "engine/util/Print.hpp"
 #include "engine/editor/FileDialog.hpp"
 
@@ -27,7 +26,7 @@ void ProjectManagerWindow::Imgui() {
                                         [](auto filePath, auto fileName)
         {
                                             Window::SetShowingTopWindow(false);
-            util::Println("Open:", filePath);
+            util::Println("New:", filePath);
             projectLocation = filePath;
         });
     }
