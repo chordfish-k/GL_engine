@@ -7,13 +7,17 @@
 #include <rttr/registration>
 #include <vector>
 
+class SpriteRenderer;
+
 class Sprite : public ASerializableObj, public AGuiObj{
     RTTR_ENABLE(AGuiObj)
+    friend class SpriteRenderer;
 private:
     float width, height;
     std::vector<glm::vec2> texCoords = {glm::vec2(1, 1), glm::vec2(1, 0),
                                         glm::vec2(0, 0), glm::vec2(0, 1)};
     Texture *texture = nullptr;
+    SpriteRenderer *spriteRenderer = nullptr;
 
 public:
     json Serialize() override;
@@ -21,7 +25,11 @@ public:
     Sprite *Deserialize(json j) override;
 
     // 属性
-    void SetTexture(Texture *texture) { this->texture = texture; SetTexCoordsToFullTexture();}
+    void SetTexture(Texture *texture) {
+        this->texture = texture;
+        this->width = (float) texture->GetWidth();
+        this->height = (float) texture->GetHeight();
+    }
 
     void SetTexCoordsToFullTexture() {
         texCoords[0] = glm::vec2(1, 1);
@@ -52,6 +60,10 @@ public:
 
     unsigned int GetTexId() {
         return texture == nullptr ? 0 : texture->GetId();
+    }
+
+    SpriteRenderer *GetSpriteRenderer() {
+        return spriteRenderer;
     }
 
     void Imgui() override;

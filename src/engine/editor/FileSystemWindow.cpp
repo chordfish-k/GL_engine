@@ -1,4 +1,4 @@
-#include <imgui.h>
+﻿#include <imgui.h>
 #include <string>
 #include <sstream>
 #include "engine/editor/ProjectManagerWindow.hpp"
@@ -235,12 +235,12 @@ void FileSystemWindow::ShowFilesAndDirs() {
                         // 将字符串转换为字节数组
                         auto lPath =(ProjectManagerWindow::projectLocation / localPath / u8Name).string();
                         const char* textData = lPath.c_str();
-                        size_t dataSize = (u8Name.length() + 1) * sizeof(char); // 包括空字符 '\0'
+                        size_t dataSize = (lPath.length() + 1) * sizeof(char); // 包括空字符 '\0'
 
                         // 设置拖放负载
-                        ImGui::SetDragDropPayload("TEX_PATH", textData, dataSize);
+                        ImGui::SetDragDropPayload("FILE_PATH", textData, dataSize);
                         ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 300.0f);
-                        ImGui::TextWrapped("%s", textData);
+                        ImGui::TextWrapped("%s", u8Name.c_str());
                         ImGui::PopTextWrapPos();
 //                        ImGui::Image((void*)(intptr_t)texId, btnSize,
 //                                     {0, 1}, {1, 0});

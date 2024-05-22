@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "engine/renderer/Sprite.hpp"
+#include "engine/node/SpriteRenderer.hpp"
 #include "engine/node/Node.hpp"
 #include "engine/core/Transform.hpp"
 #include "engine/renderer/Color.hpp"

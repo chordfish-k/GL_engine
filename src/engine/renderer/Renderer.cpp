@@ -43,6 +43,14 @@ void Renderer::Add(SpriteRenderer *sprite) {
     }
 }
 
+void Renderer::Remove(SpriteRenderer *spr) {
+    for (auto batch : batches) {
+        if (batch->DestroyIfExists(spr)) {
+            return;
+        }
+    }
+}
+
 void Renderer::DestroyNode(Node *node) {
     if (node->GetNodeType() != "SpriteRenderer") return;
     for (auto n : node->children) {

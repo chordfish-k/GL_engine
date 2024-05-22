@@ -33,4 +33,5 @@ public:
 
     static Shader *GetBoundShader();
 
+    void Remove(SpriteRenderer *spr);
 };

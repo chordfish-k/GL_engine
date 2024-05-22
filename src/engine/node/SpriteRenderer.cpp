@@ -26,6 +26,7 @@ SpriteRenderer *SpriteRenderer::SetSprite(Sprite *sprite) {
     if (this->sprite == sprite) return this;
     this->sprite = sprite;
     this->isDirty = true;
+    sprite->spriteRenderer = this;
     return this;
 }
 

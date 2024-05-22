@@ -1,4 +1,5 @@
 ﻿#include "engine/util/AssetPool.hpp"
+#include "engine/util/Print.hpp"
 
 #include <cassert>
 #include <filesystem>
@@ -55,7 +56,8 @@ Spritesheet *AssetPool::GetSpritesheet(std::string resourceName) {
         std::string msg = "ERROR: Tried to access spritesheet '" +
                           resourceName +
                           "' and it has not been added to asset pool.";
-        assert(false && msg.c_str());
+        util::Println(msg.c_str());
+        assert(false);
     }
     return spritesheets[path];
 }

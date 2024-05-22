@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "engine/util/Print.hpp"
 
 #define COLUMN_WIDTH 80
 
@@ -311,7 +312,7 @@ public:
         return res;
     }
 
-    static bool DrawDragDropBox(std::string label, std::string *value) {
+    static bool DrawResourceDragDropBox(const std::string &label, std::string &value) {
         bool res = false;
         auto lb = label.c_str();
         ImGui::PushID(lb);
@@ -322,12 +323,21 @@ public:
         ImGui::NextColumn();
 
         ImGui::PushItemWidth(-1);
-        static char buf[512];
-        if (value) {
-            strcpy_s(buf, value->c_str());
+        float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
+        ImGui::Button(value.c_str(), {ImGui::CalcItemWidth(), lineHeight});
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+            {
+                const char *path = ((char *)payload->Data);
+//                util::Println(path);
+                value = path;
+                res = true;
+            }
+            ImGui::EndDragDropTarget();
         }
-        res = ImGui::InputText("##inputText", buf, IM_ARRAYSIZE(buf));
-        *value = buf;
+
         ImGui::PopItemWidth();
 
         ImGui::Columns(1);
