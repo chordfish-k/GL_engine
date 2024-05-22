@@ -23,7 +23,7 @@ private:
 
     static void NodeMenu(Node *node);
 
-    static void ShowAddNodePopup();
+    static void ShowAddNodePopup(Node *node);
 
     static void ShowNodeDerivedTree(const rttr::type& t, int level);
 

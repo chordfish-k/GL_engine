@@ -8,16 +8,19 @@ std::string SceneHierarchyWindow::selectedNodeType = "Node";
 void SceneHierarchyWindow::Imgui() {
     ImGui::Begin("Scene Hierarchy");
 
-    ImGuiStyle& style = ImGui::GetStyle();
-    ImGuiStyle styleOrigin = ImGui::GetStyle();
-    style.IndentSpacing = 12.0f; // 设置缩进间距
-    style.ItemSpacing = ImVec2(1.0f, 1.0f); // 设置项之间的间距
+    auto scene = MainWindow::GetScene();
+    if (scene) {
+        ImGuiStyle &style = ImGui::GetStyle();
+        ImGuiStyle styleOrigin = ImGui::GetStyle();
+        style.IndentSpacing = 12.0f;            // 设置缩进间距
+        style.ItemSpacing = ImVec2(1.0f, 1.0f); // 设置项之间的间距
 
-    ShowAddNodePopup();
-    ShowNodeTree();
+//        ShowAddNodePopup(scene->root);
+        ShowNodeTree();
 
-    style.IndentSpacing = styleOrigin.IndentSpacing; // 设置缩进间距
-    style.ItemSpacing = styleOrigin.ItemSpacing; // 设置项之间的间距
+        style.IndentSpacing = styleOrigin.IndentSpacing; // 设置缩进间距
+        style.ItemSpacing = styleOrigin.ItemSpacing; // 设置项之间的间距}
+    }
     ImGui::End();
 }
 
@@ -187,7 +190,7 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
         ImGui::OpenPopup("Add Node");
     }
     // 渲染内部弹窗
-    ShowAddNodePopup();
+    ShowAddNodePopup(node);
 }
 
 void SceneHierarchyWindow::NodeDropTarget(Node *target) {
@@ -215,7 +218,7 @@ void SceneHierarchyWindow::NodeDropTarget(Node *target) {
 
 }
 
-void SceneHierarchyWindow::ShowAddNodePopup() {
+void SceneHierarchyWindow::ShowAddNodePopup(Node *node) {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
@@ -233,7 +236,7 @@ void SceneHierarchyWindow::ShowAddNodePopup() {
         if (ImGui::Button("OK", ImVec2(120, 0))) {
             auto type = rttr::type::get_by_name(selectedNodeType);
             auto instance = type.create().get_value<Node*>();
-            auto parentNode = PropertiesWindow::GetActiveNode();
+            auto parentNode = node;
             parentNode = parentNode == nullptr ? MainWindow::GetScene()->root : parentNode;
             parentNode->AddNode(instance);
             ImGui::CloseCurrentPopup();

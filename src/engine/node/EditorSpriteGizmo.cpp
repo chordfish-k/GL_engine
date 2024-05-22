@@ -231,14 +231,24 @@ void EditorSpriteGizmo::CheckAndApplyScale() {
             if (fa >= 0.01f) {
                 if (fa > 90) sign = -1;
 
-                auto distance = glm::sqrt(dp.x*dp.x + dp.y*dp.y) * 0.03f;
-                float value = sign * distance;
+                auto distance = glm::sqrt(dp.x*dp.x + dp.y*dp.y);
+                glm::vec2 vp = {
+                    GameViewWindow::rightX-GameViewWindow::leftX,
+                    GameViewWindow::topY-GameViewWindow::bottomY
+                };
+                auto diagonalLen = (float)(glm::sqrt(vp.x*vp.x + vp.y*vp.y));
 
+                float value = sign * (distance / diagonalLen) * 1000;
+
+                glm::vec2 addValue = activeNode->parent->transform.scale * value;
+                auto spr = (SpriteRenderer*)activeNode;
+                glm::vec2 pSize = {spr->GetSprite()->GetWidth(), spr->GetSprite()->GetHeight()};
+                addValue /= pSize;
 
                 if (selectedPointIndex % 2 == 0)
-                    activeNode->transform.scale.x += value;
+                    activeNode->transform.scale.x += addValue.x;
                 else
-                    activeNode->transform.scale.y += value;
+                    activeNode->transform.scale.y += addValue.y;
             }
         }
         else {
