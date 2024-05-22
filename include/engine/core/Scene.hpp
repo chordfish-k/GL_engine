@@ -9,7 +9,6 @@
 
 class Camera;
 class Node;
-//class Renderer;
 
 class Scene {
 public:

@@ -1,8 +1,7 @@
-﻿#include "engine/core/Window.hpp"
-#include "engine/util/Print.hpp"
+﻿#include "engine/core/MainWindow.hpp"
 
 int main() {
-    Window *window = Window::Get();
+    MainWindow *window = MainWindow::Get();
     window->Run();
     return 0;
 }

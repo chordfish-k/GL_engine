@@ -1,9 +1,9 @@
 ﻿#include <glad/glad.h>
 #include "engine/renderer/DebugDraw.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Print.hpp"
+#include "engine/core/MainWindow.hpp"
 
 #define DEBUG_DEFAULT_COLOR {1, 0.4, 0}
 
@@ -85,8 +85,10 @@ void DebugDraw::Draw() {
 
     // 使用shader
     shader->Use();
-    shader->UploadMat4("uProjection", Window::GetScene()->GetCamera()->GetProjMatrix());
-    shader->UploadMat4("uView", Window::GetScene()->GetCamera()->GetViewMatrix());
+    shader->UploadMat4("uProjection",
+                       MainWindow::GetScene()->GetCamera()->GetProjMatrix());
+    shader->UploadMat4("uView",
+                       MainWindow::GetScene()->GetCamera()->GetViewMatrix());
     // 绑定vao
     glBindVertexArray(vaoID);
     glEnableVertexAttribArray(0);

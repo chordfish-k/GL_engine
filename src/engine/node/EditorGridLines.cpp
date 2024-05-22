@@ -1,8 +1,10 @@
 #include "engine/node/EditorGridLines.hpp"
+#include "engine/core/MainWindow.hpp"
+
 void EditorGridLines::Update(float dt) {
     Node::Update(dt);
 
-    auto camera = Window::GetScene()->GetCamera();
+    auto camera = MainWindow::GetScene()->GetCamera();
     auto cameraPos = camera->position;
     auto cameraZoom = camera->GetZoom();
     auto projSize = camera->GetProjectionSize();

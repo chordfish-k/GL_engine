@@ -1,8 +1,6 @@
 ﻿#include "engine/renderer/Sprite.hpp"
 #include "engine/node/SpriteRenderer.hpp"
-#include "engine/util/Print.hpp"
-#include "engine/util/AssetPool.hpp"
-#include "engine/editor/MyImGui.hpp"
+#include "engine/core/MainWindow.hpp"
 #include <filesystem>
 
 json Sprite::Serialize() {
@@ -52,25 +50,4 @@ float Sprite::GetHeight() const {
 
 void Sprite::SetHeight(float height) {
     Sprite::height = height;
-}
-
-void Sprite::Imgui() {
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader("sprite")) {
-
-        auto te = GetTexture();
-        std::string path = te ? te->GetFilePath() : "";
-        std::filesystem::path path1 = path;
-        std::string filePath = path1.filename().string();
-        if (MyImGui::DrawResourceDragDropBox("sprite",filePath)) {
-            auto tex = AssetPool::GetTexture(filePath);
-            auto spr = GetSpriteRenderer();
-            auto sp = new Sprite();
-            sp->SetTexture(tex);
-            spr->SetSprite(sp);
-
-            Window::GetScene()->GetRenderer()->Remove(spr);
-            Window::GetScene()->GetRenderer()->Add(spr);
-        }
-    }
 }

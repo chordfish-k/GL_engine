@@ -1,6 +1,8 @@
-﻿#include "engine/node/SpriteRenderer.hpp"
+﻿#include <filesystem>
+#include "engine/node/SpriteRenderer.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/renderer/DebugDraw.hpp"
+#include "engine/core/MainWindow.hpp"
 
 SpriteRenderer::SpriteRenderer() {}
 
@@ -8,7 +10,7 @@ SpriteRenderer::~SpriteRenderer() {}
 
 void SpriteRenderer::Start() {
     lastTransform = GetTransform().Copy();
-    Window::GetScene()->GetRenderer()->Add(this);
+    MainWindow::GetScene()->GetRenderer()->Add(this);
     Node::Start();
 }
 
@@ -101,4 +103,18 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
 
 void SpriteRenderer::Imgui() {
     Node::Imgui<SpriteRenderer>();
+
+    auto te = GetTexture();
+    std::string filePath = te ? te->GetFilePath() : "";
+
+    if (MyImGui::DrawResourceDragDropBox("sprite",filePath)) {
+        auto tex = AssetPool::GetTexture(filePath);
+        auto sp = new Sprite();
+        sp->SetTexture(tex);
+
+        auto spr = this;
+        spr->SetSprite(sp);
+        MainWindow::GetScene()->GetRenderer()->Remove(spr);
+        MainWindow::GetScene()->GetRenderer()->Add(spr);
+    }
 }

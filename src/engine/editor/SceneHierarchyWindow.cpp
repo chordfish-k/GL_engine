@@ -1,4 +1,5 @@
 ﻿#include "engine/editor/SceneHierarchyWindow.hpp"
+#include "engine/core/MainWindow.hpp"
 
 int SceneHierarchyWindow::selectingUid = -1;
 
@@ -21,7 +22,7 @@ void SceneHierarchyWindow::Imgui() {
 }
 
 void SceneHierarchyWindow::ShowNodeTree() {
-    auto root = Window::GetScene()->root;
+    auto root = MainWindow::GetScene()->root;
     auto baseFlags = ImGuiTreeNodeFlags_DefaultOpen |
                      ImGuiTreeNodeFlags_FramePadding |
                      ImGuiTreeNodeFlags_OpenOnArrow |
@@ -150,12 +151,12 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
             // 复制该节点，json存入剪贴板
             json j = node->Serialize();
             auto jsonText = j.dump(2);
-            glfwSetClipboardString(Window::GetGlfwWindow(), jsonText.c_str());
+            glfwSetClipboardString(MainWindow::GetGlfwWindow(), jsonText.c_str());
         }
 
         if (ImGui::MenuItem("Paste")) {
             // 将剪贴板的文本作为json反序列化为节点，作为子节点添加到node下
-            auto jsonText = glfwGetClipboardString(Window::GetGlfwWindow());
+            auto jsonText = glfwGetClipboardString(MainWindow::GetGlfwWindow());
             auto j = Str2Json(jsonText);
             auto &type = j["type"];
 
@@ -171,7 +172,7 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
                     nodePtr->TravelOnSubTree([](auto n) {
                         n->GeneratedId(true);
                     });
-                    Window::GetScene()->AddNodeAsChild(node, nodePtr);
+                    MainWindow::GetScene()->AddNodeAsChild(node, nodePtr);
                 }
             }
         }
@@ -233,7 +234,7 @@ void SceneHierarchyWindow::ShowAddNodePopup() {
             auto type = rttr::type::get_by_name(selectedNodeType);
             auto instance = type.create().get_value<Node*>();
             auto parentNode = PropertiesWindow::GetActiveNode();
-            parentNode == nullptr ? Window::GetScene()->root : parentNode;
+            parentNode = parentNode == nullptr ? MainWindow::GetScene()->root : parentNode;
             parentNode->AddNode(instance);
             ImGui::CloseCurrentPopup();
         }

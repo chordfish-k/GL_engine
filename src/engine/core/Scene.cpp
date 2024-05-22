@@ -101,7 +101,7 @@ void Scene::Save() {
             out << jsonText;
             out.close();
         } else {
-            util::Println("ERROR:Save Scene failed.");
+            util::Println("ERROR:Saving Scene failed.");
         }
     };
 

@@ -1,5 +1,6 @@
 #include "engine/node/EditorMouseControls.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
+#include "engine/core/MainWindow.hpp"
 
 void EditorMouseControls::PickupNode(Node *node) {
     this->holdingNode = node;
@@ -7,7 +8,7 @@ void EditorMouseControls::PickupNode(Node *node) {
 //    if (activeNode != nullptr) {
 //        activeNode->AddNode(node);
 //    } else {
-    Window::GetScene()->AddNode(node);
+    MainWindow::GetScene()->AddNode(node);
 //    }
 }
 
@@ -24,7 +25,7 @@ void EditorMouseControls::Update(float dt){
     t.position = {
         MouseListener::GetWorldX(), MouseListener::GetWorldY()
     };
-    if (holdingNode->parent && holdingNode->parent != Window::GetScene()->root) {
+    if (holdingNode->parent && holdingNode->parent != MainWindow::GetScene()->root) {
 
     }
     if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {

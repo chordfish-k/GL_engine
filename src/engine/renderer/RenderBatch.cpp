@@ -2,14 +2,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/ext/vector_float2.hpp>
-#include <glm/ext/vector_float4.hpp>
 #include <vector>
 
 #include "engine/renderer/RenderBatch.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/core/Camera.hpp"
-#include "engine/util/AssetPool.hpp"
 #include "engine/util/Common.hpp"
+#include "engine/core/MainWindow.hpp"
 
 RenderBatch::RenderBatch(int maxBatchSize, int zIndex, Renderer *renderer)
     : maxBatchSize(maxBatchSize), zIndex(zIndex), renderer(renderer) {
@@ -141,9 +139,9 @@ void RenderBatch::Render() {
     // 使用shader
     Shader *shader = Renderer::GetBoundShader();
     shader->UploadMat4("uProjection",
-                       Window::GetScene()->GetCamera()->GetProjMatrix());
+                       MainWindow::GetScene()->GetCamera()->GetProjMatrix());
     shader->UploadMat4("uView",
-                       Window::GetScene()->GetCamera()->GetViewMatrix());
+                       MainWindow::GetScene()->GetCamera()->GetViewMatrix());
     // 启用纹理
     for (int i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i + 1); // 下标0表示无texture占位

@@ -1,7 +1,7 @@
 ﻿#include "engine/editor/GameViewWindow.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/util/Print.hpp"
+#include "engine/core/MainWindow.hpp"
 #include <imgui.h>
 
 bool GameViewWindow::isPlaying = false;
@@ -42,7 +42,7 @@ void GameViewWindow::Imgui() {
     rightX = windowPos.x + windowSize.x;
     topY = windowPos.y + windowSize.y;
 
-    auto textureId = Window::GetFrameBuffer()->GetTexture()->GetId();
+    auto textureId = MainWindow::GetFrameBuffer()->GetTexture()->GetId();
     ImGui::Image((void*)(intptr_t)textureId,
                  {windowSize.x, windowSize.y},
                     {0,1}, {1, 0});
@@ -57,11 +57,11 @@ ImVec2 GameViewWindow::GetLargestSizeForViewport() {
     ImVec2 windowSize = ImGui::GetContentRegionAvail(); // 获取可用的内容区域，不包括滚动的
 
     float aspectWidth = windowSize.x;
-    float aspectHeight = aspectWidth / Window::GetTargetAspectRatio();
+    float aspectHeight = aspectWidth / MainWindow::GetTargetAspectRatio();
     if (aspectHeight > windowSize.y) {
         // 贴合左右两边会超出高度，切换成贴合上下两边
         aspectHeight = windowSize.y;
-        aspectWidth = aspectHeight * Window::GetTargetAspectRatio();
+        aspectWidth = aspectHeight * MainWindow::GetTargetAspectRatio();
     }
     return {aspectWidth, aspectHeight};
 }
@@ -79,7 +79,7 @@ ImVec2 GameViewWindow::GetCenterPositionForViewport(ImVec2 aspectSize) {
 }
 
 bool GameViewWindow::GetWantCaptureMouse() {
-    return !Window::IsShowingTopWindow() &&
+    return
             MouseListener::GetX() >= leftX && MouseListener::GetX() <= rightX &&
            MouseListener::GetY() >= bottomY && MouseListener::GetY() <= topY;
 }

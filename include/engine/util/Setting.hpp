@@ -1,9 +1,16 @@
 #pragma once
+#include <string>
 
-namespace Setting {
-    const int WINDOW_W = 1920;
-    const int WINDOW_H = 1080;
-    const int GAME_VIEW_BUFFER_W = 1920 * 2;
-    const int GAME_VIEW_BUFFER_H = 1080 * 2;
-    const float GAME_VIEW_ASPECT = 16.0 / 9.0;
-}
+class Setting {
+public:
+    static int WINDOW_W;
+    static int WINDOW_H;
+    static int GAME_VIEW_BUFFER_W;
+    static int GAME_VIEW_BUFFER_H;
+    static float GAME_VIEW_ASPECT;
+    static std::string PROJECT_ROOT;
+
+public:
+    static void Save();
+    static void Load();
+};

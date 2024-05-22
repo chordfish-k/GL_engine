@@ -1,8 +1,8 @@
 ﻿#include <glm/vec4.hpp>
 #include "engine/core/MouseListener.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/util/Print.hpp"
+#include "engine/core/MainWindow.hpp"
 
 MouseListener *MouseListener::instance = nullptr;
 
@@ -117,7 +117,7 @@ float MouseListener::GetWorldDy() {
 }
 
 glm::vec2 MouseListener::GetWorldPos(){
-    auto scene = Window::GetScene();
+    auto scene = MainWindow::GetScene();
     if (scene == nullptr) return {0, 0};
 
     auto camera = scene->GetCamera();

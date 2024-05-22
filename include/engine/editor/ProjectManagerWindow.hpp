@@ -4,7 +4,7 @@
 
 class ProjectManagerWindow {
 public:
-    static std::string projectLocation;
+    static bool shouldOpen;
 public:
     static void Imgui();
 };

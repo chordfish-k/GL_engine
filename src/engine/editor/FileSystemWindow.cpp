@@ -1,13 +1,13 @@
 ﻿#include <imgui.h>
 #include <string>
 #include <sstream>
-#include "engine/editor/ProjectManagerWindow.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/editor/FileSystemWindow.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/core/EditorSceneInitializer.hpp"
 #include "engine/util/StringUtils.hpp"
+#include "engine/core/MainWindow.hpp"
+#include "engine/util/Setting.hpp"
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -18,14 +18,13 @@ void FileSystemWindow::Imgui() {
     ImGui::Begin("Files");
 
     ShowPath();
-
     ShowFilesAndDirs();
 
     ImGui::End();
 }
 
 void FileSystemWindow::ShowPath() {
-    std::string path = ProjectManagerWindow::projectLocation;
+    std::string path = Setting::PROJECT_ROOT;
     if (!localPath.empty()) {
         fs::path p = fs::path(path) / localPath;
         path = p.string();
@@ -122,7 +121,7 @@ void FileSystemWindow::ShowPath() {
 }
 
 void FileSystemWindow::ShowFilesAndDirs() {
-    auto path = ProjectManagerWindow::projectLocation;
+    auto path = Setting::PROJECT_ROOT;
     if (!localPath.empty()) {
         fs::path p = fs::path(path) / localPath;
         path = p.string();
@@ -176,7 +175,7 @@ void FileSystemWindow::ShowFilesAndDirs() {
                 // 如果是场景文件，则打开场景
                 if (util::String::EndsWith(name, ".scene")) {
                     if (ImGui::Button("Scene", btnSize)) {
-                        Window::ChangeScene(new EditorSceneInitializer(filePath));
+                        MainWindow::ChangeScene(new EditorSceneInitializer(filePath));
                     }
                 }
                 // 如果是图像文件
@@ -233,7 +232,7 @@ void FileSystemWindow::ShowFilesAndDirs() {
 
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
                         // 将字符串转换为字节数组
-                        auto lPath =(ProjectManagerWindow::projectLocation / localPath / u8Name).string();
+                        auto lPath =(Setting::PROJECT_ROOT / localPath / u8Name).string();
                         const char* textData = lPath.c_str();
                         size_t dataSize = (lPath.length() + 1) * sizeof(char); // 包括空字符 '\0'
 

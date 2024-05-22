@@ -1,11 +1,13 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <glm/vec2.hpp>
 #include <imgui.h>
 #include <glm/vec4.hpp>
+#include <filesystem>
 #include <glm/gtc/type_ptr.hpp>
 #include "engine/util/Print.hpp"
+#include "engine/editor/FileSystemWindow.hpp"
 
 #define COLUMN_WIDTH 80
 
@@ -312,7 +314,7 @@ public:
         return res;
     }
 
-    static bool DrawResourceDragDropBox(const std::string &label, std::string &value) {
+    static bool DrawResourceDragDropBox(const std::string &label, std::string &path) {
         bool res = false;
         auto lb = label.c_str();
         ImGui::PushID(lb);
@@ -324,15 +326,21 @@ public:
 
         ImGui::PushItemWidth(-1);
         float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
-        ImGui::Button(value.c_str(), {ImGui::CalcItemWidth(), lineHeight});
+
+        std::filesystem::path path1 = path;
+        std::string name = path1.filename().string();
+        if (ImGui::Button(name.c_str(), {ImGui::CalcItemWidth(), lineHeight})) {
+            //TODO 跳转对应文件夹
+            FileSystemWindow::localPath = path1.parent_path().string();
+        }
 
         if (ImGui::BeginDragDropTarget())
         {
+            // TODO 添加类别判断
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
             {
-                const char *path = ((char *)payload->Data);
-//                util::Println(path);
-                value = path;
+                const char *path_ = ((char *)payload->Data);
+                path = path_;
                 res = true;
             }
             ImGui::EndDragDropTarget();

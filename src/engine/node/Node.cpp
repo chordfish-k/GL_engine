@@ -1,6 +1,7 @@
 ﻿#include "engine/node/Node.hpp"
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
+#include "engine/core/MainWindow.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
@@ -29,7 +30,7 @@ void Node::Update(float dt) {
 }
 
 void Node::CheckDelete() {
-    auto renderer = Window::GetScene()->GetRenderer();
+    auto renderer = MainWindow::GetScene()->GetRenderer();
     auto &ch = children;
 
     for (auto it = ch.begin(); it != ch.end();) {
@@ -127,7 +128,7 @@ Node *Node::Deserialize(json j){
                     auto nodePtr = instance.get_value<Node*>();
                     nodePtr->Deserialize(ch);
                     if (nodePtr)
-                        Window::GetScene()->AddNodeAsChild(this,nodePtr);
+                        MainWindow::GetScene()->AddNodeAsChild(this,nodePtr);
                 }
             }
         }
@@ -181,14 +182,6 @@ void Node::SetIsPickable(bool isPickable) {
 void Node::ShowNodeProperties() {
     //每个Node都有的Transform
     transform.Imgui();
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader("ZIndex")) {
-        auto z = zIndex.GetZIndex();
-        if (MyImGui::DrawIntControl("zIndex", z)) {
-            SetZIndex(z);
-        }
-    }
 }
 
 glm::mat4 Node::GetModelMatrix() {

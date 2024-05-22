@@ -8,7 +8,7 @@ void FileDialog::DisplayWithCallback(const std::string &title, FileDialogCallbac
                                 const std::string &filter) {
     FileDialog::callback = callback;
     IGFD::FileDialogConfig config;
-    config.path = ProjectManagerWindow::projectLocation;
+    config.path = Setting::PROJECT_ROOT;
     config.fileName = defaultPath;
     config.flags |= ImGuiFileDialogFlags_Modal;
     ImGuiFileDialog::Instance()->OpenDialog("ChooseDir", title,

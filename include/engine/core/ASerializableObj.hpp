@@ -2,6 +2,7 @@
 
 #include <string>
 #include "engine/util/Json.hpp"
+#include "engine/util/Print.hpp"
 
 using json = nlohmann::json;
 
@@ -16,7 +17,8 @@ static json Str2Json(std::string str) {
     try{
         j = json::parse(str);
     }catch (std::exception &e) {
-        assert(false && e.what());
+        util::Print(e.what());
+        assert(false);
     }
     return j;
 }

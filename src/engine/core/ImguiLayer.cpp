@@ -1,7 +1,6 @@
 ﻿#include "engine/core/ImguiLayer.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/editor/GameViewWindow.hpp"
 #include "engine/editor/SceneHierarchyWindow.hpp"
@@ -10,6 +9,7 @@
 #include "engine/editor/FileSystemWindow.hpp"
 #include "engine/editor/MenuBar.hpp"
 #include "engine/editor/FileDialog.hpp"
+#include "engine/core/MainWindow.hpp"
 #include <imgui.h>
 
 ImguiLayer::ImguiLayer(GLFWwindow *glfwWindow) : glfwWindow(glfwWindow) {}
@@ -121,14 +121,13 @@ void ImguiLayer::Update(float dt) {
     ProjectManagerWindow::Imgui();
 
     SetupDockspace();
-    if (Window::CurrentScene() != nullptr)
-        Window::CurrentScene()->SceneImgui();
+    if (MainWindow::GetScene() != nullptr)
+        MainWindow::GetScene()->SceneImgui();
 
     GameViewWindow::Imgui();
     PropertiesWindow::Imgui();
     SceneHierarchyWindow::Imgui();
     FileSystemWindow::Imgui();
-
     FileDialog::Imgui();
 
     EndFrame();
@@ -143,7 +142,7 @@ void ImguiLayer::StartFrame(float dt) {
 
 void ImguiLayer::EndFrame() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, Window::GetWidth(), Window::GetHeight());
+    glViewport(0, 0, MainWindow::GetWidth(), MainWindow::GetHeight());
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 

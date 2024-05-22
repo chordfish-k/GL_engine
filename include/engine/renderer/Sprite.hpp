@@ -9,8 +9,7 @@
 
 class SpriteRenderer;
 
-class Sprite : public ASerializableObj, public AGuiObj{
-    RTTR_ENABLE(AGuiObj)
+class Sprite : public ASerializableObj{
     friend class SpriteRenderer;
 private:
     float width, height;
@@ -65,6 +64,4 @@ public:
     SpriteRenderer *GetSpriteRenderer() {
         return spriteRenderer;
     }
-
-    void Imgui() override;
 };

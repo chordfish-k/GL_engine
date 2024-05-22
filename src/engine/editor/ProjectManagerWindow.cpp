@@ -1,14 +1,16 @@
-#include <imgui.h>
+﻿#include <imgui.h>
+#include <filesystem>
 #include "engine/editor/ProjectManagerWindow.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/editor/FileDialog.hpp"
+#include "engine/util/Setting.hpp"
+#include "engine/core/MainWindow.hpp"
 
-std::string ProjectManagerWindow::projectLocation;
+bool ProjectManagerWindow::shouldOpen = false;
 
 void ProjectManagerWindow::Imgui() {
 
-    if (!ProjectManagerWindow::projectLocation.empty()) return;
+    if (!shouldOpen && !Setting::PROJECT_ROOT.empty()) return;
 
     ImGui::Begin("Projects", NULL,
                  ImGuiWindowFlags_NoScrollbar |
@@ -25,9 +27,11 @@ void ProjectManagerWindow::Imgui() {
         FileDialog::DisplayWithCallback("Choose Dir",
                                         [](auto filePath, auto fileName)
         {
-                                            Window::SetShowingTopWindow(false);
-            util::Println("New:", filePath);
-            projectLocation = filePath;
+            util::Println("New:", fileName);
+            Setting::PROJECT_ROOT = fileName;
+            ProjectManagerWindow::shouldOpen = false;
+            // TODO 创建项目文件夹
+            std::filesystem::create_directory(fileName);
         });
     }
 
@@ -36,9 +40,11 @@ void ProjectManagerWindow::Imgui() {
         FileDialog::DisplayWithCallback("Choose Dir",
                                         [](auto filePath, auto fileName)
         {
-                                            Window::SetShowingTopWindow(false);
             util::Println("Load:", filePath);
-            projectLocation = filePath;
+            Setting::PROJECT_ROOT = filePath;
+            ProjectManagerWindow::shouldOpen = false;
+            auto scene = MainWindow::GetScene();
+            if (scene) scene->RemoveAllNodes();
         });
     }
 

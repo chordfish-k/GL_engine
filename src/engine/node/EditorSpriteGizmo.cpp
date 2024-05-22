@@ -5,6 +5,7 @@
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/editor/GameViewWindow.hpp"
+#include "engine/core/MainWindow.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/vector_angle.hpp>
@@ -63,8 +64,8 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
 
 
     // 画外框，顺便画圆圈
-    auto pSize = Window::GetScene()->GetCamera()->GetProjectionSize();
-    auto zoom = Window::GetScene()->GetCamera()->GetZoom();
+    auto pSize = MainWindow::GetScene()->GetCamera()->GetProjectionSize();
+    auto zoom = MainWindow::GetScene()->GetCamera()->GetZoom();
     circleR = 0.008f * zoom * (pSize.x < pSize.y ? pSize.x : pSize.y); // 圆圈半径
     scaleCircleCenter.clear();
     rotateCircleCenter.clear();
@@ -230,14 +231,14 @@ void EditorSpriteGizmo::CheckAndApplyScale() {
             if (fa >= 0.01f) {
                 if (fa > 90) sign = -1;
 
-                auto distance = glm::sqrt(dp.x*dp.x + dp.y*dp.y) * 0.3f;
+                auto distance = glm::sqrt(dp.x*dp.x + dp.y*dp.y) * 0.03f;
                 float value = sign * distance;
 
 
                 if (selectedPointIndex % 2 == 0)
-                    activeNode->transform.scale.x += value / activeNode->GetTransform().scale.x;
+                    activeNode->transform.scale.x += value;
                 else
-                    activeNode->transform.scale.y += value / activeNode->GetTransform().scale.y;
+                    activeNode->transform.scale.y += value;
             }
         }
         else {

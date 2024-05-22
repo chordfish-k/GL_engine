@@ -7,7 +7,6 @@
 #include "engine/core/ASerializableObj.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/core/Transform.hpp"
-#include "engine/core/Window.hpp"
 #include "engine/renderer/Renderer.hpp"
 #include "engine/editor/MyImGui.hpp"
 #include "engine/renderer/Color.hpp"
@@ -218,11 +217,6 @@ protected:
 //                        t->Imgui();
 //                    }
 //                }
-
-                else if (value.is_type<Sprite*>()) {
-                    Sprite *t = value.get_value<Sprite*>();
-                    t->Imgui();
-                }
             }
         }
     }

@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/renderer/PickingTexture.hpp"
