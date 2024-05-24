@@ -10,9 +10,10 @@ private:
 //    std::vector<Sprite *> sprites;
     std::vector<std::vector<glm::vec2>> texCoordsEachSprite;
     int spriteWidth, spriteHeight;
+    int columns, rows;
 public:
     Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
-                int numSprite, int spacing);
+                int numSprite);
 
     Sprite *GetSprite(unsigned int index);
 
@@ -21,4 +22,8 @@ public:
     int Size() {
         return texCoordsEachSprite.size();
     }
+
+    int GetColumns() {return columns;}
+
+    int GetRows() {return rows;}
 };

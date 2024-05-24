@@ -28,7 +28,7 @@ void Animation::ApplyModifyToSprite(Sprite *sprite) {
 }
 
 void Animation::Imgui() {
-    ImGui::SetNextItemOpen(true);
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::TreeNode("Animation")) {
         int hFrames_ = GetHFrames();
         int vFrames_ = GetVFrames();

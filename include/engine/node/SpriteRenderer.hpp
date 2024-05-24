@@ -60,6 +60,16 @@ public:
 
     SpriteRenderer *SetSprite(Sprite *sprite);
 
+    Animation *GetAnimation() {
+        return animation;
+    }
+
+    void SetAnimation(const Animation &ani) {
+        animation->hFrames = ani.hFrames;
+        animation->vFrames = ani.vFrames;
+        animation->frame = ani.frame;
+    }
+
     bool IsDirty() const { return isDirty; }
 
     void SetDirty() { isDirty = true; }

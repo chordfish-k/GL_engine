@@ -23,9 +23,9 @@ void EditorSpriteGizmo::Update(float dt) {
         return;
     }
 
+    DrawBorderAndPoints();
     if (!GameViewWindow::GetWantCaptureMouse()) return;
 
-    DrawBorderAndPoints();
     CheckAndApplyMove();
     CheckAndApplyRotation();
     CheckAndApplyScale();

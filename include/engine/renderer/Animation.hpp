@@ -13,7 +13,11 @@ private:
     bool modified = false;
 public:
     friend class SpriteRenderer;
+
     Animation() :hFrames(1), vFrames(1), frame(0){}
+
+    Animation(int hFrames, int vFrames, int frame)
+        :hFrames(hFrames), vFrames(vFrames), frame(frame){}
 
     void ApplyModifyToSprite(Sprite *sprite);
 

@@ -3,11 +3,15 @@
 #include <vector>
 
 Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
-                         int numSprite, int spacing)
+                         int numSprite)
     : texture(texture), spriteWidth(spriteWidth), spriteHeight(spriteHeight){
     // 当前坐标指针，初始化取左上角第一格的左下角
     int currentX = 0;
     int currentY = texture->GetHeight() - spriteHeight;
+
+    columns = texture->GetWidth() / spriteWidth;
+    rows = texture->GetHeight() / spriteHeight;
+
     // 创建numSprites个sprite;
     for (int i = 0; i < numSprite; i++) {
         // 将坐标缩到[0,1]区间，作为texCoords
@@ -22,18 +26,13 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
             glm::vec2(leftX, bottomY),
             glm::vec2(leftX, topY),
         };
-//        Sprite *sprite = new Sprite();
-//        sprite->SetTexture(texture);
-//        sprite->SetWidth(spriteWidth);
-//        sprite->SetHeight(spriteHeight);
-//        sprite->SetTexCoords(texCoords);
-//        sprites.push_back(sprite);
+
         texCoordsEachSprite.push_back(texCoords);
         // 移动当前坐标指针
-        currentX += spriteHeight + spacing;
+        currentX += spriteHeight;
         if (currentX >= texture->GetWidth()) {
             currentX = 0;
-            currentY -= spriteHeight + spacing;
+            currentY -= spriteHeight;
         }
     }
 }
