@@ -29,6 +29,12 @@ void Node::Update(float dt) {
     }
 }
 
+void Node::EditorUpdate(float dt) {
+    for (auto go : children) {
+        go->EditorUpdate(dt);
+    }
+}
+
 void Node::CheckDelete() {
     auto renderer = MainWindow::GetScene()->GetRenderer();
     auto &ch = children;
@@ -150,10 +156,6 @@ bool Node::IsChildOf(Node *p) {
     return parent->IsChildOf(p);
 }
 
-//void Node::Imgui() {
-//    ShowNodeProperties();
-//}
-
 Node *Node::AddNode(Node *comp) {
     children.push_back(comp);
     comp->parent = this;
@@ -218,3 +220,4 @@ Transform Node::GetTransformByModelMatrix(const glm::mat4 &mat) {
     t.rotation = eulerAngleDegrees.z;
     return t;
 }
+

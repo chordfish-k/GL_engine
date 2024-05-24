@@ -50,6 +50,8 @@ public:
 
     virtual void Update(float dt);
 
+    virtual void EditorUpdate(float dt);
+
     void CheckDelete();
 
 //    void Imgui() override;

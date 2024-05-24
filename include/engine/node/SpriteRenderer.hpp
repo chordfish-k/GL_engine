@@ -35,6 +35,8 @@ public:
 
     void Update(float dt) override;
 
+    void EditorUpdate(float dt) override;
+
     // 属性
     Color GetColor() { return color; }
 

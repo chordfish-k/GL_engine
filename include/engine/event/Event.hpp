@@ -5,7 +5,9 @@ enum EventType {
     SaveScene,
     CloseProject,
     LoadScene,
-    CloseTopWindow
+    CloseTopWindow,
+    GameEngineStartPlay,
+    GameEngineStopPlay
 };
 
 struct Event {

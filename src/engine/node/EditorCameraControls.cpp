@@ -9,7 +9,7 @@ EditorCameraControls::EditorCameraControls(Camera *editorCamera) {
     this->clickOrigin = {0, 0};
 }
 
-void EditorCameraControls::Update(float dt) {
+void EditorCameraControls::EditorUpdate(float dt) {
     if (!editorCamera || !GameViewWindow::GetWantCaptureMouse())
         return;
 

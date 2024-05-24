@@ -22,7 +22,7 @@ private:
     int selectedPointIndex = -1;
 
 public:
-    void Update(float dt) override;
+    void EditorUpdate(float dt) override;
 
 private:
     void DrawBorderAndPoints();
@@ -31,4 +31,4 @@ private:
 
     void CheckAndApplyRotation();
     void CheckAndApplyScale();
-    };
+};

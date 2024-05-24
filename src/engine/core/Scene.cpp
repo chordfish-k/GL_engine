@@ -42,7 +42,11 @@ void Scene::Start() {
 void Scene::Update(float dt) {
     root->Update(dt);
     root->CheckDelete();
-    Render();
+}
+
+void Scene::EditorUpdate(float dt) {
+    root->EditorUpdate(dt);
+    root->CheckDelete();
 }
 
 void Scene::AddNode(Node *n) const {

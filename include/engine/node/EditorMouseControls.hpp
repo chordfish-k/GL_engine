@@ -12,5 +12,5 @@ public:
 
     void PlaceObject();
 
-    void Update(float dt) override;
+    void EditorUpdate(float dt) override;
 };

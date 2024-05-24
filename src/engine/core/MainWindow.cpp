@@ -61,13 +61,23 @@ void MainWindow::Loop() {
         glClearColor(r, g, b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        DebugDraw::BeginFrame();
 
         // 更新当前场景
         Renderer::BindShader(defaultShader);
         if (dt >= 0) {
-            currentScene->Update(dt);
-            DebugDraw::Draw();
+            if (!runtimePlaying) {
+                currentScene->EditorUpdate(dt);
+                currentScene->Render();
+
+                DebugDraw::BeginFrame();
+                DebugDraw::Draw();
+
+            } else {
+                currentScene->Update(dt);
+                currentScene->Render();
+
+            }
+
         }
 
         frameBuffer->Unbind();
@@ -211,12 +221,22 @@ void MainWindow::Notify(Node *node, Event event) {
             Setting::PROJECT_ROOT = "";
         }
         break;
+
     case LoadScene:
         ProjectManagerWindow::shouldOpen = true;
         break;
+
     case CloseTopWindow:
         if (ProjectManagerWindow::shouldOpen)
             ProjectManagerWindow::shouldOpen = false;
+        break;
+
+    case GameEngineStartPlay:
+        runtimePlaying = true;
+        break;
+
+    case GameEngineStopPlay:
+        runtimePlaying = false;
         break;
     }
 }

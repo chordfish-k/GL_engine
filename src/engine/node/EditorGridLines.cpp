@@ -1,7 +1,7 @@
 #include "engine/node/EditorGridLines.hpp"
 #include "engine/core/MainWindow.hpp"
 
-void EditorGridLines::Update(float dt) {
+void EditorGridLines::EditorUpdate(float dt) {
     Node::Update(dt);
 
     auto camera = MainWindow::GetScene()->GetCamera();

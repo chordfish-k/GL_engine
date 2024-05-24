@@ -41,6 +41,8 @@ public:
 
     virtual void Update(float dt);
 
+    virtual void EditorUpdate(float dt);
+
     void SceneImgui();
 
     virtual void Imgui();

@@ -16,7 +16,7 @@ void EditorMouseControls::PlaceObject() {
     this->holdingNode = nullptr;
 }
 
-void EditorMouseControls::Update(float dt){
+void EditorMouseControls::EditorUpdate(float dt){
     Node::Update(dt);
     if (holdingNode == nullptr)
         return;

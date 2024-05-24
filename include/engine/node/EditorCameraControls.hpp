@@ -20,5 +20,5 @@ public:
 
     void SetEditorCamera(Camera *editorCamera);
 
-    void Update(float dt) override;
+    void EditorUpdate(float dt) override;
 };

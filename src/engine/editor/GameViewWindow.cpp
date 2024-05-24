@@ -21,11 +21,11 @@ void GameViewWindow::Imgui() {
     ImGui::BeginMenuBar();
     if (ImGui::MenuItem("Play", "", isPlaying, !isPlaying)) {
         isPlaying = true;
-//        EventSystem.notify(null, new Event(EventType.GameEngineStartPlay));
+        EventSystem::Notify(nullptr, {EventType::GameEngineStartPlay});
     }
     if (ImGui::MenuItem("Stop", "", !isPlaying, isPlaying)) {
         isPlaying = false;
-//        EventSystem.notify(null, new Event(EventType.GameEngineStopPlay));
+        EventSystem::Notify(nullptr, {EventType::GameEngineStopPlay});
     }
     ImGui::EndMenuBar();
 

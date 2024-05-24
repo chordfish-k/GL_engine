@@ -1,4 +1,4 @@
-#include "engine/core/ManagerWindow.hpp"
+﻿#include "engine/core/ManagerWindow.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/KeyListener.hpp"
 
@@ -8,36 +8,6 @@ ManagerWindow::ManagerWindow() {
 }
 
 void ManagerWindow::Run() {
-//    util::Println("Hello", "!");
-//
-//    Init();
-//
-//    // gui
-//    IMGUI_CHECKVERSION();
-//    ImGui::CreateContext();
-//
-//    ImGuiIO &io = ImGui::GetIO();
-//    io.IniFilename = "imgui.ini";
-//    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-//    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-//    io.BackendPlatformName = "imgui_impl_glfw";
-//
-//    ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
-//    ImGui_ImplOpenGL3_Init("#version 330 core");
-//    //
-//    Loop();
-//
-//    //
-//    ImGui_ImplOpenGL3_Shutdown();
-//    ImGui_ImplGlfw_Shutdown();
-//    ImGui::DestroyContext();
-//
-//    // 释放内存
-//    glfwDestroyWindow(glfwWindow);
-//
-//    glfwTerminate();
-//    glfwSetErrorCallback(nullptr);
-    // 初始化GLFW
     if (!glfwInit())
         return;
 

@@ -7,6 +7,8 @@
 class MainWindow : public Window, public IObserver{
 protected:
     static MainWindow *window; // 单例模式
+    bool runtimePlaying = false; // 游戏运行
+
     Scene *currentScene = nullptr;
     ImguiLayer *imguiLayer = nullptr;
     FrameBuffer *frameBuffer = nullptr;

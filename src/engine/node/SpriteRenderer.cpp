@@ -34,6 +34,23 @@ void SpriteRenderer::Update(float dt) {
     Node::Update(dt);
 }
 
+void SpriteRenderer::EditorUpdate(float dt) {
+    Transform t = GetTransform();
+
+    // 监测Animation的变化，重设TexCoord
+    if (animation->IsModified()) {
+        animation->ApplyModifyToSprite(sprite);
+        isDirty = true;
+    }
+
+    if (!lastTransform.Equals(t)) {
+        GetTransform().CopyTo(lastTransform);
+        isDirty = true;
+    }
+
+    Node::EditorUpdate(dt);
+}
+
 SpriteRenderer *SpriteRenderer::SetSprite(Sprite *sprite) {
     if (this->sprite == sprite) return this;
     delete this->sprite;

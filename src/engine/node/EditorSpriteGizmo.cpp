@@ -10,7 +10,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/vector_angle.hpp>
 
-void EditorSpriteGizmo::Update(float dt) {
+void EditorSpriteGizmo::EditorUpdate(float dt) {
     lastActiveNode = activeNode;
     activeNode = PropertiesWindow::GetActiveNode();
     if (lastActiveNode != activeNode) {

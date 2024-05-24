@@ -7,5 +7,5 @@
 
 COMPONENT(EditorGridLines)
 public:
-    void Update(float dt) override;
+    void EditorUpdate(float dt) override;
 };
