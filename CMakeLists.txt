@@ -9,6 +9,7 @@ aux_source_directory(src/engine/renderer SOURCES)
 aux_source_directory(src/engine/node SOURCES)
 aux_source_directory(src/engine/editor SOURCES)
 aux_source_directory(src/engine/util SOURCES)
+aux_source_directory(src/engine/event SOURCES)
 
 file(GLOB_RECURSE HEADERS "./include/*.hpp")
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})

@@ -1,7 +1,10 @@
 ﻿#pragma once
 
-#include "Window.hpp"
-class MainWindow : public Window {
+#include "engine/core/Window.hpp"
+#include "engine/event/IObserver.hpp"
+#include "engine/event/EventSystem.hpp"
+
+class MainWindow : public Window, public IObserver{
 protected:
     static MainWindow *window; // 单例模式
     Scene *currentScene = nullptr;
@@ -14,6 +17,7 @@ protected:
         width = Setting::WINDOW_W;
         height=Setting::WINDOW_H;
         title="Window";
+        EventSystem::AddObserver(this);
     }
 
 public:
@@ -28,6 +32,8 @@ public:
     void Loop() override;
 
     static void ChangeScene(ASceneInitializer *sceneInitializer);
+
+    void Notify(Node *node, Event event) override;
 
     // 属性
     static void SetTitle(const std::string &title) { Get()->title = title; }

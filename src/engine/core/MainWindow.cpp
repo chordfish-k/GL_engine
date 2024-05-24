@@ -6,6 +6,7 @@
 #include "engine/core/EditorSceneInitializer.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
+#include "engine/editor/ProjectManagerWindow.hpp"
 
 MainWindow *MainWindow::window = nullptr;
 
@@ -190,4 +191,23 @@ void MainWindow::ChangeScene(ASceneInitializer *sceneInitializer) {
 
 GLFWwindow *MainWindow::GetGlfwWindow(){
     return Get()->glfwWindow;
+}
+
+void MainWindow::Notify(Node *node, Event event) {
+    switch (event.type) {
+
+    case SaveScene:
+        if (currentScene) currentScene->Save();
+        break;
+
+    case CloseProject:
+        if (currentScene) {
+            currentScene->RemoveAllNodes();
+            Setting::PROJECT_ROOT = "";
+        }
+        break;
+    case LoadScene:
+        ProjectManagerWindow::shouldOpen = true;
+        break;
+    }
 }
