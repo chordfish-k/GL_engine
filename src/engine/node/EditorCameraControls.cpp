@@ -46,7 +46,7 @@ void EditorCameraControls::Update(float dt) {
     }
 
     // 小数点键：返回原点坐标
-    if (KeyListener::IsKeyPressed(GLFW_KEY_KP_DECIMAL)) {
+    if (KeyListener::IsKeyDown(GLFW_KEY_KP_DECIMAL)) {
         reset = true;
     }
 

@@ -9,7 +9,7 @@ private:
     static KeyListener *instance; // 单例
 
     bool keyPressed[KEY_NUM] = {false};
-    bool keyBeginPress[KEY_NUM] = {false};
+    bool lastKeyPressed[KEY_NUM] = {false};
 
     KeyListener() {}
 
@@ -19,5 +19,11 @@ public:
     static void KeyCallback(GLFWwindow *window, int key, int scancode,
                             int action, int mods);
 
+    static void EndFrame();
+
+    static bool IsKeyDown(int keyCode);
+
     static bool IsKeyPressed(int keyCode);
+
+    static void DoShortcutKeys();
 };

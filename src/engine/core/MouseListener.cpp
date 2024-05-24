@@ -63,7 +63,7 @@ void MouseListener::EndFrame() {
     Get()->lastY = Get()->yPos;
     Get()->lastWorldX = Get()->worldX;
     Get()->lastWorldY = Get()->worldY;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < MOUSE_NUM; i++) {
         Get()->lastMouseButtonPressed[i] = Get()->mouseButtonPressed[i];
     }
 }

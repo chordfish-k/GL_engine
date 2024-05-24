@@ -12,7 +12,7 @@ void ProjectManagerWindow::Imgui() {
 
     if (!shouldOpen && !Setting::PROJECT_ROOT.empty()) return;
 
-    ImGui::Begin("Projects", NULL,
+    ImGui::Begin("Projects", &shouldOpen,
                  ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoScrollWithMouse |
                      ImGuiWindowFlags_MenuBar |

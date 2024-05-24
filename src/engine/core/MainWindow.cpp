@@ -36,6 +36,10 @@ void MainWindow::Loop() {
         // 轮询事件
         glfwPollEvents();
 
+        // 更新事件
+        // 快捷键事件
+        KeyListener::DoShortcutKeys();
+
         // 渲染到拾取纹理
         glDisable(GL_BLEND);
         pickingTexture->EnableWriting();
@@ -74,6 +78,7 @@ void MainWindow::Loop() {
         glfwSwapBuffers(glfwWindow); // 双缓冲交换
 
         MouseListener::EndFrame();
+        KeyListener::EndFrame();
 
         // 计算dt
         endTime = (float)glfwGetTime();
@@ -208,6 +213,10 @@ void MainWindow::Notify(Node *node, Event event) {
         break;
     case LoadScene:
         ProjectManagerWindow::shouldOpen = true;
+        break;
+    case CloseTopWindow:
+        if (ProjectManagerWindow::shouldOpen)
+            ProjectManagerWindow::shouldOpen = false;
         break;
     }
 }
