@@ -7,8 +7,9 @@
 class Spritesheet {
 private:
     Texture *texture;
-    std::vector<Sprite *> sprites;
-
+//    std::vector<Sprite *> sprites;
+    std::vector<std::vector<glm::vec2>> texCoordsEachSprite;
+    int spriteWidth, spriteHeight;
 public:
     Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
                 int numSprite, int spacing);
@@ -18,6 +19,6 @@ public:
     // 属性
     
     int Size() {
-        return sprites.size();
+        return texCoordsEachSprite.size();
     }
 };

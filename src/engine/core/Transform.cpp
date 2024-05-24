@@ -34,9 +34,10 @@ bool Transform::Equals(Transform &t) {
 
 void Transform::Imgui() {
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader("Transform")) {
+    if (ImGui::TreeNode("Transform")) {
         MyImGui::DrawVec2Control("position", position, 0, 0.5f);
         MyImGui::DrawVec2Control("scale", scale, 0, 0.05f);
         MyImGui::DrawFloatControl("rotation", rotation);
+        ImGui::TreePop();
     }
 }

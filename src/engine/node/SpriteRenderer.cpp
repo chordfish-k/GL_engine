@@ -6,7 +6,10 @@
 
 SpriteRenderer::SpriteRenderer() {}
 
-SpriteRenderer::~SpriteRenderer() {}
+SpriteRenderer::~SpriteRenderer() {
+    delete sprite;
+    delete animation;
+}
 
 void SpriteRenderer::Start() {
     lastTransform = GetTransform().Copy();
@@ -16,6 +19,13 @@ void SpriteRenderer::Start() {
 
 void SpriteRenderer::Update(float dt) {
     Transform t = GetTransform();
+
+    // 监测Animation的变化，重设TexCoord
+    if (animation->IsModified()) {
+        animation->ApplyModifyToSprite(sprite);
+        isDirty = true;
+    }
+
     if (!lastTransform.Equals(t)) {
         GetTransform().CopyTo(lastTransform);
         isDirty = true;
@@ -26,9 +36,9 @@ void SpriteRenderer::Update(float dt) {
 
 SpriteRenderer *SpriteRenderer::SetSprite(Sprite *sprite) {
     if (this->sprite == sprite) return this;
+    delete this->sprite;
     this->sprite = sprite;
     this->isDirty = true;
-    sprite->spriteRenderer = this;
     return this;
 }
 
@@ -69,7 +79,8 @@ json SpriteRenderer::Serialize() {
     j["data"]["centered"] = IsCentered();
     j["data"]["color"] = {color.r, color.g, color.b, color.a};
     j["data"]["offset"] = {offset.x, offset.y};
-    j["data"]["sprite"] = sprite->Serialize();
+    j["data"]["texture"] = sprite->Serialize();
+    j["data"]["animation"] = animation->Serialize();
     return j;
 }
 SpriteRenderer *SpriteRenderer::Deserialize(json j) {
@@ -91,30 +102,42 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
     if (!o.empty())
         SetOffset(glm::vec2(o[0], o[1]));
 
-    auto &sp = data["sprite"];
-    auto *sprite = new Sprite();
+    auto &sp = data["texture"];
     if (!sp.empty())
         sprite->Deserialize(sp);
 
-    SetSprite(sprite);
+    auto &an = data["animation"];
+    if (!an.empty())
+        animation->Deserialize(an);
 
     return this;
 }
 
-void SpriteRenderer::Imgui() {
-    Node::Imgui<SpriteRenderer>();
+void SpriteRenderer::Imgui(){
+    Node::Imgui();
 
-    auto te = GetTexture();
-    std::string filePath = te ? te->GetFilePath() : "";
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
 
-    if (MyImGui::DrawResourceDragDropBox("sprite",filePath)) {
-        auto tex = AssetPool::GetTexture(filePath);
-        auto sp = new Sprite();
-        sp->SetTexture(tex);
+        ShowImgui();
 
-        auto spr = this;
-        spr->SetSprite(sp);
-        MainWindow::GetScene()->GetRenderer()->Remove(spr);
-        MainWindow::GetScene()->GetRenderer()->Add(spr);
+        auto te = GetTexture();
+        std::string filePath = te ? te->GetFilePath() : "";
+
+        if (MyImGui::DrawResourceDragDropBox("texture",filePath)) {
+            auto tex = AssetPool::GetTexture(filePath);
+            auto sp = new Sprite();
+            sp->SetTexture(tex);
+
+            auto spr = this;
+            spr->SetSprite(sp);
+            MainWindow::GetScene()->GetRenderer()->Remove(spr);
+            MainWindow::GetScene()->GetRenderer()->Add(spr);
+        }
+
+        animation->Imgui();
     }
+
+
+
 }

@@ -4,7 +4,7 @@
 
 Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
                          int numSprite, int spacing)
-    : texture(texture) {
+    : texture(texture), spriteWidth(spriteWidth), spriteHeight(spriteHeight){
     // 当前坐标指针，初始化取左上角第一格的左下角
     int currentX = 0;
     int currentY = texture->GetHeight() - spriteHeight;
@@ -22,12 +22,13 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
             glm::vec2(leftX, bottomY),
             glm::vec2(leftX, topY),
         };
-        Sprite *sprite = new Sprite();
-        sprite->SetTexture(texture);
+//        Sprite *sprite = new Sprite();
+//        sprite->SetTexture(texture);
 //        sprite->SetWidth(spriteWidth);
 //        sprite->SetHeight(spriteHeight);
-        sprite->SetTexCoords(texCoords);
-        sprites.push_back(sprite);
+//        sprite->SetTexCoords(texCoords);
+//        sprites.push_back(sprite);
+        texCoordsEachSprite.push_back(texCoords);
         // 移动当前坐标指针
         currentX += spriteHeight + spacing;
         if (currentX >= texture->GetWidth()) {
@@ -38,5 +39,10 @@ Spritesheet::Spritesheet(Texture *texture, int spriteWidth, int spriteHeight,
 }
 
 Sprite *Spritesheet::GetSprite(unsigned int index) {
-    return sprites[index];
+    Sprite *sprite = new Sprite();
+            sprite->SetTexture(texture);
+            sprite->SetWidth(spriteWidth);
+            sprite->SetHeight(spriteHeight);
+            sprite->SetTexCoords(texCoordsEachSprite[index]);
+    return sprite;
 }

@@ -3,7 +3,7 @@
 #include <rttr/registration>
 
 class AGuiObj {
-    RTTR_ENABLE();
+//    RTTR_ENABLE();
 public:
     virtual void Imgui() = 0;
 };

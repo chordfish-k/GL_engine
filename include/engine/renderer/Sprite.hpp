@@ -16,7 +16,6 @@ private:
     std::vector<glm::vec2> texCoords = {glm::vec2(1, 1), glm::vec2(1, 0),
                                         glm::vec2(0, 0), glm::vec2(0, 1)};
     Texture *texture = nullptr;
-    SpriteRenderer *spriteRenderer = nullptr;
 
 public:
     json Serialize() override;
@@ -37,7 +36,7 @@ public:
         texCoords[3] = glm::vec2(0, 1);
     }
 
-    void SetTexCoords(std::vector<glm::vec2> texCoords) {
+    void SetTexCoords(const std::vector<glm::vec2> &texCoords) {
         this->texCoords.assign(texCoords.begin(), texCoords.end());
     }
 
@@ -59,9 +58,5 @@ public:
 
     unsigned int GetTexId() {
         return texture == nullptr ? 0 : texture->GetId();
-    }
-
-    SpriteRenderer *GetSpriteRenderer() {
-        return spriteRenderer;
     }
 };

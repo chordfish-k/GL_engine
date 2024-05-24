@@ -150,9 +150,9 @@ bool Node::IsChildOf(Node *p) {
     return parent->IsChildOf(p);
 }
 
-void Node::Imgui() {
-    ShowNodeProperties();
-}
+//void Node::Imgui() {
+//    ShowNodeProperties();
+//}
 
 Node *Node::AddNode(Node *comp) {
     children.push_back(comp);
@@ -177,11 +177,6 @@ bool Node::IsPickable() const {
 
 void Node::SetIsPickable(bool isPickable) {
     Node::isPickable = isPickable;
-}
-
-void Node::ShowNodeProperties() {
-    //每个Node都有的Transform
-    transform.Imgui();
 }
 
 glm::mat4 Node::GetModelMatrix() {

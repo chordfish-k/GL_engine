@@ -14,7 +14,7 @@
 class MyImGui {
 public:
 
-    static bool DrawIntControl(const std::string& label, int &values) {
+    static bool DrawIntSpinner(const std::string& label, int &values, int v_min=INT32_MIN, int v_max=INT32_MAX) {
         bool res = false;
         auto lb = label.c_str();
         ImGui::PushID(lb);
@@ -25,7 +25,30 @@ public:
         ImGui::NextColumn();
 
         ImGui::PushItemWidth(-1);
-        res = ImGui::DragInt("##dragInt", &values, 0.1f);
+        int v = values;
+        res = ImGui::InputInt("##dragInt", &v);
+        if (v >= v_min && v <= v_max)
+            values = v;
+
+        ImGui::PopItemWidth();
+
+        ImGui::Columns(1);
+        ImGui::PopID();
+        return res;
+    }
+
+    static bool DrawIntControl(const std::string& label, int &values, int v_speed = 1, int v_min=0, int v_max=0) {
+        bool res = false;
+        auto lb = label.c_str();
+        ImGui::PushID(lb);
+
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+        ImGui::Text("%s", lb);
+        ImGui::NextColumn();
+
+        ImGui::PushItemWidth(-1);
+        res = ImGui::DragInt("##dragInt", &values, (float)v_speed, v_min, v_max);
         ImGui::PopItemWidth();
 
         ImGui::Columns(1);

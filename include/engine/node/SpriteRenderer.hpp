@@ -5,6 +5,7 @@
 #include "engine/node/Node.hpp"
 #include "engine/core/Transform.hpp"
 #include "engine/renderer/Color.hpp"
+#include "engine/renderer/Animation.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,12 +16,15 @@ class Texture;
 
 COMPONENT(SpriteRenderer)
 private:
+    Transform lastTransform;
+    bool isDirty = true; // 脏标记，表示数据有变化
+
+protected:
+    bool centered = true; // 从纹理的正中心开始算offset
     Color color = {1, 1, 1, 1};
     Sprite *sprite = new Sprite();
     glm::vec2 offset = glm::vec2(0, 0);
-    Transform lastTransform;
-    bool centered = true; // 从纹理的正中心开始算offset
-    bool isDirty = true; // 脏标记，表示数据有变化
+    Animation *animation = new Animation();
 
 public:
     SpriteRenderer();
