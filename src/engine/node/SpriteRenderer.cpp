@@ -133,11 +133,11 @@ void SpriteRenderer::Imgui(){
             spr->SetSprite(sp);
             MainWindow::GetScene()->GetRenderer()->Remove(spr);
             MainWindow::GetScene()->GetRenderer()->Add(spr);
+
+            // 重置animation
+            animation->Reset();
         }
 
         animation->Imgui();
     }
-
-
-
 }

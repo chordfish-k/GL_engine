@@ -7,6 +7,17 @@
 RTTR_REGISTRATION  {
 
 //    rttr::registration::class_<AGuiObj>("AGuiObj");
+    rttr::registration::class_<Transform>("Transform")
+        .constructor<>()
+        .property("position", &Transform::position)
+        .property("scale", &Transform::scale)
+        .property("rotation", &Transform::rotation);
+
+    rttr::registration::class_<Animation>("Animation")
+        .constructor<>()
+        .property("hFrames", &Animation::GetHFrames, &Animation::SetHFrames)
+        .property("vFrames", &Animation::GetVFrames, &Animation::SetVFrames)
+        .property("frame", &Animation::GetFrame, &Animation::SetFrame);
 
     rttr::registration::class_<Node>("Node")
         .constructor<>()(
