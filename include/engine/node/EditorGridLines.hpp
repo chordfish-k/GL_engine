@@ -4,9 +4,10 @@
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Camera.hpp"
-#include "TileMap.hpp"
+#include "engine/node/TileMap.hpp"
 
-COMPONENT(EditorGridLines)
+class EditorGridLines : public Node {
+    COMPONENT(EditorGridLines)
 public:
     void EditorUpdate(float dt) override;
 

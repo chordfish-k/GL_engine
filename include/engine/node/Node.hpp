@@ -144,17 +144,9 @@ protected:
     void ShowImgui(std::vector<std::string> notShowFields = {});
 };
 
-#define COMPONENT(name_)                                \
-    class name_ : public Node {                         \
-    RTTR_ENABLE(Node)                                  \
-    public:                                             \
-        const std::string nodeType = #name_;            \
-        std::string GetNodeType() {return nodeType;}
-
-#define COMPONENT_E(name_, parent)                        \
-    class name_ : public Parent {                       \
-    RTTR_ENABLE(parent)                                \
-    public:                                             \
-        const std::string nodeType = #name_;            \
-        std::string GetNodeType() {return nodeType;}
-
+#define COMPONENT(name_)                                        \
+    RTTR_ENABLE(Node)                                           \
+    public:                                                     \
+        const std::string nodeType = #name_;                    \
+        std::string GetNodeType() override {return nodeType;}   \
+    private:

@@ -52,7 +52,7 @@ void Renderer::Remove(SpriteRenderer *spr) {
 }
 
 void Renderer::DestroyNode(Node *node) {
-    if (node->GetNodeType() != "SpriteRenderer") return;
+    if (dynamic_cast<SpriteRenderer*>(node) == nullptr) return;
     for (auto n : node->children) {
         DestroyNode(n);
     }

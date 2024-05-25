@@ -30,7 +30,7 @@ void ProjectManagerWindow::Imgui() {
             util::Println("New:", fileName);
             Setting::PROJECT_ROOT = fileName;
             ProjectManagerWindow::shouldOpen = false;
-            // TODO 创建项目文件夹
+
             std::filesystem::create_directory(fileName);
         });
     }

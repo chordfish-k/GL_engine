@@ -238,7 +238,7 @@ void SceneHierarchyWindow::ShowAddNodePopup(Node *node) {
             auto instance = type.create().get_value<Node*>();
             auto parentNode = node;
             parentNode = parentNode == nullptr ? MainWindow::GetScene()->root : parentNode;
-            parentNode->AddNode(instance);
+            MainWindow::GetScene()->AddNodeAsChild(parentNode, instance);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();

@@ -42,4 +42,18 @@ RTTR_REGISTRATION  {
             )
         .property("cellWidth", &TileMap::GetCellWidth, &TileMap::SetCellWidth)
         .property("cellHeight", &TileMap::GetCellHeight, &TileMap::SetCellHeight);
+
+    rttr::registration::enumeration<BodyType>("BodyType")(
+        rttr::value("Kinematic", BodyType::Kinematic),
+        rttr::value("Dynamic", BodyType::Dynamic),
+        rttr::value("Static", BodyType::Static)
+    );
+
+    rttr::registration::class_<RigidBody2D>("RigidBody2D")
+        .constructor<>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+            )
+        .property("mass", &RigidBody2D::GetMass, &RigidBody2D::SetMass)
+        .property("velocity", &RigidBody2D::GetVelocity, &RigidBody2D::SetVelocity)
+        .property("bodyType", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType);
 }

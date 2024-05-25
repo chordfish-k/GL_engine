@@ -3,7 +3,8 @@
 #include "engine/node/Node.hpp"
 #include "engine/core/Camera.hpp"
 
-COMPONENT(EditorCameraControls)
+class EditorCameraControls : public Node {
+    COMPONENT(EditorCameraControls)
 private:
     Camera *editorCamera = nullptr;
     glm::vec2 clickOrigin{};

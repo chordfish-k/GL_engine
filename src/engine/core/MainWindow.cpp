@@ -72,6 +72,9 @@ void MainWindow::Loop() {
             } else {
                 currentScene->Update(dt);
                 currentScene->Render();
+
+                DebugDraw::BeginFrame();
+                DebugDraw::Draw();
             }
         }
 
@@ -88,6 +91,17 @@ void MainWindow::Loop() {
         endTime = (float)glfwGetTime();
         dt = endTime - beginTime;
         beginTime = endTime;
+
+        static int frameCount = 0;
+        static float tDt = 0;
+        if (frameCount == 10) {
+            glfwSetWindowTitle(glfwWindow,
+                               ("FPS: " + std::to_string(frameCount / tDt)).c_str());
+            frameCount = 0;
+            tDt = 0;
+        }
+        tDt += dt;
+        frameCount++;
     }
 }
 
@@ -134,7 +148,7 @@ void MainWindow::Init() {
     // 使opengl上下文成为当前上下文
     glfwMakeContextCurrent(glfwWindow);
     // 启用v-sync垂直同步，帧刷新率尽量高
-    glfwSwapInterval(1);
+//    glfwSwapInterval(1);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -224,11 +238,18 @@ void MainWindow::Notify(Node *node, Event event) {
         break;
 
     case GameEngineStartPlay:
-        runtimePlaying = true;
+        if (currentScene) {
+            currentScene->Save();
+            runtimePlaying = true;
+        }
         break;
 
     case GameEngineStopPlay:
-        runtimePlaying = false;
+        if (currentScene) {
+            runtimePlaying = false;
+            ChangeScene(new EditorSceneInitializer(
+                currentScene->GetSceneInitializer()->GetFilePath()));
+        }
         break;
     }
 }

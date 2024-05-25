@@ -42,7 +42,6 @@ void EditorCameraControls::EditorUpdate(float dt) {
                                          1 / editorCamera->GetZoom());
         addValue *= -(float)(MouseListener::GetScrollY() >= 0 ? 1 : -1);
         editorCamera->AddZoom(addValue);
-        editorCamera->AdjustProjection();
     }
 
     // 小数点键：返回原点坐标
@@ -62,7 +61,6 @@ void EditorCameraControls::EditorUpdate(float dt) {
             editorCamera->SetZoom(1.0f);
             reset = false;
         }
-        editorCamera->AdjustProjection();
     }
 }
 

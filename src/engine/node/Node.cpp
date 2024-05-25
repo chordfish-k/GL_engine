@@ -9,7 +9,11 @@
 int Node::ID_COUNTER = 0;
 
 Node::~Node(){
+    auto renderer = MainWindow::GetScene()->GetRenderer();
+    auto physics2D = MainWindow::GetScene()->GetPhysics2D();
     for (auto &c : children) {
+        renderer->DestroyNode(c);
+        physics2D->DestroyNode(c);
         delete c;
     }
     if (PropertiesWindow::GetActiveNode() == this) {
@@ -36,7 +40,8 @@ void Node::EditorUpdate(float dt) {
 }
 
 void Node::CheckDelete() {
-    auto renderer = MainWindow::GetScene()->GetRenderer();
+//    auto renderer = MainWindow::GetScene()->GetRenderer();
+//    auto physics2D = MainWindow::GetScene()->GetPhysics2D();
     auto &ch = children;
 
     for (auto it = ch.begin(); it != ch.end();) {
@@ -45,7 +50,8 @@ void Node::CheckDelete() {
         go->CheckDelete();
 
         if (go->ShouldDestroy()) {
-            renderer->DestroyNode(go);
+//            renderer->DestroyNode(go);
+//            physics2D->DestroyNode(go);
             it = ch.erase(it);
             delete go;
         } else {
@@ -306,6 +312,37 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
             if (MyImGui::DrawColor4Control(std::string(p.get_name()),
                                            v4)) {
                 p.set_value(obj, Color(v4.x, v4.y, v4.z, v4.w));
+            }
+        }
+        else if (value.is_type<BodyType>()) {
+            std::vector<std::string> enum_names;
+            std::vector<rttr::variant> enum_values;
+            auto type = rttr::type::get<BodyType>();
+            auto enumerators = type.get_enumeration().get_names();
+            int index = 0, currentIndex = 0;
+            BodyType now = value.get_value<BodyType>();
+
+            for (const auto&n : enumerators){
+                enum_names.emplace_back(n.data());
+                auto v = type.get_enumeration().name_to_value(n);
+                enum_values.push_back(v);
+                if (v == rttr::variant(now)) {
+                    index = currentIndex;
+                }
+                ++currentIndex;
+            }
+            // 使用 enum_names 的数据绘制 ImGui::Combo
+            if (ImGui::Combo("bodyType", &index, [](void* data, int idx, const char** out_text)
+                 {
+                     auto* names = static_cast<const std::vector<std::string>*>(data);
+                     if (idx < 0 || idx >= names->size())
+                         return false;
+                     *out_text = (*names)[idx].c_str();
+                     return true;
+                 }, static_cast<void*>(&enum_names), enum_names.size()))
+            {
+                BodyType selected_value = enum_values[index].get_value<BodyType>();
+                p.set_value(obj, selected_value);
             }
         }
     }

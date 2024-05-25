@@ -8,6 +8,7 @@ protected:
 
 public:
     ASceneInitializer(const std::string &filePath = ""):filePath(filePath){};
+    virtual ~ASceneInitializer() = default;
     virtual void Init(Scene *scene) = 0;
     virtual void LoadResources(Scene *scene) = 0;
     virtual void Imgui() = 0;

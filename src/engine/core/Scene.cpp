@@ -3,7 +3,6 @@
 #include "engine/renderer/Renderer.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Camera.hpp"
-#include "engine/node/Node.hpp"
 #include "engine/editor/ProjectManagerWindow.hpp"
 #include "engine/editor/ImGuiFileDialog.h"
 #include "engine/editor/FileDialog.hpp"
@@ -11,6 +10,7 @@
 Scene::Scene(ASceneInitializer *sceneInitializer)
     :sceneInitializer(sceneInitializer) {
     renderer = new Renderer();
+    physics2D = new Physics2D();
     root = new Node();
     sceneToolsRoot = new Node();
     sceneToolsRoot->SetDoSerialization(false);
@@ -21,11 +21,9 @@ Scene::Scene(ASceneInitializer *sceneInitializer)
 
 Scene::~Scene() {
     delete renderer;
-    renderer = nullptr;
+    delete physics2D;
     delete root;
-    root = nullptr;
     delete sceneInitializer;
-    sceneInitializer = nullptr;
 }
 
 void Scene::Init() {
@@ -40,11 +38,14 @@ void Scene::Start() {
 }
 
 void Scene::Update(float dt) {
+    camera->AdjustProjection();
+    physics2D->Update(dt);
     root->Update(dt);
     root->CheckDelete();
 }
 
 void Scene::EditorUpdate(float dt) {
+    camera->AdjustProjection();
     root->EditorUpdate(dt);
     root->CheckDelete();
 }
@@ -146,9 +147,14 @@ Renderer *Scene::GetRenderer() const {
     return renderer;
 }
 
+Physics2D *Scene::GetPhysics2D() const {
+    return physics2D;
+}
+
 void Scene::Render() {
     this->renderer->Render();
 }
+
 Node *Scene::GetNodeByUid(int uid) {
     Node *node = nullptr;
     root->TravelOnSubTree([&](auto n){
@@ -158,4 +164,8 @@ Node *Scene::GetNodeByUid(int uid) {
         }
     });
     return node;
+}
+
+ASceneInitializer *Scene::GetSceneInitializer() const {
+    return sceneInitializer;
 }

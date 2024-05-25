@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Node.hpp"
+#include "engine/node/Node.hpp"
 #include "engine/core/MouseListener.hpp"
 
-COMPONENT(EditorMouseControls)
+class EditorMouseControls : public Node {
+    COMPONENT(EditorMouseControls)
 protected:
     Node *holdingNode = nullptr;
 

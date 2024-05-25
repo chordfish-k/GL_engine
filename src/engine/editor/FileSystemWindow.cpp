@@ -211,8 +211,6 @@ void FileSystemWindow::ShowFilesAndDirs() {
 
                     if (ImGui::Button(("##"+name).c_str(), btnSize)){
                         // 处理按钮点击事件
-                        util::Println(name);
-                        // TODO 拖拽到SpriteRenderer属性面板，替换Sprite
                     }
 
                     ImGui::PopStyleColor(3);

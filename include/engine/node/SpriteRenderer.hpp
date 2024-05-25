@@ -14,7 +14,8 @@
 
 class Texture;
 
-COMPONENT(SpriteRenderer)
+class SpriteRenderer : public Node {
+    COMPONENT(SpriteRenderer)
 private:
     Transform lastTransform;
     bool isDirty = true; // 脏标记，表示数据有变化

@@ -1,8 +1,9 @@
 ﻿#pragma once
 
-#include "Node.hpp"
+#include "engine/node/Node.hpp"
 
-COMPONENT(EditorSpriteGizmo)
+class EditorSpriteGizmo : public Node {
+    COMPONENT(EditorSpriteGizmo)
 public:
     enum GizmoMode{
         NONE,

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Node.hpp"
+#include "engine/node/Node.hpp"
 
-COMPONENT(TileMap)
+class TileMap : public Node {
+    COMPONENT(TileMap)
 protected:
     int cellWidth = 16;
     int cellHeight = 16;

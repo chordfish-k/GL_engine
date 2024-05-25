@@ -1,6 +1,5 @@
 ﻿#include <filesystem>
 #include "engine/node/SpriteRenderer.hpp"
-#include "engine/editor/PropertiesWindow.hpp"
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/core/MainWindow.hpp"
 
@@ -13,7 +12,10 @@ SpriteRenderer::~SpriteRenderer() {
 
 void SpriteRenderer::Start() {
     lastTransform = GetTransform().Copy();
-    MainWindow::GetScene()->GetRenderer()->Add(this);
+    auto scene = MainWindow::GetScene();
+    if (scene != nullptr) {
+        scene->GetRenderer()->Add(this);
+    }
     Node::Start();
 }
 

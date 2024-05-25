@@ -3,6 +3,7 @@
 #include "engine/renderer/Renderer.hpp"
 #include "engine/core/ASerializableObj.hpp"
 #include "engine/core/ASceneInitializer.hpp"
+#include "engine/physics2D/Physics2D.hpp"
 #include <imgui.h>
 #include <vector>
 #include <fstream>
@@ -17,6 +18,7 @@ public:
 
 private:
     Renderer *renderer = nullptr;
+    Physics2D *physics2D = nullptr;
     Camera *camera = nullptr;
     bool isRunning = false;
     ASceneInitializer *sceneInitializer = nullptr;
@@ -59,7 +61,11 @@ public:
 
     Renderer *GetRenderer() const;
 
+    Physics2D *GetPhysics2D() const;
+
     void Render();
 
     Node *GetNodeByUid(int uid);
+
+    ASceneInitializer *GetSceneInitializer() const;
 };
