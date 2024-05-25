@@ -9,8 +9,6 @@ Renderer::Renderer() {}
 
 Renderer::~Renderer() {
     for (auto rb : batches) {
-        if (rb == nullptr)
-            continue;
         delete rb;
     }
 }

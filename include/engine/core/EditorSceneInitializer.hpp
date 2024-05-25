@@ -34,7 +34,9 @@ public:
     EditorSceneInitializer(const std::string &filePath = "")
         : ASceneInitializer(filePath){};
 
-    ~EditorSceneInitializer() = default;
+    ~EditorSceneInitializer() {
+
+    }
 
     void Init(Scene *scene) override {
         sprites = AssetPool::GetSpritesheet("assets/image/spritesheets/decorationsAndBlocks.png");
@@ -48,18 +50,9 @@ public:
     }
 
     void LoadResources(Scene *scene) override {
-//        AssetPool::GetShader("assets/shader/default.glsl");
-//        AssetPool::AddSpritesheet(
-//            "assets/image/spritesheet.png",
-//            new Spritesheet(
-//                AssetPool::GetTexture("assets/image/spritesheet.png"), 16, 16,
-//                26, 0));
         AssetPool::AddSpritesheet(
-            "assets/image/spritesheets/decorationsAndBlocks.png",
-            new Spritesheet(
-                AssetPool::GetTexture(
-                    "assets/image/spritesheets/decorationsAndBlocks.png"),
-                16, 16, 81));
+                    "assets/image/spritesheets/decorationsAndBlocks.png",
+                16, 16, 81);
     }
 
     void Imgui() override {
@@ -95,6 +88,7 @@ public:
             if (i + 1 < sprites->Size() && nextButtonX2 < windowX2) {
                 ImGui::SameLine();
             }
+            delete sprite;
         }
         ImGui::End();
     }

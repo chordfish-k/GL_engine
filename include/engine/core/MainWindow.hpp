@@ -15,6 +15,8 @@ protected:
     FrameBuffer *frameBuffer = nullptr;
     PickingTexture *pickingTexture = nullptr;
 
+    ASceneInitializer *nextScene = nullptr;
+
     MainWindow() {
         r = g = b = 0.2f;
         width = Setting::WINDOW_W;
@@ -66,4 +68,7 @@ public:
     }
 
     static GLFWwindow *GetGlfwWindow();
+
+private:
+    static void ChangeSceneLazy(ASceneInitializer *nextScene);
 };

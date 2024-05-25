@@ -101,7 +101,6 @@ b2Body *RigidBody2D::GetRawBody() const {
 }
 
 void RigidBody2D::SetRawBody(b2Body *rawBody_) {
-    MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
     RigidBody2D::rawBody = rawBody_;
 }
 

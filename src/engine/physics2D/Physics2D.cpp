@@ -2,6 +2,14 @@
 #include "engine/physics2D/CircleCollider.hpp"
 #include "engine/physics2D/Box2DCollider.hpp"
 
+Physics2D::Physics2D() {
+    world = new b2World(gravity);
+}
+
+Physics2D::~Physics2D() {
+    delete world;
+}
+
 void Physics2D::Add(RigidBody2D *rb) {
     if (rb == nullptr || rb->GetRawBody() != nullptr) return;
 
@@ -48,7 +56,7 @@ void Physics2D::Add(RigidBody2D *rb) {
         bodyDef.position = {xPos, yPos};
     }
 
-    b2Body *body = world.CreateBody(&bodyDef);
+    b2Body *body = world->CreateBody(&bodyDef);
     rb->SetRawBody(body);
     body->CreateFixture(&shape, rb->GetMass());
     body->SetFixedRotation(rb->IsFixedRotation());
@@ -57,7 +65,7 @@ void Physics2D::Add(RigidBody2D *rb) {
 void Physics2D::Update(float dt) {
     physicsTime += dt;
     if (physicsTime >= physicsTimeStep) {
-        world.Step(physicsTime, velocityIterations, positionIterations);
+        world->Step(physicsTime, velocityIterations, positionIterations);
         physicsTime -= physicsTimeStep;
     }
 }
@@ -65,13 +73,12 @@ void Physics2D::Update(float dt) {
 void Physics2D::DestroyNode(Node *node) {
     auto *rb = dynamic_cast<RigidBody2D*>(node);
     if (rb != nullptr) {
-        if (rb->GetRawBody() != nullptr) {
-            world.DestroyBody(rb->GetRawBody());
+        if (rb->GetRawBody() && world) {
+            world->DestroyBody(rb->GetRawBody());
             rb->SetRawBody(nullptr);
         }
     }
 }
-
 void Physics2D::ReAdd(RigidBody2D *rb) {
     DestroyNode(rb);
     Add(rb);

@@ -42,6 +42,8 @@ public:
 
     virtual ~Node();
 
+    void Delete();
+
     virtual std::string GetNodeType() {return nodeType;}
 
     static void Init(int maxId) {ID_COUNTER = maxId; }

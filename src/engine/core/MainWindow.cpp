@@ -39,46 +39,49 @@ void MainWindow::Loop() {
         // 快捷键事件
         KeyListener::DoShortcutKeys();
 
-        // 渲染到拾取纹理
-        glDisable(GL_BLEND);
-        pickingTexture->EnableWriting();
+//        auto currentScene = Get()->currentScene;
 
-        glViewport(0, 0, 3840, 2160);
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (currentScene) {
+            // 渲染到拾取纹理
+            glDisable(GL_BLEND);
+            pickingTexture->EnableWriting();
 
-        Renderer::BindShader(pickingShader);
-        currentScene->Render();
+            glViewport(0, 0, 3840, 2160);
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        pickingTexture->DisableWriting();
-        glEnable(GL_BLEND);
+            Renderer::BindShader(pickingShader);
+            currentScene->Render();
 
-        frameBuffer->Bind();
+            pickingTexture->DisableWriting();
+            glEnable(GL_BLEND);
 
-        // 设置清屏颜色
-        glViewport(0, 0, Setting::GAME_VIEW_BUFFER_W, Setting::GAME_VIEW_BUFFER_H);
-        glClearColor(r, g, b, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+            frameBuffer->Bind();
 
-        // 更新当前场景
-        Renderer::BindShader(defaultShader);
-        if (dt >= 0) {
-            if (!runtimePlaying) {
-                currentScene->EditorUpdate(dt);
-                currentScene->Render();
+            // 设置清屏颜色
+            glViewport(0, 0, Setting::GAME_VIEW_BUFFER_W, Setting::GAME_VIEW_BUFFER_H);
+            glClearColor(r, g, b, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-                DebugDraw::BeginFrame();
-                DebugDraw::Draw();
-            } else {
-                currentScene->Update(dt);
-                currentScene->Render();
+            // 更新当前场景
+            Renderer::BindShader(defaultShader);
+            if (dt >= 0) {
+                if (!runtimePlaying) {
+                    currentScene->EditorUpdate(dt);
+                    currentScene->Render();
 
-                DebugDraw::BeginFrame();
-                DebugDraw::Draw();
+                    DebugDraw::BeginFrame();
+                    DebugDraw::Draw();
+                } else {
+                    currentScene->Update(dt);
+                    currentScene->Render();
+                }
             }
+
+            frameBuffer->Unbind();
         }
 
-        frameBuffer->Unbind();
+
         // 更新gui
         imguiLayer->Update(dt);
 
@@ -92,16 +95,13 @@ void MainWindow::Loop() {
         dt = endTime - beginTime;
         beginTime = endTime;
 
-        static int frameCount = 0;
-        static float tDt = 0;
-        if (frameCount == 10) {
-            glfwSetWindowTitle(glfwWindow,
-                               ("FPS: " + std::to_string(frameCount / tDt)).c_str());
-            frameCount = 0;
-            tDt = 0;
+        if (currentScene && currentScene->shouldDestroy) {
+            delete currentScene;
+            Get()->currentScene = new Scene(nextScene);
+            Get()->currentScene->Load();
+            Get()->currentScene->Init();
+            Get()->currentScene->Start();
         }
-        tDt += dt;
-        frameCount++;
     }
 }
 
@@ -204,10 +204,14 @@ void MainWindow::ChangeScene(ASceneInitializer *sceneInitializer) {
         Get()->currentScene->Destroy();
     }
     PropertiesWindow::SetActiveNode(nullptr);
-    Get()->currentScene = new Scene(sceneInitializer);
-    Get()->currentScene->Load();
-    Get()->currentScene->Init();
-    Get()->currentScene->Start();
+    if (Get()->currentScene != nullptr) {
+        ChangeSceneLazy(sceneInitializer);
+    } else {
+        Get()->currentScene = new Scene(sceneInitializer);
+        Get()->currentScene->Load();
+        Get()->currentScene->Init();
+        Get()->currentScene->Start();
+    }
 }
 
 GLFWwindow *MainWindow::GetGlfwWindow(){
@@ -252,4 +256,8 @@ void MainWindow::Notify(Node *node, Event event) {
         }
         break;
     }
+}
+
+void MainWindow::ChangeSceneLazy(ASceneInitializer *nextScene_) {
+    Get()->nextScene = nextScene_;
 }

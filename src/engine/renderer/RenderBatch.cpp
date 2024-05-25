@@ -23,7 +23,8 @@ RenderBatch::RenderBatch(int maxBatchSize, int zIndex, Renderer *renderer)
 }
 
 RenderBatch::~RenderBatch() {
-    // delete shader;
+    delete[] sprites;
+    vertices.clear();
 }
 
 void RenderBatch::Start() {

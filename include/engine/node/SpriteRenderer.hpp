@@ -30,7 +30,7 @@ protected:
 public:
     SpriteRenderer();
 
-    ~SpriteRenderer();
+    ~SpriteRenderer() override;
 
     void Start() override;
 

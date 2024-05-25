@@ -17,8 +17,7 @@ public:
 
     static Texture *GetTexture(std::string resourceName);
 
-    static void AddSpritesheet(std::string resourceName,
-                               Spritesheet *spritesheet);
+    static void AddSpritesheet(std::string resourceName, int spriteWidth,int spriteHeight,int numSprite);
 
     static Spritesheet *GetSpritesheet(std::string resourceName);
 

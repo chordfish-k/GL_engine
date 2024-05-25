@@ -20,10 +20,11 @@ Scene::Scene(ASceneInitializer *sceneInitializer)
 }
 
 Scene::~Scene() {
+    delete root;
     delete renderer;
     delete physics2D;
-    delete root;
     delete sceneInitializer;
+    delete camera;
 }
 
 void Scene::Init() {
@@ -42,12 +43,14 @@ void Scene::Update(float dt) {
     physics2D->Update(dt);
     root->Update(dt);
     root->CheckDelete();
+    if (root->ShouldDestroy()) delete root;
 }
 
 void Scene::EditorUpdate(float dt) {
     camera->AdjustProjection();
     root->EditorUpdate(dt);
     root->CheckDelete();
+    if (root->ShouldDestroy()) delete root;
 }
 
 void Scene::AddNode(Node *n) const {
@@ -141,6 +144,7 @@ void Scene::Load() {
 
 void Scene::Destroy() {
     root->Destroy();
+    shouldDestroy = true;
 }
 
 Renderer *Scene::GetRenderer() const {

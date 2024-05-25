@@ -73,7 +73,9 @@ bool Texture::Init(std::string filePath) {
     return succeed;
 }
 
-Texture::~Texture() {}
+Texture::~Texture() {
+
+}
 
 void Texture::Bind() {
     glBindTexture(GL_TEXTURE_2D, texID);

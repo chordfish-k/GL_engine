@@ -41,14 +41,6 @@ Texture *AssetPool::GetTexture(std::string resourceName) {
     }
 }
 
-void AssetPool::AddSpritesheet(std::string resourceName,
-                               Spritesheet *spritesheet) {
-    std::string path = GetAbsolutePath(resourceName);
-    if (!spritesheets.count(path)) {
-        spritesheets[path] = spritesheet;
-    }
-}
-
 Spritesheet *AssetPool::GetSpritesheet(std::string resourceName) {
     // 如果一句载入过，则返回，否则 载入再返回
     std::string path = GetAbsolutePath(resourceName);
@@ -92,4 +84,13 @@ void AssetPool::Clear() {
         }
     }
     textures.clear();
+}
+void AssetPool::AddSpritesheet(std::string resourceName, int spriteWidth,
+                               int spriteHeight, int numSprite) {
+    std::string path = GetAbsolutePath(resourceName);
+    if (!spritesheets.count(path)) {
+        spritesheets[path] = new Spritesheet(
+            AssetPool::GetTexture(resourceName),
+            spriteWidth, spriteHeight, numSprite);
+    }
 }

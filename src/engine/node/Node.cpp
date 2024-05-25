@@ -9,16 +9,22 @@
 int Node::ID_COUNTER = 0;
 
 Node::~Node(){
+    Delete();
+}
+
+void Node::Delete() {
     auto renderer = MainWindow::GetScene()->GetRenderer();
     auto physics2D = MainWindow::GetScene()->GetPhysics2D();
     for (auto &c : children) {
         renderer->DestroyNode(c);
         physics2D->DestroyNode(c);
-        delete c;
+        c->Delete();
     }
     if (PropertiesWindow::GetActiveNode() == this) {
         PropertiesWindow::SetActiveNode(nullptr);
     }
+    renderer->DestroyNode(this);
+    physics2D->DestroyNode(this);
 }
 
 void Node::Start() {
@@ -40,8 +46,6 @@ void Node::EditorUpdate(float dt) {
 }
 
 void Node::CheckDelete() {
-//    auto renderer = MainWindow::GetScene()->GetRenderer();
-//    auto physics2D = MainWindow::GetScene()->GetPhysics2D();
     auto &ch = children;
 
     for (auto it = ch.begin(); it != ch.end();) {
@@ -50,10 +54,8 @@ void Node::CheckDelete() {
         go->CheckDelete();
 
         if (go->ShouldDestroy()) {
-//            renderer->DestroyNode(go);
-//            physics2D->DestroyNode(go);
             it = ch.erase(it);
-            delete go;
+            go->Delete();
         } else {
             ++it;
         }

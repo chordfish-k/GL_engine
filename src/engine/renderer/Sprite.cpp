@@ -51,3 +51,21 @@ float Sprite::GetHeight() const {
 void Sprite::SetHeight(float height) {
     Sprite::height = height;
 }
+
+void Sprite::SetTexture(Texture *texture) {
+    if (this->texture) delete this->texture;
+    this->texture = texture;
+    this->width = (float) texture->GetWidth();
+    this->height = (float) texture->GetHeight();
+}
+
+void Sprite::SetTexCoordsToFullTexture() {
+    texCoords[0] = glm::vec2(1, 1);
+    texCoords[1] = glm::vec2(1, 0);
+    texCoords[2] = glm::vec2(0, 0);
+    texCoords[3] = glm::vec2(0, 1);
+}
+
+void Sprite::SetTexCoords(const std::vector<glm::vec2> &texCoords) {
+    this->texCoords.assign(texCoords.begin(), texCoords.end());
+}

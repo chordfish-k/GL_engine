@@ -23,22 +23,11 @@ public:
     Sprite *Deserialize(json j) override;
 
     // 属性
-    void SetTexture(Texture *texture) {
-        this->texture = texture;
-        this->width = (float) texture->GetWidth();
-        this->height = (float) texture->GetHeight();
-    }
+    void SetTexture(Texture *texture);
 
-    void SetTexCoordsToFullTexture() {
-        texCoords[0] = glm::vec2(1, 1);
-        texCoords[1] = glm::vec2(1, 0);
-        texCoords[2] = glm::vec2(0, 0);
-        texCoords[3] = glm::vec2(0, 1);
-    }
+    void SetTexCoordsToFullTexture();
 
-    void SetTexCoords(const std::vector<glm::vec2> &texCoords) {
-        this->texCoords.assign(texCoords.begin(), texCoords.end());
-    }
+    void SetTexCoords(const std::vector<glm::vec2> &texCoords);
 
     Texture *GetTexture() { return texture; }
 

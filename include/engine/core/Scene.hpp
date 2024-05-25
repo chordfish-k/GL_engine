@@ -15,6 +15,7 @@ class Scene {
 public:
     Node *root = nullptr;
     Node *sceneToolsRoot = nullptr;
+    bool shouldDestroy = false;
 
 private:
     Renderer *renderer = nullptr;
