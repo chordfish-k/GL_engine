@@ -120,9 +120,10 @@ Node *Node::Deserialize(json j){
     auto &c = j["children"];
     if (!c.empty()) {
         for (auto &ch : c) {
-            std::string type = ch["type"];
-            if (type.empty())
+            auto &ty = ch["type"];
+            if (ty.empty())
                 continue;
+            std::string type = ty;
 
             // 通过反射创建对应Node并序列化
             auto t = rttr::type::get_by_name(type);

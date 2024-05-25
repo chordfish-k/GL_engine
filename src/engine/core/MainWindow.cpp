@@ -1,5 +1,4 @@
 ﻿#include "engine/core/MainWindow.hpp"
-#include "engine/util/AssetPool.hpp"
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/util/Print.hpp"
 #include "engine/core/MouseListener.hpp"
@@ -61,7 +60,6 @@ void MainWindow::Loop() {
         glClearColor(r, g, b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-
         // 更新当前场景
         Renderer::BindShader(defaultShader);
         if (dt >= 0) {
@@ -71,17 +69,13 @@ void MainWindow::Loop() {
 
                 DebugDraw::BeginFrame();
                 DebugDraw::Draw();
-
             } else {
                 currentScene->Update(dt);
                 currentScene->Render();
-
             }
-
         }
 
         frameBuffer->Unbind();
-
         // 更新gui
         imguiLayer->Update(dt);
 
@@ -95,8 +89,6 @@ void MainWindow::Loop() {
         dt = endTime - beginTime;
         beginTime = endTime;
     }
-
-    //    currentScene->Save();
 }
 
 void MainWindow::Init() {
@@ -168,7 +160,7 @@ void MainWindow::Init() {
     imguiLayer->InitImgui();
 
     // 默认场景
-    MainWindow::ChangeScene(new EditorSceneInitializer());
+    MainWindow::ChangeScene(new EditorSceneInitializer(defaultScenePath));
 }
 
 void MainWindow::Run() {

@@ -90,9 +90,9 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
             auto cen2 = from;
             cen2 = cen2 + n2 * circleR;
             rotateCircleCenter.push_back(cen2);
-            DebugDraw::AddCircle(cen2, circleR, {1, 0, 0});
+            DebugDraw::AddCircle(cen2, circleR, {1, 0, 0, 1});
             if (mode == ROTATE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
-                DebugDraw::AddCircle(cen2, circleR * 0.5f, {1, 0, 0});
+                DebugDraw::AddCircle(cen2, circleR * 0.5f, {1, 0, 0, 1});
             }
         }
     }

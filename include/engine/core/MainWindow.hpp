@@ -7,6 +7,7 @@
 class MainWindow : public Window, public IObserver{
 protected:
     static MainWindow *window; // 单例模式
+    std::string defaultScenePath;
     bool runtimePlaying = false; // 游戏运行
 
     Scene *currentScene = nullptr;
@@ -32,6 +33,8 @@ public:
     void Init() override;
 
     void Loop() override;
+
+    void SetDefaultScenePath(std::string_view path) {Get()->defaultScenePath = path;}
 
     static void ChangeScene(ASceneInitializer *sceneInitializer);
 

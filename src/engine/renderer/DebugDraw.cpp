@@ -5,11 +5,11 @@
 #include "engine/util/Print.hpp"
 #include "engine/core/MainWindow.hpp"
 
-#define DEBUG_DEFAULT_COLOR {1, 0.4, 0}
+#define DEBUG_DEFAULT_COLOR {1, 0.4, 0, 1}
 
 std::vector<Line2D> DebugDraw::lines;
 
-float DebugDraw::vertexArray[DEBUG_MAX_LINES * 6 * 2];
+float DebugDraw::vertexArray[DEBUG_MAX_LINES * 7 * 2];
 
 Shader *DebugDraw::shader = nullptr;
 
@@ -27,14 +27,14 @@ void DebugDraw::Start() {
     // 创建vbo
     glGenBuffers(1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferData(GL_ARRAY_BUFFER, (long) (DEBUG_MAX_LINES * 6 * 2) * sizeof(float),
+    glBufferData(GL_ARRAY_BUFFER, (long) (DEBUG_MAX_LINES * 7 * 2) * sizeof(float),
                  vertexArray, GL_DYNAMIC_DRAW);
 
     // 启用顶点属性
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * sizeof(float), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 7 * sizeof(float), 0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float),
+    glVertexAttribPointer(1, 4, GL_FLOAT, false, 7 * sizeof(float),
                           reinterpret_cast<const void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -65,7 +65,7 @@ void DebugDraw::Draw() {
     for (Line2D line : lines) {
         for (int i = 0; i < 2; i++) {
             glm::vec2 position = i == 0 ? line.GetFrom() : line.GetTo();
-            glm::vec3 color = line.GetColor();
+            glm::vec4 color = line.GetColor();
 
             // 载入坐标
             vertexArray[index + 0] = position.x;
@@ -76,12 +76,13 @@ void DebugDraw::Draw() {
             vertexArray[index + 3] = color.x;
             vertexArray[index + 4] = color.y;
             vertexArray[index + 5] = color.z;
-            index += 6;
+            vertexArray[index + 6] = color.w;
+            index += 7;
         }
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, lines.capacity() * 6 * 2 * sizeof(float), vertexArray);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, lines.capacity() * 7 * 2 * sizeof(float), vertexArray);
 
     // 使用shader
     shader->Use();
@@ -98,7 +99,7 @@ void DebugDraw::Draw() {
     glLineWidth(4);
 
     // 绘画
-    glDrawArrays(GL_LINES, 0, lines.size() * 6 * 2);
+    glDrawArrays(GL_LINES, 0, lines.size() * 7 * 2);
 
     // 解绑
     glDisableVertexAttribArray(0);
@@ -112,7 +113,7 @@ void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to) {
     AddLine2D(from, to, DEBUG_DEFAULT_COLOR, 1);
 }
 
-void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color) {
+void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec4 color) {
     AddLine2D(from, to, color, 1);
 }
 
@@ -122,18 +123,18 @@ void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions,
 }
 
 void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
-                         glm::vec3 color) {
+                         glm::vec4 color) {
     AddBox2D(center, dimensions, rotation, color, 1);
 }
 
-void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec3 color,
+void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec4 color,
                           int lifeTime) {
     if (lines.size() >= DEBUG_MAX_LINES) return;
     DebugDraw::lines.emplace_back(from, to, color, lifeTime);
 }
 
 void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
-                         glm::vec3 color, int lifetime) {
+                         glm::vec4 color, int lifetime) {
     auto mMin = center - dimensions;
     auto mMax = center + dimensions;
 
@@ -158,11 +159,11 @@ void DebugDraw::AddCircle(glm::vec2 center, float radius) {
     AddCircle(center, radius, DEBUG_DEFAULT_COLOR, 1);
 }
 
-void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec3 color) {
+void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec4 color) {
     AddCircle(center, radius, color, 1);
 }
 
-void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec3 color,
+void DebugDraw::AddCircle(glm::vec2 center, float radius, glm::vec4 color,
                           int lifetime) {
     int cnt = (int)(radius / 2);
     int mMax = 8;

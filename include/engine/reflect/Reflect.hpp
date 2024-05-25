@@ -3,6 +3,7 @@
 #include <rttr/registration>
 #include "engine/core/Transform.hpp"
 #include "engine/node/SpriteRenderer.hpp"
+#include "engine/node/TileMap.hpp"
 
 RTTR_REGISTRATION  {
 
@@ -34,4 +35,11 @@ RTTR_REGISTRATION  {
         .property("color", &SpriteRenderer::GetColor, &SpriteRenderer::SetColor)
         .property("offset", &SpriteRenderer::GetOffset, &SpriteRenderer::SetOffset)
         .property("sprite", &SpriteRenderer::GetSprite, &SpriteRenderer::SetSprite);
+
+    rttr::registration::class_<TileMap>("TileMap")
+        .constructor<>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+            )
+        .property("cellWidth", &TileMap::GetCellWidth, &TileMap::SetCellWidth)
+        .property("cellHeight", &TileMap::GetCellHeight, &TileMap::SetCellHeight);
 }
