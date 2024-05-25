@@ -62,6 +62,7 @@ void DebugDraw::BeginFrame() {
 void DebugDraw::Draw() {
     int index = 0;
     memset(vertexArray, 0, sizeof(vertexArray));
+
     for (Line2D line : lines) {
         for (int i = 0; i < 2; i++) {
             glm::vec2 position = i == 0 ? line.GetFrom() : line.GetTo();

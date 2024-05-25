@@ -24,10 +24,6 @@ void RigidBody2D::Update(float dt)  {
         velocity = {vel.x, vel.y};
     }
 
-    if (collider != nullptr) {
-        collider->EditorUpdate(dt, this);
-    }
-
     Node::Update(dt);
 }
 

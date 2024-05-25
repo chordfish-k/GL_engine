@@ -148,7 +148,7 @@ void MainWindow::Init() {
     // 使opengl上下文成为当前上下文
     glfwMakeContextCurrent(glfwWindow);
     // 启用v-sync垂直同步，帧刷新率尽量高
-//    glfwSwapInterval(1);
+    glfwSwapInterval(1);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
