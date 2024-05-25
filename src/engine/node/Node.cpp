@@ -222,3 +222,91 @@ Transform Node::GetTransformByModelMatrix(const glm::mat4 &mat) {
     return t;
 }
 
+void Node::Imgui() {
+    auto name_ = GetName();
+    if (MyImGui::DrawTextInput("name", name_)){
+        name = name_;
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader("Node")) {
+        transform.Imgui();
+        zIndex.Imgui();
+    }
+}
+
+
+void Node::ShowImgui(std::vector<std::string> notShowFields){
+    auto &obj = *(this);
+
+    auto thisType = rttr::type::get_by_name(GetNodeType());
+    auto baseClasses = thisType.get_base_classes();
+
+    auto props = thisType.get_properties();
+
+    if (!props.size()) return;
+
+    ImGui::AlignTextToFramePadding();
+
+    for (auto &p : props) {
+        if (0 < std::count(notShowFields.begin(), notShowFields.end(), p.get_name()))
+            continue;
+        rttr::variant value = p.get_value(obj);
+        auto declaringType = p.get_declaring_type();
+
+        // 只显示自身定义的，不显示父类的
+        if (declaringType != thisType || !value)
+            continue;
+        // int
+        if (value.is_type<int>()) {
+            auto v = value.get_value<int>();
+            if (MyImGui::DrawIntControl(std::string(p.get_name()), v)) {
+                p.set_value(obj, v);
+            }
+        }
+        // float
+        else if (value.is_type<float>()) {
+            auto v = value.get_value<float>();
+            if (MyImGui::DrawFloatControl(std::string(p.get_name()),v)) {
+                p.set_value(obj, v);
+            }
+        }
+        // bool
+        else if (value.is_type<bool>()) {
+            auto v = value.get_value<bool>();
+            if (MyImGui::DrawCheckbox(std::string(p.get_name()),v)) {
+                p.set_value(obj, v);
+            }
+        }
+        // vec2
+        else if (value.is_type<glm::vec2>()) {
+            auto v2 = value.get_value<glm::vec2>();
+            if (MyImGui::DrawVec2Control(std::string(p.get_name()), v2)) {
+                p.set_value(obj, v2);
+            }
+        }
+        // vec3
+        else if (value.is_type<glm::vec3>()) {
+            auto v3 = value.get_value<glm::vec3>();
+            if (MyImGui::DrawVec3Control(std::string(p.get_name()),v3)) {
+                p.set_value(obj, v3);
+            }
+        }
+        // vec4
+        else if (value.is_type<glm::vec4>()) {
+            auto v4 = value.get_value<glm::vec4>();
+            if (MyImGui::DrawVec4Control(std::string(p.get_name()),
+                                         v4)) {
+                p.set_value(obj, v4);
+            }
+        }
+
+        else if (value.is_type<Color>()) {
+            auto v4 = value.get_value<Color>().ToVec4();
+            if (MyImGui::DrawColor4Control(std::string(p.get_name()),
+                                           v4)) {
+                p.set_value(obj, Color(v4.x, v4.y, v4.z, v4.w));
+            }
+        }
+    }
+}
