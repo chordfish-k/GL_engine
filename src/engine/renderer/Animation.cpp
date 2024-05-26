@@ -27,25 +27,31 @@ void Animation::ApplyModifyToSprite(Sprite *sprite) {
     }
 }
 
-void Animation::Imgui() {
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Animation")) {
+bool Animation::Imgui() {
+    bool res = false;
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+    if (ImGui::TreeNodeEx("Animation", ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen)) {
         int hFrames_ = GetHFrames();
         int vFrames_ = GetVFrames();
         int frame_ = GetFrame();
 
         if (MyImGui::DrawIntSpinner("HFrames", hFrames_, 1)) {
             SetHFrames(hFrames_);
+            res = true;
         }
         if (MyImGui::DrawIntSpinner("VFrames", vFrames_, 1)) {
             SetVFrames(vFrames_);
+            res = true;
         }
         if (MyImGui::DrawIntSpinner("Frame", frame_,0)) {
             SetFrame(frame_);
+            res = true;
         }
 
         ImGui::TreePop();
     }
+    ImGui::PopStyleColor();
+    return res;
 }
 
 void Animation::Reset() {

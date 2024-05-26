@@ -135,7 +135,7 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
 
 void SpriteRenderer::Imgui(){
     Node::Imgui();
-
+    ImGui::Dummy({1, 5});
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
 

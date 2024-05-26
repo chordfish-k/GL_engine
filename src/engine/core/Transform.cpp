@@ -32,12 +32,15 @@ bool Transform::Equals(Transform &t) {
            t.rotation == this->rotation;
 }
 
-void Transform::Imgui() {
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Transform")) {
-        MyImGui::DrawVec2Control("position", position, 0, 0.5f);
-        MyImGui::DrawVec2Control("scale", scale, 0, 0.05f);
+bool Transform::Imgui() {
+    bool res = false;
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+    if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen)) {
+        res = MyImGui::DrawVec2Control("position", position, 0, 0.5f);
+        res = res || MyImGui::DrawVec2Control("scale", scale, 0, 0.05f);
         MyImGui::DrawFloatControl("rotation", rotation);
         ImGui::TreePop();
     }
+    ImGui::PopStyleColor();
+    return res;
 }

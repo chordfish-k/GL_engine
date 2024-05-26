@@ -33,7 +33,7 @@ void ManagerWindow::Run() {
     // 设置Dear ImGui样式（可选）
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 5.0f;
-    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+//    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 
     // 初始化Dear ImGui的渲染器后端
     ImGui_ImplGlfw_InitForOpenGL(window, true);

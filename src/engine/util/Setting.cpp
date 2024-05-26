@@ -39,6 +39,7 @@ void Setting::Load() {
             return;
     }
     json j;
+    if (jsonText.empty()) return;
     try{
         j = json::parse(jsonText);
     }catch (std::exception &e) {

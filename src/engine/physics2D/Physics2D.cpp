@@ -25,13 +25,13 @@ void Physics2D::Add(RigidBody2D *rb) {
 
     switch (rb->GetBodyType()) {
 
-    case Static:
+    case BodyType::Static:
         bodyDef.type = b2_staticBody;
         break;
-    case Dynamic:
+    case BodyType::Dynamic:
         bodyDef.type = b2_dynamicBody;
         break;
-    case Kinematic:
+    case BodyType::Kinematic:
         bodyDef.type = b2_kinematicBody;
         break;
     }

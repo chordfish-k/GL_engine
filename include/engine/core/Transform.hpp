@@ -22,7 +22,7 @@ public:
 
     bool Equals(Transform &t);
 
-    void Imgui();
+    bool Imgui();
 
 
 

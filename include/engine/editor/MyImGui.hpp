@@ -9,16 +9,16 @@
 #include "engine/util/Print.hpp"
 #include "engine/editor/FileSystemWindow.hpp"
 
-#define COLUMN_WIDTH 80
+#define COLUMN_WIDTH 100
 
 class MyImGui {
 public:
 
     static bool DrawIntSpinner(const std::string& label, int &values, int v_min=INT32_MIN, int v_max=INT32_MAX);
 
-    static bool DrawIntControl(const std::string& label, int &values, int v_speed = 1, int v_min=0, int v_max=0);
+    static bool DrawIntControl(const std::string& label, int &values, int v_speed = 1, int v_min=INT32_MIN, int v_max=INT32_MAX);
 
-    static bool DrawFloatControl(const std::string& label, float &values);
+    static bool DrawFloatControl(const std::string& label, float &values, float v_speed = 0.1f, float v_min=-FLT_MIN, float v_max=FLT_MAX);
 
     static bool DrawCheckbox(const std::string& label, bool &values);
 
@@ -33,4 +33,7 @@ public:
     static bool DrawResourceDragDropBox(const std::string &label, std::string &path);
 
     static bool DrawTextInput(const std::string &label, std::string &value);
+
+    static bool DrawComboControl(const std::string &label, int &index,
+                          const char *values[], int size);
 };

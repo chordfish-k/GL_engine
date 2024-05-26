@@ -5,6 +5,7 @@
 #include "engine/editor/FileDialog.hpp"
 #include "engine/util/Setting.hpp"
 #include "engine/core/MainWindow.hpp"
+#include "engine/core/EditorSceneInitializer.hpp"
 
 bool ProjectManagerWindow::shouldOpen = false;
 
@@ -42,9 +43,11 @@ void ProjectManagerWindow::Imgui() {
         {
             util::Println("Load:", filePath);
             Setting::PROJECT_ROOT = filePath;
+            FileSystemWindow::localPath = "";
             ProjectManagerWindow::shouldOpen = false;
             auto scene = MainWindow::GetScene();
             if (scene) scene->RemoveAllNodes();
+//            MainWindow::ChangeScene(new EditorSceneInitializer(Setting::PROJECT_ROOT));
         });
     }
 

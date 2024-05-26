@@ -21,7 +21,7 @@ void RigidBody2D::Update(float dt)  {
                               rawBody->GetPosition().y};
         transform.rotation = (float) glm::degrees(rawBody->GetAngle());
         auto vel = rawBody->GetLinearVelocity();
-        velocity = {vel.x, vel.y};
+        linear.velocity = {vel.x, vel.y};
     }
 
     Node::Update(dt);
@@ -35,31 +35,44 @@ void RigidBody2D::EditorUpdate(float dt)  {
     Node::EditorUpdate(dt);
 }
 
-const glm::vec2 &RigidBody2D::GetVelocity() const {
-    return velocity;
+const glm::vec2 &RigidBody2D::GetLinearVelocity() const {
+    return linear.velocity;
 }
 
-void RigidBody2D::SetVelocity(const glm::vec2 &velocity_) {
-    RigidBody2D::velocity = velocity_;
+void RigidBody2D::SetLinearVelocity(const glm::vec2 &velocity_) {
+    linear.velocity = velocity_;
     if (rawBody != nullptr) {
-        this->rawBody->SetLinearVelocity({velocity_.x, velocity_.y});
+        rawBody->SetLinearVelocity({velocity_.x, velocity_.y});
+    }
+}
+
+const float &RigidBody2D::GetAngularVelocity() const {
+    return angular.velocity;
+}
+
+void RigidBody2D::SetAngularVelocity(const float &velocity_) {
+    angular.velocity = velocity_;
+    if (rawBody != nullptr) {
+        rawBody->SetAngularVelocity(velocity_);
     }
 }
 
 float RigidBody2D::GetAngularDamping() const {
-    return angularDamping;
+    return angular.damp;
 }
 
 void RigidBody2D::SetAngularDamping(float angularDamping_) {
-    RigidBody2D::angularDamping = angularDamping_;
+    angular.damp = angularDamping_;
 }
 
 float RigidBody2D::GetLinearDamping() const {
-    return linearDamping;
+    return linear.damp;
 }
 
 void RigidBody2D::SetLinearDamping(float linearDamping_) {
-    RigidBody2D::linearDamping = linearDamping_;
+    linear.damp = linearDamping_;
+    if (rawBody)
+        rawBody->SetLinearDamping(linearDamping_);
 }
 
 float RigidBody2D::GetMass() const {
@@ -69,9 +82,11 @@ float RigidBody2D::GetMass() const {
 void RigidBody2D::SetMass(float mass_) {
     RigidBody2D::mass = mass_;
     b2MassData massData;
-    rawBody->GetMassData(&massData);
-    massData.mass = mass_;
-    rawBody->SetMassData(&massData);
+    if (rawBody) {
+        rawBody->GetMassData(&massData);
+        massData.mass = mass_;
+        rawBody->SetMassData(&massData);
+    }
 }
 
 bool RigidBody2D::IsFixedRotation() const {
@@ -80,7 +95,8 @@ bool RigidBody2D::IsFixedRotation() const {
 
 void RigidBody2D::SetFixedRotation(bool fixedRotation_) {
     RigidBody2D::fixedRotation = fixedRotation_;
-    rawBody->SetFixedRotation(fixedRotation_);
+    if (rawBody)
+        rawBody->SetFixedRotation(fixedRotation_);
 }
 
 bool RigidBody2D::IsContinuousCollision() const {
@@ -89,7 +105,8 @@ bool RigidBody2D::IsContinuousCollision() const {
 
 void RigidBody2D::SetContinuousCollision(bool continuousCollision_) {
     RigidBody2D::continuousCollision = continuousCollision_;
-    rawBody->SetBullet(continuousCollision_);
+    if (rawBody)
+        rawBody->SetBullet(continuousCollision_);
 }
 
 b2Body *RigidBody2D::GetRawBody() const {
@@ -110,13 +127,13 @@ void RigidBody2D::SetBodyType(BodyType bodyType_) {
     if (rawBody != nullptr) {
         switch (bodyType_) {
 
-        case Static:
+        case BodyType::Static:
             rawBody->SetType(b2_staticBody);
             break;
-        case Dynamic:
+        case BodyType::Dynamic:
             rawBody->SetType(b2_dynamicBody);
             break;
-        case Kinematic:
+        case BodyType::Kinematic:
             rawBody->SetType(b2_kinematicBody);
             break;
         }
@@ -135,10 +152,20 @@ void RigidBody2D::SetCollider(ACollider *collider_) {
 
 void RigidBody2D::Imgui() {
     Node::Imgui();
-
+    ImGui::Dummy({1, 5});
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
         ShowImgui();
+
+        if (linear.Imgui()) {
+            rawBody->SetLinearVelocity({linear.velocity.x, linear.velocity.y});
+            rawBody->SetLinearDamping(linear.damp);
+        }
+
+        if (angular.Imgui()) {
+            rawBody->SetAngularVelocity(angular.velocity);
+            rawBody->SetAngularDamping(angular.damp);
+        }
     }
 }
 
@@ -150,3 +177,48 @@ void RigidBody2D::Start() {
     Node::Start();
 }
 
+json RigidBody2D::Serialize() {
+    json j = Node::Serialize();
+    j["data"]["mass"] = mass;
+    j["data"]["bodyType"] = GetNameByBodyType(bodyType);
+    j["data"]["linear"]["velocity"] = {linear.velocity.x, linear.velocity.y};
+    j["data"]["linear"]["damp"] = linear.damp;
+    j["data"]["angular"]["velocity"] = angular.velocity;
+    j["data"]["angular"]["damp"] = angular.damp;
+    return j;
+}
+
+RigidBody2D *RigidBody2D::Deserialize(json j) {
+    Node::Deserialize(j);
+    auto &data = j["data"];
+    if (data.empty()) return this;
+
+    auto &m = data["mass"];
+    if (!m.empty())
+        SetMass(m);
+
+    auto &t = data["bodyType"];
+    if (!t.empty())
+        SetBodyType(GetBodyTypeByName(t));
+
+    auto &l = data["linear"];
+    if (!l.empty()) {
+        auto &v = l["velocity"];
+        auto &d = l["damp"];
+        if (!v.empty() && v.size() == 2)
+            SetLinearVelocity({v[0], v[1]});
+        if (!d.empty())
+            SetLinearDamping(d);
+    }
+
+    auto &a = data["angular"];
+    if (!a.empty()) {
+        auto &v = a["velocity"];
+        auto &d = a["damp"];
+        if (!v.empty())
+            SetAngularVelocity(v);
+        if (!d.empty())
+            SetAngularDamping(d);
+    }
+    return this;
+}

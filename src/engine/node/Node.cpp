@@ -238,6 +238,7 @@ void Node::Imgui() {
         name = name_;
     }
 
+    ImGui::Dummy({1, 5});
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader("Node")) {
         transform.Imgui();
@@ -318,17 +319,20 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
                 p.set_value(obj, Color(v4.x, v4.y, v4.z, v4.w));
             }
         }
-        else if (value.is_type<BodyType>()) {
-            std::vector<std::string> enum_names;
+        else if (p.is_enumeration()) {
+            std::vector<const char*> enum_names;
             std::vector<rttr::variant> enum_values;
-            auto type = rttr::type::get<BodyType>();
-            auto enumerators = type.get_enumeration().get_names();
+
+            // 获取属性的类型
+            auto property_type = p.get_type();
+
+            auto enumerators = property_type.get_enumeration().get_names();
             int index = 0, currentIndex = 0;
             BodyType now = value.get_value<BodyType>();
 
             for (const auto&n : enumerators){
                 enum_names.emplace_back(n.data());
-                auto v = type.get_enumeration().name_to_value(n);
+                auto v = property_type.get_enumeration().name_to_value(n);
                 enum_values.push_back(v);
                 if (v == rttr::variant(now)) {
                     index = currentIndex;
@@ -336,16 +340,8 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
                 ++currentIndex;
             }
             // 使用 enum_names 的数据绘制 ImGui::Combo
-            if (ImGui::Combo("bodyType", &index, [](void* data, int idx, const char** out_text)
-                 {
-                     auto* names = static_cast<const std::vector<std::string>*>(data);
-                     if (idx < 0 || idx >= names->size())
-                         return false;
-                     *out_text = (*names)[idx].c_str();
-                     return true;
-                 }, static_cast<void*>(&enum_names), enum_names.size()))
-            {
-                BodyType selected_value = enum_values[index].get_value<BodyType>();
+            if (MyImGui::DrawComboControl(std::string(p.get_name()), index, enum_names.data(), enum_names.size())){
+                auto selected_value = enum_values[index];
                 p.set_value(obj, selected_value);
             }
         }

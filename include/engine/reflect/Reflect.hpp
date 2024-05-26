@@ -4,6 +4,7 @@
 #include "engine/core/Transform.hpp"
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/node/TileMap.hpp"
+#include "engine/physics2D/Linear.h"
 
 RTTR_REGISTRATION  {
 
@@ -13,6 +14,11 @@ RTTR_REGISTRATION  {
         .property("position", &Transform::position)
         .property("scale", &Transform::scale)
         .property("rotation", &Transform::rotation);
+
+    rttr::registration::class_<Linear>("Linear")
+        .constructor<>()
+        .property("velocity", &Linear::velocity)
+        .property("damp", &Linear::damp);
 
     rttr::registration::class_<Animation>("Animation")
         .constructor<>()
@@ -54,6 +60,5 @@ RTTR_REGISTRATION  {
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
             )
         .property("mass", &RigidBody2D::GetMass, &RigidBody2D::SetMass)
-        .property("velocity", &RigidBody2D::GetVelocity, &RigidBody2D::SetVelocity)
-        .property("bodyType", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType);
+        .property("body type", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType);
 }

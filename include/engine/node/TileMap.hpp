@@ -10,52 +10,19 @@ protected:
 
 public:
 
-    json Serialize() override {
-        json j = Node::Serialize();
-        j["data"]["cellSize"] = {cellWidth, cellHeight};
-        return j;
-    }
+    json Serialize() override;
 
-    TileMap *Deserialize(json j) override {
-        Node::Deserialize(j);
-        auto &data = j["data"];
-        if (data.empty()) return this;
+    TileMap *Deserialize(json j) override;
 
-        auto &cs = data["cellSize"];
-        if (!cs.empty() && cs.size() == 2) {
-            cellWidth = cs[0];
-            cellHeight = cs[1];
-        }
+    void SetCellSize(int cellWidth_, int cellHeight_);
 
-        return this;
-    }
+    void SetCellWidth(int cellWidth_);
 
-    void SetCellSize(int cellWidth_, int cellHeight_){
-        cellWidth = cellWidth_;
-        cellHeight = cellHeight_;
-    }
+    void SetCellHeight(int cellHeight_);
 
-    void SetCellWidth(int cellWidth_) {
-        cellWidth = cellWidth_;
-    }
-    void SetCellHeight(int cellHeight_) {
-        cellHeight = cellHeight_;
-    }
+    int GetCellWidth() const;
 
-    int GetCellWidth() const {
-        return cellWidth;
-    }
+    int GetCellHeight() const;
 
-    int GetCellHeight() const {
-        return cellHeight;
-    }
-
-    void Imgui() override {
-        Node::Imgui();
-
-        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
-            ShowImgui();
-        }
-    }
-    };
+    void Imgui() override;
+};

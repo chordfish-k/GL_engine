@@ -8,6 +8,8 @@ bool MyImGui::DrawIntSpinner(const std::string& label, int &values, int v_min, i
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
@@ -31,6 +33,8 @@ bool MyImGui::DrawIntControl(const std::string& label, int &values, int v_speed,
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
@@ -43,18 +47,20 @@ bool MyImGui::DrawIntControl(const std::string& label, int &values, int v_speed,
     return res;
 }
 
-bool MyImGui::DrawFloatControl(const std::string& label, float &values) {
+bool MyImGui::DrawFloatControl(const std::string& label, float &values, float v_speed, float v_min, float v_max) {
     bool res = false;
     auto lb = label.c_str();
     ImGui::PushID(lb);
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
     ImGui::PushItemWidth(-1);
-    res = ImGui::DragFloat("##dragFloat", &values, 0.1f);
+    res = ImGui::DragFloat("##dragFloat", &values, v_speed, v_min, v_max);
     ImGui::PopItemWidth();
 
     ImGui::Columns(1);
@@ -69,6 +75,8 @@ bool MyImGui::DrawCheckbox(const std::string& label, bool &values) {
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
@@ -86,14 +94,16 @@ bool MyImGui::DrawVec2Control(const std::string& label, glm::vec2 &values, float
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 3.f});
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 3});
 
     float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
     ImVec2 buttonSize(lineHeight + 3.0f, lineHeight);
-    float widthEach = (ImGui::GetContentRegionAvail().x -2.f - buttonSize.x * 2.0f) / 2.0f;
+    float widthEach = (ImGui::GetContentRegionAvail().x - buttonSize.x );
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.2f, 0.7f, 0.2f, 1.0f});
@@ -109,7 +119,6 @@ bool MyImGui::DrawVec2Control(const std::string& label, glm::vec2 &values, float
     float vecValuesX = values.x;
     res = ImGui::DragFloat("##x", &vecValuesX, speed) || res;
     ImGui::PopItemWidth();
-    ImGui::SameLine();
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.8f, 0.1f, 0.15f, 1.0f});
@@ -143,14 +152,16 @@ bool MyImGui::DrawVec3Control(const std::string& label, glm::vec3 &values, float
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 3.f});
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 3});
 
     float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
     ImVec2 buttonSize(lineHeight + 3.0f, lineHeight);
-    float widthEach = (ImGui::CalcItemWidth() - buttonSize.x * 3.0f) / 3.0f;
+    float widthEach = (ImGui::CalcItemWidth() - buttonSize.x);
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.2f, 0.7f, 0.2f, 1.0f});
@@ -166,7 +177,6 @@ bool MyImGui::DrawVec3Control(const std::string& label, glm::vec3 &values, float
     float vecValuesX = values.x;
     res = ImGui::DragFloat("##x", &vecValuesX, speed) || res;
     ImGui::PopItemWidth();
-    ImGui::SameLine();
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.8f, 0.1f, 0.15f, 1.0f});
@@ -183,7 +193,6 @@ bool MyImGui::DrawVec3Control(const std::string& label, glm::vec3 &values, float
     res = ImGui::DragFloat("##y", &vecValuesY, speed) || res;
     ImGui::PopItemWidth();
 
-    ImGui::SameLine();
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.15f, 0.1f, 0.8f, 1.0f});
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0.2f, 0.2f, 0.8f, 1.0f});
@@ -217,14 +226,16 @@ bool MyImGui::DrawVec4Control(const std::string& label, glm::vec4 &values, float
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 3.f});
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 3});
 
     float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
     ImVec2 buttonSize(lineHeight + 3.0f, lineHeight);
-    float widthEach = (ImGui::CalcItemWidth() - buttonSize.x * 2.0f) / 2.0f;
+    float widthEach = (ImGui::CalcItemWidth() - buttonSize.x);
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.2f, 0.7f, 0.2f, 1.0f});
@@ -241,7 +252,6 @@ bool MyImGui::DrawVec4Control(const std::string& label, glm::vec4 &values, float
     float vecValuesX = values.x;
     res = ImGui::DragFloat("##x", &vecValuesX, speed) || res;
     ImGui::PopItemWidth();
-    ImGui::SameLine();
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.8f, 0.1f, 0.15f, 1.0f});
@@ -272,7 +282,6 @@ bool MyImGui::DrawVec4Control(const std::string& label, glm::vec4 &values, float
     float vecValuesZ = values.z;
     res = ImGui::DragFloat("##z", &vecValuesX, speed) || res;
     ImGui::PopItemWidth();
-    ImGui::SameLine();
 
     ImGui::PushItemWidth(widthEach);
     ImGui::PushStyleColor(ImGuiCol_Button, {0.8f, 0.7f, 0.15f, 1.0f});
@@ -306,15 +315,17 @@ bool MyImGui::DrawColor4Control(const std::string& label, glm::vec4 &color) {
     auto lb = label.c_str();
     ImGui::PushID(lb);
 
-
     ImGui::Columns(2);
 
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
     ImGui::PushItemWidth(-1);
-    if (ImGui::ColorEdit4("##colorPicker", glm::value_ptr(color))) {
+    if (ImGui::ColorEdit4("##colorPicker", glm::value_ptr(color),
+                          ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_NoInputs)) {
         res = true;
     }
     ImGui::PopItemWidth();
@@ -331,6 +342,8 @@ bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &pat
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
@@ -341,6 +354,10 @@ bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &pat
     std::string name = path1.filename().string();
     if (ImGui::Button(name.c_str(), {ImGui::CalcItemWidth(), lineHeight})) {
         FileSystemWindow::localPath = path1.parent_path().string();
+    }
+
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("%s", name.c_str());
     }
 
     if (ImGui::BeginDragDropTarget())
@@ -369,6 +386,8 @@ bool MyImGui::DrawTextInput(const std::string &label, std::string &value) {
 
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
     ImGui::Text("%s", lb);
     ImGui::NextColumn();
 
@@ -377,6 +396,30 @@ bool MyImGui::DrawTextInput(const std::string &label, std::string &value) {
     ImGui::PushItemWidth(-1);
     if (ImGui::InputText("##inputText", buf, 64)){
         value = buf;
+        res = true;
+    }
+    ImGui::PopItemWidth();
+
+    ImGui::Columns(1);
+    ImGui::PopID();
+    return res;
+}
+
+bool MyImGui::DrawComboControl(const std::string& label, int &index, const char*values[], int size) {
+    bool res = false;
+    auto lb = label.c_str();
+    ImGui::PushID(lb);
+
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
+    ImGui::Text("%s", lb);
+    ImGui::NextColumn();
+
+    ImGui::PushItemWidth(-1);
+//    res = ImGui::DragInt("##dragInt", &values, (float)v_speed, v_min, v_max);
+    if (ImGui::Combo("##combo", &index, values, size)) {
         res = true;
     }
     ImGui::PopItemWidth();

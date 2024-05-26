@@ -3,16 +3,18 @@
 #include "engine/node/Node.hpp"
 #include "engine/physics2D/BodyType.hpp"
 #include "engine/physics2D/ACollider.hpp"
+#include "engine/physics2D/Linear.h"
+#include "engine/physics2D/Angular.h"
 #include <box2d/box2d.h>
 
 class RigidBody2D : public Node {
     COMPONENT(RigidBody2D)
 protected:
-    glm::vec2 velocity = {0, 0};
-    float angularDamping = 0.8f; // 角阻尼
-    float linearDamping = 0.9f; // 线性阻尼
+    Linear linear;
+    Angular angular;
+
     float mass = 1;
-    BodyType bodyType = Dynamic;
+    BodyType bodyType = BodyType::Dynamic;
 
     bool fixedRotation = false;
     bool continuousCollision = true; // 连续碰撞，防止隧穿
@@ -31,9 +33,17 @@ public:
 
     void EditorUpdate(float dt) override;
 
-    const glm::vec2 &GetVelocity() const;
+    json Serialize() override;
 
-    void SetVelocity(const glm::vec2 &velocity);
+    RigidBody2D *Deserialize(json j) override;
+
+    const glm::vec2 &GetLinearVelocity() const;
+
+    void SetLinearVelocity(const glm::vec2 &velocity_);
+
+    const float &GetAngularVelocity() const;
+
+    void SetAngularVelocity(const float &velocity_);
 
     float GetAngularDamping() const;
 

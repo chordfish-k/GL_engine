@@ -21,7 +21,7 @@ public:
 
     void ApplyModifyToSprite(Sprite *sprite);
 
-    void Imgui();
+    bool Imgui();
 
     void Reset();
 
