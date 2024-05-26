@@ -245,6 +245,8 @@ void MainWindow::Notify(Node *node, Event event) {
     case GameEngineStartPlay:
         if (currentScene) {
             currentScene->Save();
+            ChangeScene(new EditorSceneInitializer(
+                currentScene->GetSceneInitializer()->GetFilePath()));
             runtimePlaying = true;
         }
         break;

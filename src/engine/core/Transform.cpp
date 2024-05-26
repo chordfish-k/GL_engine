@@ -37,7 +37,7 @@ bool Transform::Imgui() {
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
     if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen)) {
         res = MyImGui::DrawVec2Control("position", position, 0, 0.5f);
-        res = res || MyImGui::DrawVec2Control("scale", scale, 0, 0.05f);
+        res = MyImGui::DrawVec2Control("scale", scale, 0, 0.05f) || res;
         MyImGui::DrawFloatControl("rotation", rotation);
         ImGui::TreePop();
     }

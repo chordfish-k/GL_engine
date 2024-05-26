@@ -1,0 +1,4 @@
+1.CollisionShape2D As Node
+2.Change Collision Shape on Right Panel
+3.DebugDraw Fill Polygon
+4.Draw Collision Shape with DebugDraw Fill Functions
