@@ -46,6 +46,8 @@ void SceneHierarchyWindow::ShowNodeTree() {
         ShowSubNodes(root);
         ImGui::TreePop();
     }
+
+
 }
 
 void SceneHierarchyWindow::ShowSubNodes(Node *root) {
@@ -137,12 +139,12 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
         selectingUid = node->GetUid();
         if (node->parent != nullptr)
             PropertiesWindow::SetActiveNode(node);
-        ImGui::OpenPopup("Popup for Node");
+        ImGui::OpenPopup(("Popup for Node" + std::to_string(node->GetUid())).c_str());
     }
 
     bool openAddNodePopup = false;
 
-    if (ImGui::BeginPopupContextItem("Popup for Node")) {
+    if (ImGui::BeginPopupContextItem(("Popup for Node"+ std::to_string(node->GetUid())).c_str())) {
         // 添加菜单项
         if (ImGui::MenuItem("Add..."))
         {
@@ -187,7 +189,7 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
     }
 
     if (openAddNodePopup) {
-        ImGui::OpenPopup("Add Node");
+        ImGui::OpenPopup(("Add Node" + std::to_string(node->GetUid())).c_str());
     }
     // 渲染内部弹窗
     ShowAddNodePopup(node);
@@ -222,7 +224,8 @@ void SceneHierarchyWindow::ShowAddNodePopup(Node *node) {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-    if (ImGui::BeginPopupModal("Add Node", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal(("Add Node" + std::to_string(node->GetUid())).c_str(),
+                                NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         auto t = rttr::type::get<Node>();
         ShowNodeDerivedTree(t, 0);
