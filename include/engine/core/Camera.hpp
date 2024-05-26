@@ -34,7 +34,7 @@ public:
 
     glm::mat4 &GetInvView();
 
-    const glm::vec2 &GetProjectionSize() const {
+    glm::vec2 GetProjectionSize(){
         return projectionSize;
     }
 

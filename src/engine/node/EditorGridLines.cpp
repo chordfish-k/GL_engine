@@ -3,8 +3,6 @@
 #include "engine/editor/PropertiesWindow.hpp"
 
 void EditorGridLines::EditorUpdate(float dt) {
-    Node::Update(dt);
-
     Node *node = PropertiesWindow::GetActiveNode();
     if (node != nullptr && node->GetNodeType() == "TileMap") {
         ShowTileMapGrids(dynamic_cast<TileMap *>(node));
@@ -14,6 +12,8 @@ void EditorGridLines::EditorUpdate(float dt) {
     auto cameraPos = camera->position;
     auto cameraZoom = camera->GetZoom();
     auto projSize = camera->GetProjectionSize();
+
+
 
     glm::vec2 center = {0, 0};
     glm::vec2 down = {center.x, (int)(projSize.y * cameraZoom * -.5f + cameraPos.y)};
@@ -26,7 +26,7 @@ void EditorGridLines::EditorUpdate(float dt) {
     DebugDraw::AddLine2D(center, left, {0.8, 0, 0, 1});
     DebugDraw::AddLine2D(center, right, {0.8, 0.3, 0.3, 1});
 
-
+    Node::EditorUpdate(dt);
 }
 
 void EditorGridLines::ShowTileMapGrids(TileMap *tileMap) {

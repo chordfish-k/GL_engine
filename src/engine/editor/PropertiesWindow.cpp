@@ -42,7 +42,7 @@ void PropertiesWindow::SetActiveNode(Node *go) {
     activeNode = go;
 }
 
-void PropertiesWindow::Update(float dt) {
+void PropertiesWindow::EditorUpdate(float dt) {
     if (!GameViewWindow::GetWantCaptureMouse()) return;
 
     debounce -= dt;

@@ -11,7 +11,7 @@ private:
 public:
     static void Imgui();
 
-    static void Update(float dt);
+    static void EditorUpdate(float dt);
 
     static Node *GetActiveNode();
 

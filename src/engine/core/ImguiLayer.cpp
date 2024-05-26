@@ -113,10 +113,10 @@ void ImguiLayer::InitImgui() {
     ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
-void ImguiLayer::Update(float dt) {
+void ImguiLayer::EditorUpdate(float dt) {
     StartFrame(dt);
 
-    PropertiesWindow::Update(dt);
+    PropertiesWindow::EditorUpdate(dt);
 
     ProjectManagerWindow::Imgui();
 

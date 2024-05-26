@@ -3,7 +3,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 class Line2D {
-private:
+public:
     glm::vec2 from, to;
     glm::vec4 color;
     int lifeTime; // 线条将存在的帧数

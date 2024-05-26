@@ -29,7 +29,7 @@ void EditorSpriteGizmo::EditorUpdate(float dt) {
     CheckAndApplyMove();
     CheckAndApplyRotation();
     CheckAndApplyScale();
-    Node::Update(dt);
+    Node::EditorUpdate(dt);
 }
 
 void EditorSpriteGizmo::DrawBorderAndPoints() {

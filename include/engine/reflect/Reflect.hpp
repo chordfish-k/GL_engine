@@ -60,5 +60,7 @@ RTTR_REGISTRATION  {
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
             )
         .property("mass", &RigidBody2D::GetMass, &RigidBody2D::SetMass)
-        .property("body type", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType);
+        .property("body type", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType)
+        .property("fixed rotation", &RigidBody2D::IsFixedRotation, &RigidBody2D::SetFixedRotation)
+        .property("continuous", &RigidBody2D::IsContinuousCollision, &RigidBody2D::SetContinuousCollision);
 }

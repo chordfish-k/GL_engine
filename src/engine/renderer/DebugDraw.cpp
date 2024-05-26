@@ -38,7 +38,8 @@ void DebugDraw::Start() {
                           reinterpret_cast<const void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-
+    // 设置线宽
+    glLineWidth(4);
 
     // 获取Shader
     shader = AssetPool::GetShader("assets/shader/debugLine2D.glsl");
@@ -60,9 +61,10 @@ void DebugDraw::BeginFrame() {
 }
 
 void DebugDraw::Draw() {
-    int index = 0;
-    memset(vertexArray, 0, sizeof(vertexArray));
+    if (lines.empty()) return;
 
+    int index = 0;
+    int vNum = 0;
     for (Line2D line : lines) {
         for (int i = 0; i < 2; i++) {
             glm::vec2 position = i == 0 ? line.GetFrom() : line.GetTo();
@@ -79,11 +81,12 @@ void DebugDraw::Draw() {
             vertexArray[index + 5] = color.z;
             vertexArray[index + 6] = color.w;
             index += 7;
+            vNum++;
         }
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, lines.capacity() * 7 * 2 * sizeof(float), vertexArray);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, index * sizeof(float), vertexArray);
 
     // 使用shader
     shader->Use();
@@ -96,11 +99,8 @@ void DebugDraw::Draw() {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
-    // 设置线宽
-    glLineWidth(4);
-
     // 绘画
-    glDrawArrays(GL_LINES, 0, lines.size() * 7 * 2);
+    glDrawArrays(GL_LINES, 0, vNum);
 
     // 解绑
     glDisableVertexAttribArray(0);

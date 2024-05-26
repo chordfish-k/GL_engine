@@ -20,7 +20,7 @@ public:
 
     void InitImgui();
 
-    void Update(float dt);
+    void EditorUpdate(float dt);
 
     void DestroyImgui();
 

@@ -81,7 +81,7 @@ void MainWindow::Loop() {
 
 
         // 更新gui
-        imguiLayer->Update(dt);
+        imguiLayer->EditorUpdate(dt);
 
         glfwSwapBuffers(glfwWindow); // 双缓冲交换
 

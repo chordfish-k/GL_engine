@@ -17,7 +17,6 @@ void EditorMouseControls::PlaceObject() {
 }
 
 void EditorMouseControls::EditorUpdate(float dt){
-    Node::Update(dt);
     if (holdingNode == nullptr)
         return;
 
@@ -31,4 +30,5 @@ void EditorMouseControls::EditorUpdate(float dt){
     if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
         PlaceObject();
     }
+    Node::EditorUpdate(dt);
 };
