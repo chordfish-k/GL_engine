@@ -52,13 +52,14 @@ void Node::CheckDelete() {
 
     for (auto it = ch.begin(); it != ch.end();) {
         auto go = (*it);
-        go->CheckDelete();
+
 
         if (go->ShouldDestroy()) {
             it = ch.erase(it);
             go->Delete();
             delete go;
         } else {
+            go->CheckDelete();
             ++it;
         }
     }
@@ -145,7 +146,7 @@ Node *Node::Deserialize(json j){
                     auto nodePtr = instance.get_value<Node*>();
                     nodePtr->Deserialize(ch);
                     if (nodePtr)
-                        MainWindow::GetScene()->AddNodeAsChild(this,nodePtr);
+                        this->AddNode(nodePtr);
                 }
             }
         }

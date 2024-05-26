@@ -181,6 +181,8 @@ json RigidBody2D::Serialize() {
     json j = Node::Serialize();
     j["data"]["mass"] = mass;
     j["data"]["bodyType"] = GetNameByBodyType(bodyType);
+    j["data"]["fixRotate"] = fixedRotation;
+    j["data"]["continuous"] = continuousCollision;
     j["data"]["linear"]["velocity"] = {linear.velocity.x, linear.velocity.y};
     j["data"]["linear"]["damp"] = linear.damp;
     j["data"]["angular"]["velocity"] = angular.velocity;
@@ -200,6 +202,14 @@ RigidBody2D *RigidBody2D::Deserialize(json j) {
     auto &t = data["bodyType"];
     if (!t.empty())
         SetBodyType(GetBodyTypeByName(t));
+
+    auto &fr = data["fixRotate"];
+    if (!fr.empty())
+        SetFixedRotation(fr);
+
+    auto &co = data["continuous"];
+    if (!co.empty())
+        SetContinuousCollision(co);
 
     auto &l = data["linear"];
     if (!l.empty()) {

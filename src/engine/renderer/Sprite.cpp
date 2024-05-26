@@ -53,10 +53,12 @@ void Sprite::SetHeight(float height) {
 }
 
 void Sprite::SetTexture(Texture *texture) {
-    if (this->texture) delete this->texture;
-    this->texture = texture;
-    this->width = (float) texture->GetWidth();
-    this->height = (float) texture->GetHeight();
+    if (texture != nullptr) {
+        if (this->texture) delete this->texture;
+        this->texture = texture;
+        this->width = (float) texture->GetWidth();
+        this->height = (float) texture->GetHeight();
+    }
 }
 
 void Sprite::SetTexCoordsToFullTexture() {

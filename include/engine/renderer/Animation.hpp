@@ -30,24 +30,13 @@ public:
     Animation *Deserialize(json j) override;
 
     // 属性
-    int GetHFrames() const { return hFrames; }
-    void SetHFrames(int hFrames) {
-        if (hFrames <= 0) return;
-        this->hFrames = hFrames;
-        this->modified = true;
-    }
-    int GetVFrames() const { return vFrames; }
-    void SetVFrames(int vFrames) {
-        if (vFrames <= 0) return;
-        this->vFrames = vFrames;
-        this->modified = true;
-    }
-    int GetFrame() const { return frame; }
-    void SetFrame(int frame) {
-        if (vFrames < 0) return;
-        this->frame = frame;
-        this->modified = true;
-    }
-    bool IsModified() const { return modified; }
+    int GetHFrames();
+    void SetHFrames(int hFrames);
+    int GetVFrames();
+    void SetVFrames(int vFrames);
+    int GetFrame();
+    void SetFrame(int frame);
+    bool IsModified();
+    void ClearModify();
 
 };

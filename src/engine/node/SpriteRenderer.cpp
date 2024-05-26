@@ -27,6 +27,7 @@ void SpriteRenderer::Update(float dt) {
     if (animation->IsModified()) {
         animation->ApplyModifyToSprite(sprite);
         isDirty = true;
+        animation->ClearModify();
     }
 
     if (!lastTransform.Equals(t)) {
@@ -44,6 +45,7 @@ void SpriteRenderer::EditorUpdate(float dt) {
     if (animation->IsModified()) {
         animation->ApplyModifyToSprite(sprite);
         isDirty = true;
+        animation->ClearModify();
     }
 
     if (!lastTransform.Equals(t)) {

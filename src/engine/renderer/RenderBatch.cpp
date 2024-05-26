@@ -119,7 +119,7 @@ void RenderBatch::Render() {
     bool rebufferData = false;
     for (int i = 0; i < numSprites; i++) {
         SpriteRenderer *spr = sprites[i];
-        if (spr->IsDirty()) {
+        if (spr->IsDirty() && !spr->ShouldDestroy()) {
             LoadVertexProperties(i);
             spr->SetClean();
             rebufferData = true;

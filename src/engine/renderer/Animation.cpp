@@ -1,7 +1,7 @@
 #include "engine/renderer/Animation.hpp"
 
 void Animation::ApplyModifyToSprite(Sprite *sprite) {
-    if (modified) {
+    if (modified && sprite->GetTexture()) {
         float W = sprite->GetTexture()->GetWidth();
         float H = sprite->GetTexture()->GetHeight();
         float spriteW = W / hFrames;
@@ -79,3 +79,30 @@ Animation *Animation::Deserialize(json j) {
         SetFrame(f);
     return this;
 }
+
+int Animation::GetHFrames() { return hFrames; }
+
+void Animation::SetHFrames(int hFrames) {
+    if (hFrames <= 0) return;
+    this->hFrames = hFrames;
+    this->modified = true;
+}
+
+int Animation::GetVFrames() { return vFrames; }
+
+void Animation::SetVFrames(int vFrames) {
+    if (vFrames <= 0) return;
+    this->vFrames = vFrames;
+    this->modified = true;
+}
+
+int Animation::GetFrame() { return frame; }
+
+void Animation::SetFrame(int frame) {
+    if (vFrames < 0) return;
+    this->frame = frame;
+    this->modified = true;
+}
+bool Animation::IsModified() { return modified; }
+
+void Animation::ClearModify() {modified = false;}
