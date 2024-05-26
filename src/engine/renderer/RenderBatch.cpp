@@ -25,6 +25,10 @@ RenderBatch::RenderBatch(int maxBatchSize, int zIndex, Renderer *renderer)
 RenderBatch::~RenderBatch() {
     delete[] sprites;
     vertices.clear();
+
+    glDeleteVertexArrays(1, &vaoID);
+    glDeleteBuffers(1, &vboID);
+    glDeleteBuffers(1, &eboID);
 }
 
 void RenderBatch::Start() {
@@ -43,7 +47,7 @@ void RenderBatch::Start() {
                  vertices.data(), GL_DYNAMIC_DRAW);
 
     // 创建并上传标记缓冲区，GL_STATIC_DRAW:每次绘制数据都不变，静态数据
-    unsigned int eboID;
+
     glGenBuffers(1, &eboID);
     std::vector<unsigned int> indices = GenerateIndices();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);

@@ -34,6 +34,7 @@ private:
     std::vector<Texture *> textures;
 
     unsigned int vaoID, vboID;
+    unsigned int eboID;
     int zIndex; // 用于确定渲染顺序
 
 public:

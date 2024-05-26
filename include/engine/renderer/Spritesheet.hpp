@@ -7,7 +7,6 @@
 class Spritesheet {
 private:
     Texture *texture;
-//    std::vector<Sprite *> sprites;
     std::vector<std::vector<glm::vec2>> texCoordsEachSprite;
     int spriteWidth, spriteHeight;
     int columns, rows;
@@ -18,7 +17,6 @@ public:
     Sprite *GetSprite(unsigned int index);
 
     // 属性
-    
     int Size() {
         return texCoordsEachSprite.size();
     }

@@ -56,6 +56,8 @@ public:
     }
 
     void Imgui() override {
+        // TODO spritesheet中sprite对象缓存
+        /*
         ImGui::Begin("Spritesheet");
 
         ImVec2 windowPos = ImGui::GetWindowPos();
@@ -91,5 +93,6 @@ public:
             delete sprite;
         }
         ImGui::End();
+         */
     }
 };

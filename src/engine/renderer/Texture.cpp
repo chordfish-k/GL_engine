@@ -74,7 +74,7 @@ bool Texture::Init(std::string filePath) {
 }
 
 Texture::~Texture() {
-
+    glDeleteTextures(GL_TEXTURE_2D, &texID);
 }
 
 void Texture::Bind() {

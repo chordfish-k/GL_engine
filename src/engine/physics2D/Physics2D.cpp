@@ -71,12 +71,15 @@ void Physics2D::Update(float dt) {
 }
 
 void Physics2D::DestroyNode(Node *node) {
-    auto *rb = dynamic_cast<RigidBody2D*>(node);
-    if (rb != nullptr) {
-        if (rb->GetRawBody() && world) {
-            world->DestroyBody(rb->GetRawBody());
-            rb->SetRawBody(nullptr);
-        }
+    if (!node) return;
+    for (auto n : node->children) {
+        DestroyNode(n);
+    }
+
+    auto rb = dynamic_cast<RigidBody2D*>(node);
+    if (rb && rb->GetRawBody() && world) {
+        world->DestroyBody(rb->GetRawBody());
+        rb->SetRawBody(nullptr);
     }
 }
 void Physics2D::ReAdd(RigidBody2D *rb) {

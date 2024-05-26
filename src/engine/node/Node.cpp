@@ -8,6 +8,8 @@
 
 int Node::ID_COUNTER = 0;
 
+Node::Node (glm::vec2 position, glm::vec2 scale) {}
+
 Node::~Node(){
     Delete();
 }
@@ -15,16 +17,16 @@ Node::~Node(){
 void Node::Delete() {
     auto renderer = MainWindow::GetScene()->GetRenderer();
     auto physics2D = MainWindow::GetScene()->GetPhysics2D();
+    renderer->DestroyNode(this);
+    physics2D->DestroyNode(this);
     for (auto &c : children) {
-        renderer->DestroyNode(c);
-        physics2D->DestroyNode(c);
-        c->Delete();
+        delete c;
+        c = nullptr;
     }
     if (PropertiesWindow::GetActiveNode() == this) {
         PropertiesWindow::SetActiveNode(nullptr);
     }
-    renderer->DestroyNode(this);
-    physics2D->DestroyNode(this);
+
 }
 
 void Node::Start() {
@@ -50,12 +52,12 @@ void Node::CheckDelete() {
 
     for (auto it = ch.begin(); it != ch.end();) {
         auto go = (*it);
-
         go->CheckDelete();
 
         if (go->ShouldDestroy()) {
             it = ch.erase(it);
             go->Delete();
+            delete go;
         } else {
             ++it;
         }

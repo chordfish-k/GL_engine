@@ -35,10 +35,9 @@ public:
     std::string name = "";
 
 public:
-    Node() : Node(glm::vec2(), glm::vec2(1,1)){}
+    Node() : Node(glm::vec2(), glm::vec2(1,1)){};
 
-    Node(glm::vec2 position, glm::vec2 scale = glm::vec2(1,1))
-        : transform(Transform(position, scale)) {}
+    Node(glm::vec2 position, glm::vec2 scale = glm::vec2(1,1));
 
     virtual ~Node();
 

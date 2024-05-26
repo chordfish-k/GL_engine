@@ -11,9 +11,7 @@ MainWindow *MainWindow::window = nullptr;
 
 MainWindow::~MainWindow() {
     AssetPool::Clear();
-    delete imguiLayer;
-    delete frameBuffer;
-    delete pickingTexture;
+
 }
 
 MainWindow *MainWindow::Get() {
@@ -192,6 +190,9 @@ void MainWindow::Run() {
     Get()->imguiLayer->DestroyImgui();
     delete Get()->imguiLayer;
 
+    delete Get()->frameBuffer;
+    delete Get()->pickingTexture;
+
     glfwTerminate();
     glfwSetErrorCallback(nullptr);
 
@@ -227,7 +228,7 @@ void MainWindow::Notify(Node *node, Event event) {
 
     case CloseProject:
         if (currentScene) {
-            currentScene->RemoveAllNodes();
+            ChangeScene(new EditorSceneInitializer());
             Setting::PROJECT_ROOT = "";
         }
         break;

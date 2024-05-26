@@ -1,5 +1,5 @@
-﻿#include "engine/renderer/RenderBatch.hpp"
-#include "engine/renderer/Renderer.hpp"
+﻿#include "engine/renderer/Renderer.hpp"
+#include "engine/renderer/RenderBatch.hpp"
 
 #include <algorithm>
 
@@ -50,10 +50,12 @@ void Renderer::Remove(SpriteRenderer *spr) {
 }
 
 void Renderer::DestroyNode(Node *node) {
-    if (dynamic_cast<SpriteRenderer*>(node) == nullptr) return;
+    if (!node) return;
     for (auto n : node->children) {
         DestroyNode(n);
     }
+
+    if (dynamic_cast<SpriteRenderer*>(node) == nullptr) return;
     for (auto batch : batches) {
         if (batch->DestroyIfExists(node)) {
             return;

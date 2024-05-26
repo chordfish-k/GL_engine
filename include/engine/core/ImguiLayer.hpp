@@ -13,7 +13,7 @@ struct GLFWwindow;
 class ImguiLayer {
 private:
     GLFWwindow *glfwWindow;
-    GLFWcursor *mouseCursors[ImGuiMouseCursor_COUNT];
+//    GLFWcursor *mouseCursors[ImGuiMouseCursor_COUNT];
 
 public:
     ImguiLayer(GLFWwindow *glfwWindow);
