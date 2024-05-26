@@ -5,7 +5,7 @@
 RigidBody2D::RigidBody2D() {
     collider = new Box2DCollider();
     auto c = (Box2DCollider*) collider;
-    c->SetHalfSize({40, 40});
+    c->SetHalfSize({16, 16});
     mass = 10;
 
 }
@@ -17,11 +17,11 @@ RigidBody2D::~RigidBody2D() {
 void RigidBody2D::Update(float dt)  {
     if (rawBody != nullptr) {
         // 更新rawBody的实际位置到gameObject的transform组件
-        transform.position = {rawBody->GetPosition().x,
-                              rawBody->GetPosition().y};
+        transform.position = {rawBody->GetPosition().x * Setting::PHYSICS_SCALE,
+                              rawBody->GetPosition().y * Setting::PHYSICS_SCALE};
         transform.rotation = (float) glm::degrees(rawBody->GetAngle());
         auto vel = rawBody->GetLinearVelocity();
-        linear.velocity = {vel.x, vel.y};
+        linear.velocity = glm::vec2(vel.x, vel.y) * Setting::PHYSICS_SCALE;
     }
 
     Node::Update(dt);
@@ -42,7 +42,7 @@ const glm::vec2 &RigidBody2D::GetLinearVelocity() const {
 void RigidBody2D::SetLinearVelocity(const glm::vec2 &velocity_) {
     linear.velocity = velocity_;
     if (rawBody != nullptr) {
-        rawBody->SetLinearVelocity({velocity_.x, velocity_.y});
+        rawBody->SetLinearVelocity(Setting::PHYSICS_SCALE_INV* b2Vec2(velocity_.x, velocity_.y));
     }
 }
 

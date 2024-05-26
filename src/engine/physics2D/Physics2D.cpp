@@ -1,6 +1,7 @@
 #include "engine/physics2D/Physics2D.hpp"
 #include "engine/physics2D/CircleCollider.hpp"
 #include "engine/physics2D/Box2DCollider.hpp"
+#include "engine/util/Setting.hpp"
 
 Physics2D::Physics2D() {
     world = new b2World(gravity);
@@ -45,7 +46,7 @@ void Physics2D::Add(RigidBody2D *rb) {
 
     }
     else if (box2DCollider != nullptr) {
-        glm::vec2 halfSize = box2DCollider->GetHalfSize();
+        glm::vec2 halfSize = box2DCollider->GetHalfSize() * Setting::PHYSICS_SCALE_INV;
         glm::vec2 offset = box2DCollider->GetOffset();
         glm::vec2 origin = box2DCollider->GetOrigin();
         shape.SetAsBox(halfSize.x, halfSize.y, {origin.x, origin.y}, 0);
@@ -53,7 +54,7 @@ void Physics2D::Add(RigidBody2D *rb) {
         b2Vec2 pos = bodyDef.position;
         float  xPos = pos.x + offset.x;
         float  yPos = pos.y + offset.y;
-        bodyDef.position = {xPos, yPos};
+        bodyDef.position = Setting::PHYSICS_SCALE_INV * b2Vec2(xPos, yPos);
     }
 
     b2Body *body = world->CreateBody(&bodyDef);
@@ -65,7 +66,8 @@ void Physics2D::Add(RigidBody2D *rb) {
 void Physics2D::Update(float dt) {
     physicsTime += dt;
     if (physicsTime >= physicsTimeStep) {
-        world->Step(physicsTime, velocityIterations, positionIterations);
+//        util::Println(physicsTime);
+        world->Step(dt, velocityIterations, positionIterations);
         physicsTime -= physicsTimeStep;
     }
 }

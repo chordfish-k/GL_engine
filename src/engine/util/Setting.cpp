@@ -12,11 +12,18 @@ int Setting::GAME_VIEW_BUFFER_W = 1920 * 2;
 int Setting::GAME_VIEW_BUFFER_H = 1080 * 2;
 float Setting::GAME_VIEW_ASPECT = GAME_VIEW_BUFFER_W * 1.f / GAME_VIEW_BUFFER_H;
 
+float Setting::PHYSICS_SCALE = 50;
+float Setting::PHYSICS_SCALE_INV = 1.f/50;
+
 void Setting::Save() {
     json j;
     j["WINDOW_SIZE"] = {WINDOW_W, WINDOW_H};
     j["GAME_VIEW_BUFFER_SIZE"] = {GAME_VIEW_BUFFER_W, GAME_VIEW_BUFFER_H};
     j["PROJECT_ROOT"] = PROJECT_ROOT;
+
+
+    j["PHYSICS_SCALE"] = PHYSICS_SCALE;
+
     auto str = j.dump(1, '\t', true,
                       nlohmann::json::error_handler_t::replace);
     std::ofstream os("setting.json", std::ios::trunc);
@@ -63,6 +70,12 @@ void Setting::Load() {
     auto &pr = j["PROJECT_ROOT"];
     if (!pr.empty()) {
         PROJECT_ROOT = pr;
+    }
+
+    auto &ps = j["PHYSICS_SCALE"];
+    if (!ps.empty()) {
+        PHYSICS_SCALE = ps;
+        PHYSICS_SCALE_INV = 1.f / PHYSICS_SCALE;
     }
 
 }

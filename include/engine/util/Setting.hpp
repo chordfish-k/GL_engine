@@ -10,6 +10,9 @@ public:
     static float GAME_VIEW_ASPECT;
     static std::string PROJECT_ROOT;
 
+    static float PHYSICS_SCALE;
+    static float PHYSICS_SCALE_INV;
+
 public:
     static void Save();
     static void Load();

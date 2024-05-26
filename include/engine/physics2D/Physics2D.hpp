@@ -5,7 +5,7 @@
 
 class Physics2D {
 private:
-    b2Vec2 gravity = {0, -98.f};
+    b2Vec2 gravity = {0, -9.8f};
     b2World *world = nullptr;
     float physicsTime = 0.f;
     float physicsTimeStep = 1.f / 60.f;
