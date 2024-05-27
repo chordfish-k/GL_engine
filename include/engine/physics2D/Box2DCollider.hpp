@@ -10,17 +10,12 @@ class Box2DCollider : public ACollider {
     friend class ColliderShape2D;
 private:
     glm::vec2 size = {1, 1};
-    glm::vec2 origin = {0, 0};
     ColliderShape2D * colliderShape2D;
 
 public:
     const glm::vec2 &GetSize() const;
 
     void SetSize(const glm::vec2 &size);
-
-    const glm::vec2 &GetOrigin() const;
-
-    void SetOrigin(const glm::vec2 &origin);
 
     void EditorUpdate(float dt);
 

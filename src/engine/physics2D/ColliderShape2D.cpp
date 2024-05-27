@@ -78,6 +78,12 @@ void ColliderShape2D::Update(float dt) {
 }
 
 void ColliderShape2D::EditorUpdate(float dt) {
+
+    if (!(lastTransform.Equals(transform))) {
+        lastTransform = transform;
+//        collider.SetOrigin
+    }
+
     if (collider != nullptr) {
         collider->EditorUpdate(dt);
     }

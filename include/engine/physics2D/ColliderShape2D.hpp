@@ -8,6 +8,7 @@ class ColliderShape2D : public Node{
     RTTR_ENABLE(Node)
 private:
     ACollider *collider = nullptr;
+    Transform lastTransform;
 
 public:
     ColliderShape2D();
@@ -27,5 +28,6 @@ public:
     void Imgui() override;
 
     void Update(float dt) override;
+
     void EditorUpdate(float dt) override;
 };

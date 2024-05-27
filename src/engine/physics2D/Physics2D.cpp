@@ -62,8 +62,11 @@ void Physics2D::Add(RigidBody2D *rb) {
             glm::vec2 halfSize =
                 box2DCollider->GetSize() * Setting::PHYSICS_SCALE_INV;
 //            glm::vec2 offset = box2DCollider->GetOffset();
-            glm::vec2 origin = Setting::PHYSICS_SCALE_INV * box2DCollider->GetOrigin();
-            shape_->SetAsBox(halfSize.x, halfSize.y, {origin.x, origin.y}, 0);
+            glm::vec2 origin = Setting::PHYSICS_SCALE_INV * colliderShape2D->transform.position;//box2DCollider->GetOrigin();
+            glm::vec2 scale = colliderShape2D->GetTransform().scale;
+            shape_->SetAsBox(halfSize.x * scale.x, halfSize.y * scale.y,
+                             {origin.x, origin.y},
+                             glm::radians(colliderShape2D->transform.rotation));
             shape = shape_;
         }
         auto fixture = body->CreateFixture(shape, rb->GetMass());
@@ -88,9 +91,10 @@ void Physics2D::Add(ColliderShape2D *cs) {
     else if (box2DCollider != nullptr) {
         auto *shape_ = new b2PolygonShape();
         glm::vec2 halfSize =
-            box2DCollider->GetSize() * Setting::PHYSICS_SCALE_INV;
-        glm::vec2 origin = Setting::PHYSICS_SCALE_INV * box2DCollider->GetOrigin();
-        shape_->SetAsBox(halfSize.x, halfSize.y, {origin.x, origin.y}, 0);
+            box2DCollider->GetSize() * cs->GetTransform().scale * Setting::PHYSICS_SCALE_INV;
+        glm::vec2 origin = Setting::PHYSICS_SCALE_INV * cs->transform.position;//box2DCollider->GetOrigin();
+        shape_->SetAsBox(halfSize.x, halfSize.y,
+                         {origin.x, origin.y}, glm::radians(cs->transform.rotation));
         shape = shape_;
     }
 
