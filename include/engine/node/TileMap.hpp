@@ -4,6 +4,7 @@
 
 class TileMap : public Node {
     COMPONENT(TileMap)
+    RTTR_ENABLE(Node)
 protected:
     int cellWidth = 16;
     int cellHeight = 16;

@@ -9,6 +9,7 @@
 
 class RigidBody2D : public Node {
     COMPONENT(RigidBody2D)
+    RTTR_ENABLE(Node)
 protected:
     Linear linear;
     Angular angular;

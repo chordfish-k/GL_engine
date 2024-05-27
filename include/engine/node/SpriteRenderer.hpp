@@ -16,6 +16,7 @@ class Texture;
 
 class SpriteRenderer : public Node {
     COMPONENT(SpriteRenderer)
+    RTTR_ENABLE(Node)
 private:
     Transform lastTransform;
     bool isDirty = true; // 脏标记，表示数据有变化

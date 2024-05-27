@@ -3,7 +3,7 @@
 
 int main() {
     MainWindow *window = MainWindow::Get();
-    window->SetDefaultScenePath("test/scenes/c.scene");
+    window->SetDefaultScenePath("test/scenes/b.scene");
     window->Run();
     return 0;
 }

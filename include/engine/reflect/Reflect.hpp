@@ -1,14 +1,10 @@
 #pragma once
 
 #include <rttr/registration>
-#include "engine/core/Transform.hpp"
-#include "engine/node/SpriteRenderer.hpp"
-#include "engine/node/TileMap.hpp"
-#include "engine/physics2D/Linear.h"
+#include "engine/node/IUnselectableNode.h"
 
 RTTR_REGISTRATION  {
 
-//    rttr::registration::class_<AGuiObj>("AGuiObj");
     rttr::registration::class_<Transform>("Transform")
         .constructor<>()
         .property("position", &Transform::position)
@@ -26,6 +22,7 @@ RTTR_REGISTRATION  {
         .property("vFrames", &Animation::GetVFrames, &Animation::SetVFrames)
         .property("frame", &Animation::GetFrame, &Animation::SetFrame);
 
+    rttr::registration::class_<IUnselectableNode>("IUnselectableNode");
     rttr::registration::class_<Node>("Node")
         .constructor<>()(
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
@@ -54,7 +51,6 @@ RTTR_REGISTRATION  {
         rttr::value("Dynamic", BodyType::Dynamic),
         rttr::value("Static", BodyType::Static)
     );
-
     rttr::registration::class_<RigidBody2D>("RigidBody2D")
         .constructor<>()(
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象

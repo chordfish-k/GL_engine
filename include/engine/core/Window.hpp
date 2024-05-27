@@ -3,14 +3,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Scene.hpp"
-#include "ImguiLayer.hpp"
+#include <cassert>
+#include <string>
+
 #include "engine/core/Scene.hpp"
+#include "engine/core/ImguiLayer.hpp"
 #include "engine/renderer/FrameBuffer.hpp"
 #include "engine/renderer/PickingTexture.hpp"
 #include "engine/util/Setting.hpp"
-#include <cassert>
-#include <string>
 
 class Window {
 protected:

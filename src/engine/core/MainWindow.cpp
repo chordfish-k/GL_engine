@@ -7,6 +7,8 @@
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/editor/ProjectManagerWindow.hpp"
 
+#include "engine/reflect/Reflect.hpp"
+
 MainWindow *MainWindow::window = nullptr;
 
 MainWindow::~MainWindow() {

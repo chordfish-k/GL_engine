@@ -1,10 +1,8 @@
 ﻿#include "engine/core/Window.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/core/MouseListener.hpp"
-#include "engine/core/EditorSceneInitializer.hpp"
 
 #include <GLFW/glfw3.h>
-#include "engine/reflect/Reflect.hpp"
 #include "engine/editor/ProjectManagerWindow.hpp"
 
 Window *Window::Get() {

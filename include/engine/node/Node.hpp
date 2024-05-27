@@ -146,7 +146,6 @@ protected:
 };
 
 #define COMPONENT(name_)                                        \
-    RTTR_ENABLE(Node)                                           \
     public:                                                     \
         const std::string nodeType = #name_;                    \
         std::string GetNodeType() override {return nodeType;}   \

@@ -1,5 +1,8 @@
 ﻿#include "engine/editor/SceneHierarchyWindow.hpp"
 #include "engine/core/MainWindow.hpp"
+#include "engine/node/IUnselectableNode.h"
+
+#define DISABLE_COLOR {0.2, 0.2, 0.2, 1}
 
 int SceneHierarchyWindow::selectingUid = -1;
 
@@ -46,8 +49,6 @@ void SceneHierarchyWindow::ShowNodeTree() {
         ShowSubNodes(root);
         ImGui::TreePop();
     }
-
-
 }
 
 void SceneHierarchyWindow::ShowSubNodes(Node *root) {
@@ -258,19 +259,32 @@ void SceneHierarchyWindow::ShowNodeDerivedTree(const rttr::type& t, int level) {
 
     if (derivedClasses.empty())
         nodeFlags |= ImGuiTreeNodeFlags_Leaf;
-    if (selectedNodeType == t.get_name().to_string())
-        nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
     if (level == 0)
         nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
 
-    if (ImGui::TreeNodeEx(t.get_name().data(),nodeFlags)) {
+    // 如果继承了IUnselectable接口，则这个Node不可手动添加，只能作为基节点
+    bool selectable = true;
+    if (t.is_derived_from<IUnselectableNode>()) {
+        selectable = false;
+    }
 
+    if (selectedNodeType == t.get_name().to_string() && selectable)
+        nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+    // 不可选中的颜色
+    if (!selectable) ImGui::PushStyleColor(ImGuiCol_Text, DISABLE_COLOR);
+
+    bool open = ImGui::TreeNodeEx(t.get_name().data(),nodeFlags);
+
+    if (!selectable) ImGui::PopStyleColor();
+
+    if (open) {
         if (ImGui::IsItemClicked()) {
             selectedNodeType = t.get_name().to_string();
         }
 
-        for (const auto& derived : derivedClasses)
-        {
+        for (const auto& derived : derivedClasses){
             ShowNodeDerivedTree(derived, level + 1);
         }
         ImGui::TreePop();
