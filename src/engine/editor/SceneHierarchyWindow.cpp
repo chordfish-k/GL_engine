@@ -1,6 +1,6 @@
 ﻿#include "engine/editor/SceneHierarchyWindow.hpp"
 #include "engine/core/MainWindow.hpp"
-#include "engine/node/IUnselectableNode.h"
+#include "engine/node/IUnselectableNode.hpp"
 
 #define DISABLE_COLOR {0.2, 0.2, 0.2, 1}
 

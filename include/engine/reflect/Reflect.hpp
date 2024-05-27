@@ -1,7 +1,7 @@
 #pragma once
 
 #include <rttr/registration>
-#include "engine/node/IUnselectableNode.h"
+#include "engine/node/IUnselectableNode.hpp"
 
 RTTR_REGISTRATION  {
 
@@ -51,6 +51,7 @@ RTTR_REGISTRATION  {
         rttr::value("Dynamic", BodyType::Dynamic),
         rttr::value("Static", BodyType::Static)
     );
+
     rttr::registration::class_<RigidBody2D>("RigidBody2D")
         .constructor<>()(
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
@@ -59,4 +60,10 @@ RTTR_REGISTRATION  {
         .property("body type", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType)
         .property("fixed rotation", &RigidBody2D::IsFixedRotation, &RigidBody2D::SetFixedRotation)
         .property("continuous", &RigidBody2D::IsContinuousCollision, &RigidBody2D::SetContinuousCollision);
+
+    rttr::registration::class_<ColliderShape2D>("ColliderShape2D")
+        .constructor<>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+            )
+        ;
 }

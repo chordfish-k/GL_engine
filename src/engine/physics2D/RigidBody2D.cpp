@@ -3,23 +3,30 @@
 #include "engine/physics2D/Box2DCollider.hpp"
 
 RigidBody2D::RigidBody2D() {
-    collider = new Box2DCollider();
-    auto c = (Box2DCollider*) collider;
-    c->SetHalfSize({16, 16});
     mass = 10;
-
 }
 
 RigidBody2D::~RigidBody2D() {
-    delete collider;
 }
 
 void RigidBody2D::Update(float dt)  {
     if (rawBody != nullptr) {
         // 更新rawBody的实际位置到gameObject的transform组件
-        transform.position = {rawBody->GetPosition().x * Setting::PHYSICS_SCALE,
+        Transform tr;
+        tr.position = {rawBody->GetPosition().x * Setting::PHYSICS_SCALE,
                               rawBody->GetPosition().y * Setting::PHYSICS_SCALE};
-        transform.rotation = (float) glm::degrees(rawBody->GetAngle());
+        tr.rotation = (float) glm::degrees(rawBody->GetAngle());
+
+        if (parent) {
+            auto ptr = parent->transform;
+            transform.position = tr.position - ptr.position;
+            transform.rotation = tr.rotation - ptr.rotation;
+        }
+        else {
+            transform.position = tr.position;
+            transform.rotation = tr.rotation;
+        }
+
         auto vel = rawBody->GetLinearVelocity();
         linear.velocity = glm::vec2(vel.x, vel.y) * Setting::PHYSICS_SCALE;
     }
@@ -28,10 +35,12 @@ void RigidBody2D::Update(float dt)  {
 }
 
 void RigidBody2D::EditorUpdate(float dt)  {
-    if (collider != nullptr) {
-        collider->EditorUpdate(dt, this);
+    if (rawBody != nullptr){
+        auto tr = GetTransform();
+        auto pos = Setting::PHYSICS_SCALE_INV * b2Vec2(tr.position.x, tr.position.y);
+        auto ro = glm::radians(tr.rotation);
+        rawBody->SetTransform(pos, ro);
     }
-
     Node::EditorUpdate(dt);
 }
 
@@ -139,15 +148,6 @@ void RigidBody2D::SetBodyType(BodyType bodyType_) {
         }
     }
 
-}
-
-ACollider *RigidBody2D::GetCollider() const {
-    return collider;
-}
-
-void RigidBody2D::SetCollider(ACollider *collider_) {
-    delete collider;
-    RigidBody2D::collider = collider_;
 }
 
 void RigidBody2D::Imgui() {

@@ -75,6 +75,10 @@ void MainWindow::Loop() {
                 } else {
                     currentScene->Update(dt);
                     currentScene->Render();
+
+                    DebugDraw::BeginFrame();
+                    DebugDraw::Draw();
+
                 }
             }
 
@@ -265,4 +269,8 @@ void MainWindow::Notify(Node *node, Event event) {
 
 void MainWindow::ChangeSceneLazy(ASceneInitializer *nextScene_) {
     Get()->nextScene = nextScene_;
+}
+
+bool MainWindow::IsPlaying() {
+    return Get()->runtimePlaying;
 }

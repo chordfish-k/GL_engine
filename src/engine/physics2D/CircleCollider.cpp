@@ -7,5 +7,7 @@ float CircleCollider::GetRadius() const {
 void CircleCollider::SetRadius(float radius_) {
     CircleCollider::radius = radius_;
 }
+void CircleCollider::EditorUpdate(float dt) {
+    ACollider::EditorUpdate(dt);
+}
 
-void CircleCollider::EditorUpdate(float dt, RigidBody2D *rb) {}

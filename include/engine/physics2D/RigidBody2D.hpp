@@ -3,8 +3,8 @@
 #include "engine/node/Node.hpp"
 #include "engine/physics2D/BodyType.hpp"
 #include "engine/physics2D/ACollider.hpp"
-#include "engine/physics2D/Linear.h"
-#include "engine/physics2D/Angular.h"
+#include "engine/physics2D/Linear.hpp"
+#include "engine/physics2D/Angular.hpp"
 #include <box2d/box2d.h>
 
 class RigidBody2D : public Node {
@@ -21,7 +21,6 @@ protected:
     bool continuousCollision = true; // 连续碰撞，防止隧穿
 
     b2Body *rawBody = nullptr;
-    ACollider *collider = nullptr;
 
 public:
     RigidBody2D();
@@ -73,10 +72,6 @@ public:
     BodyType GetBodyType() const;
 
     void SetBodyType(BodyType bodyType);
-
-    ACollider *GetCollider() const;
-
-    void SetCollider(ACollider *collider);
 
     void Imgui() override;
 };

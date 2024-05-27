@@ -15,14 +15,16 @@ float Setting::GAME_VIEW_ASPECT = GAME_VIEW_BUFFER_W * 1.f / GAME_VIEW_BUFFER_H;
 float Setting::PHYSICS_SCALE = 50;
 float Setting::PHYSICS_SCALE_INV = 1.f/50;
 
+bool Setting::PHYSICS_DRAW_DEBUG = false;
+
 void Setting::Save() {
     json j;
     j["WINDOW_SIZE"] = {WINDOW_W, WINDOW_H};
     j["GAME_VIEW_BUFFER_SIZE"] = {GAME_VIEW_BUFFER_W, GAME_VIEW_BUFFER_H};
     j["PROJECT_ROOT"] = PROJECT_ROOT;
 
-
     j["PHYSICS_SCALE"] = PHYSICS_SCALE;
+    j["PHYSICS_DRAW_DEBUG"] = PHYSICS_DRAW_DEBUG;
 
     auto str = j.dump(1, '\t', true,
                       nlohmann::json::error_handler_t::replace);
@@ -78,4 +80,8 @@ void Setting::Load() {
         PHYSICS_SCALE_INV = 1.f / PHYSICS_SCALE;
     }
 
+    auto &pd = j["PHYSICS_DRAW_DEBUG"];
+    if (!pd.empty()){
+        PHYSICS_DRAW_DEBUG = pd;
+    }
 }

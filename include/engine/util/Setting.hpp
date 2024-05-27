@@ -12,6 +12,7 @@ public:
 
     static float PHYSICS_SCALE;
     static float PHYSICS_SCALE_INV;
+    static bool PHYSICS_DRAW_DEBUG;
 
 public:
     static void Save();

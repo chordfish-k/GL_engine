@@ -69,6 +69,8 @@ public:
 
     static GLFWwindow *GetGlfwWindow();
 
+    static bool IsPlaying();
+
 private:
     static void ChangeSceneLazy(ASceneInitializer *nextScene);
 };

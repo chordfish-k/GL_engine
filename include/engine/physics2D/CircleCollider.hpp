@@ -11,5 +11,5 @@ public:
 
     void SetRadius(float radius);
 
-    void EditorUpdate(float dt, RigidBody2D *rb) override;
+    void EditorUpdate(float dt) override;
 };

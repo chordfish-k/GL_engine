@@ -2,6 +2,7 @@
 
 #include <box2d/box2d.h>
 #include "RigidBody2D.hpp"
+#include "ColliderShape2D.hpp"
 
 class Physics2D {
 private:
@@ -18,6 +19,8 @@ public:
     ~Physics2D();
 
     void Add(RigidBody2D *rb);
+
+    void Add(ColliderShape2D *cs);
 
     void DestroyNode(Node *node);
 
