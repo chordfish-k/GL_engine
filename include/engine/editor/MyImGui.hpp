@@ -18,7 +18,7 @@ public:
 
     static bool DrawIntControl(const std::string& label, int &values, int v_speed = 1, int v_min=INT32_MIN, int v_max=INT32_MAX);
 
-    static bool DrawFloatControl(const std::string& label, float &values, float v_speed = 0.1f, float v_min=-FLT_MIN, float v_max=FLT_MAX);
+    static bool DrawFloatControl(const std::string& label, float &values, float v_speed = 0.1f, float v_min=std::numeric_limits<float>::lowest(), float v_max=std::numeric_limits<float>::max());
 
     static bool DrawCheckbox(const std::string& label, bool &values);
 
