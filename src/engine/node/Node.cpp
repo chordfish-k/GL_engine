@@ -303,13 +303,13 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
 
             auto enumerators = property_type.get_enumeration().get_names();
             int index = 0, currentIndex = 0;
-            BodyType now = value.get_value<BodyType>();
+
 
             for (const auto&n : enumerators){
                 enum_names.emplace_back(n.data());
                 auto v = property_type.get_enumeration().name_to_value(n);
                 enum_values.push_back(v);
-                if (v == rttr::variant(now)) {
+                if (v == value) {
                     index = currentIndex;
                 }
                 ++currentIndex;

@@ -32,6 +32,10 @@ void Physics2D::Add(RigidBody2D *rb) {
     bodyDef.fixedRotation = rb->IsFixedRotation();
     bodyDef.bullet = rb->IsContinuousCollision();
 
+    auto vel = b2Vec2(rb->GetLinearVelocity().x, rb->GetLinearVelocity().y);
+    bodyDef.linearVelocity = Setting::PHYSICS_SCALE_INV * vel;
+    bodyDef.angularVelocity = Setting::PHYSICS_SCALE_INV * rb->GetAngularVelocity();
+
     switch (rb->GetBodyType()) {
 
     case BodyType::Static:
@@ -39,6 +43,7 @@ void Physics2D::Add(RigidBody2D *rb) {
         break;
     case BodyType::Dynamic:
         bodyDef.type = b2_dynamicBody;
+        bodyDef.allowSleep = false;
         break;
     case BodyType::Kinematic:
         bodyDef.type = b2_kinematicBody;
@@ -47,38 +52,30 @@ void Physics2D::Add(RigidBody2D *rb) {
 
 
     b2Body *body = world->CreateBody(&bodyDef);
-
-    for (auto *ch : rb->children) {
-        b2Shape *shape = nullptr;
-        auto *colliderShape2D = dynamic_cast<ColliderShape2D*>(ch);
-        if (colliderShape2D == nullptr)
-            continue;
-
-        ACollider *collider = colliderShape2D->GetCollider();
-        auto *circleCollider = dynamic_cast<CircleCollider*>(collider);
-        auto *box2DCollider = dynamic_cast<Box2DCollider*>(collider);
-        if (circleCollider != nullptr) {
-
-        }
-        else if (box2DCollider != nullptr) {
-            auto *shape_ = new b2PolygonShape();
-            glm::vec2 halfSize = Setting::PHYSICS_SCALE_INV * box2DCollider->GetSize() * 0.5f;
-            glm::vec2 origin = Setting::PHYSICS_SCALE_INV * colliderShape2D->transform.position;
-            glm::vec2 scale = Setting::PHYSICS_SCALE_INV * temp.scale;
-            shape_->SetAsBox(scale.x * halfSize.x,
-                             scale.y * halfSize.y,
-                             {origin.x, origin.y},
-                             glm::radians(colliderShape2D->transform.rotation));
-            shape = shape_;
-        }
-        auto fixture = body->CreateFixture(shape, rb->GetMass());
-        collider->SetFixture(fixture);
-    }
     body->SetFixedRotation(rb->IsFixedRotation());
     rb->SetRawBody(body);
 }
 
 void Physics2D::Add(ColliderShape2D *cs) {
+    RigidBody2D *rb = nullptr;
+    b2Body *rawBody = nullptr;
+
+    if (!cs->parent) return;
+    // 加入到最近rigid父节点的fixtureList中
+    Node *p = cs;
+    while (p->parent) {
+        rb = dynamic_cast<RigidBody2D *>(p->parent);
+        if (rb && rb->GetRawBody()) {
+            auto fixture = rawBody = rb->GetRawBody();
+            break;
+        } else {
+            p = p->parent;
+        }
+    }
+
+    if (!rawBody)
+        return;
+
     b2Shape *shape = nullptr;
     auto *colliderShape2D = cs;
     if (colliderShape2D == nullptr)
@@ -87,23 +84,50 @@ void Physics2D::Add(ColliderShape2D *cs) {
     ACollider *collider = colliderShape2D->GetCollider();
     auto *circleCollider = dynamic_cast<CircleCollider*>(collider);
     auto *box2DCollider = dynamic_cast<Box2DCollider*>(collider);
-    if (circleCollider != nullptr) {
 
+    if (circleCollider != nullptr) {
+        // 生成椭圆顶点
+        int segments = 16;
+        std::vector<b2Vec2> vertices(segments);
+        float angleIncrement = 2.0f * b2_pi / segments;
+        for (int i = 0; i < segments; ++i) {
+            float angle = i * angleIncrement;
+            b2Vec2 p = {circleCollider->GetRadius() * cosf(angle),
+                        circleCollider->GetRadius() * sinf(angle)};
+            p = Setting::PHYSICS_SCALE_INV * p;
+            vertices[i].Set(p.x, p.y);
+        }
+
+        // 分割顶点并创建多个多边形
+        for (int i = 0; i < segments; i++) {
+            b2Vec2 polygonVertices[3];
+            int32 vertexCount = 0;
+
+            // 第一个顶点是多边形的中心
+            polygonVertices[vertexCount++] = b2Vec2(0, 0);
+
+            // 复制顶点到多边形
+            for (int j = 0; j < 2; ++j) {
+                polygonVertices[vertexCount++] = vertices[(i + j) % segments];
+            }
+
+            // 创建新的多边形形状
+            b2PolygonShape poly;
+            poly.Set(polygonVertices, vertexCount);
+
+            // 创建新的fixture
+            circleCollider->SetFixture(rawBody->CreateFixture(&poly, rb->GetMass()), i);
+        }
     }
     else if (box2DCollider != nullptr) {
         auto *shape_ = new b2PolygonShape();
         glm::vec2 halfSize = Setting::PHYSICS_SCALE_INV * box2DCollider->GetSize() * 0.5f;
         glm::vec2 origin = Setting::PHYSICS_SCALE_INV * cs->transform.position;
-        shape_->SetAsBox(halfSize.x, halfSize.y,
-                         {origin.x, origin.y}, glm::radians(cs->transform.rotation));
+        shape_->SetAsBox(halfSize.x, halfSize.y, {origin.x, origin.y},
+                         glm::radians(cs->transform.rotation));
         shape = shape_;
-    }
 
-    if (!cs->parent) return;
-    auto rb = dynamic_cast<RigidBody2D*>(cs->parent);
-    if (rb->GetRawBody()) {
-        auto fixture = rb->GetRawBody()->CreateFixture(shape, rb->GetMass());
-        collider->SetFixture(fixture);
+        box2DCollider->SetFixture(rawBody->CreateFixture(shape, rb->GetMass()));
     }
 }
 
@@ -123,16 +147,21 @@ void Physics2D::DestroyNode(Node *node) {
 
     auto rb = dynamic_cast<RigidBody2D*>(node);
     if (rb && rb->GetRawBody() && world) {
-        world->DestroyBody(rb->GetRawBody());
+//        world->DestroyBody(rb->GetRawBody());
         rb->SetRawBody(nullptr);
     }
 
     auto cs = dynamic_cast<ColliderShape2D*>(node);
-    if (cs && cs->GetCollider() && cs->GetCollider()->GetFixture() && world) {
-        auto parent = cs->parent;
-        auto rbb = dynamic_cast<RigidBody2D*>(parent);
-        if (rbb && rbb->GetRawBody()) {
-            rbb->GetRawBody()->DestroyFixture(cs->GetCollider()->GetFixture());
+    if (cs && cs->GetCollider() && world) {
+        auto &fs = cs->GetCollider()->GetFixture();
+        if (!fs.empty()) {
+            auto parent = cs->parent;
+            auto rbb = dynamic_cast<RigidBody2D*>(parent);
+            if (rbb && rbb->GetRawBody()) {
+                for (auto &f : fs) {
+                    rbb->GetRawBody()->DestroyFixture(f);
+                }
+            }
         }
     }
 }

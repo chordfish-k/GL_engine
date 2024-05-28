@@ -4,6 +4,11 @@
 #include "engine/core/MainWindow.hpp"
 #include "engine/core/Camera.hpp"
 
+Box2DCollider::Box2DCollider(ColliderShape2D *collider) {
+    colliderShape2D = collider;
+    fixture = std::vector<b2Fixture*>(1);
+}
+
 const glm::vec2 &Box2DCollider::GetSize() const {
     return size;
 }
@@ -11,10 +16,10 @@ const glm::vec2 &Box2DCollider::GetSize() const {
 void Box2DCollider::SetSize(const glm::vec2 &size_) {
     size = size_;
 
-    if (!fixture)
+    if (fixture.empty())
         return;
 
-    auto shape = fixture->GetShape();
+    auto shape = fixture[0]->GetShape();
     if (!shape)
         return;
 
@@ -22,13 +27,13 @@ void Box2DCollider::SetSize(const glm::vec2 &size_) {
     if (!poly)
         return;
 
-    poly->SetAsBox(size.x * 0.5f, size.y * 0.5f,poly->m_centroid, 0);
+//    poly->SetAsBox(size.x * 0.5f, size.y * 0.5f,poly->m_centroid, 0);
 }
 
 
 void Box2DCollider::EditorUpdate(float dt) {
-    if (!fixture) return;
-    auto shape = fixture->GetShape();
+    if (fixture.empty()) return;
+    auto shape = fixture[0]->GetShape();
     if (!shape)
         return;
 
@@ -41,19 +46,15 @@ void Box2DCollider::EditorUpdate(float dt) {
         int index = (i+1)%poly->m_count;
         b2Vec2 vPosA = {poly->m_vertices[i].x, poly->m_vertices[i].y};
         b2Vec2 vPosB = {poly->m_vertices[index].x, poly->m_vertices[index].y};
-        auto vA = Setting::PHYSICS_SCALE * fixture->GetBody()->GetWorldPoint(vPosA);
-        auto vB = Setting::PHYSICS_SCALE * fixture->GetBody()->GetWorldPoint(vPosB);
+        auto vA = Setting::PHYSICS_SCALE * fixture[0]->GetBody()->GetWorldPoint(vPosA);
+        auto vB = Setting::PHYSICS_SCALE * fixture[0]->GetBody()->GetWorldPoint(vPosB);
         DebugDraw::AddLine2D({vA.x, vA.y}, {vB.x, vB.y});
     }
 }
 
-std::string Box2DCollider::GetColliderShapeType() {
-    return "Box2DCollider";
-}
 
 json Box2DCollider::Serialize() {
     json j;
-    j["type"] = GetColliderShapeType();
     j["size"] = {size.x, size.y};
     return j;
 }
@@ -78,4 +79,35 @@ bool Box2DCollider::Imgui() {
     }
     ImGui::PopStyleColor();
     return res;
+}
+
+void Box2DCollider::RefreshShape() {
+    if (!colliderShape2D || fixture.empty()) return;
+
+    auto center = glm::vec2(0.5f, 0.5f);
+    auto modelMat = colliderShape2D->GetModelMatrix();
+
+    // 计算外框顶点坐标
+    float xAdd = size.x * (center.x - 1);
+    float yAdd = size.y * (center.y - 1);
+
+    b2Vec2 vertices[4];
+    for (int i = 0; i < 4; i++) {
+        if (i == 1) {
+            xAdd = size.x * center.x;
+        } else if (i == 2) {
+            yAdd = size.y * center.y;
+        } else if (i == 3) {
+            xAdd = size.x * (center.y - 1);
+        }
+
+        auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
+        pos = pos * Setting::PHYSICS_SCALE_INV;
+        auto p = fixture[0]->GetBody()->GetLocalPoint({pos.x, pos.y});
+        vertices[i] = {p.x, p.y};
+    }
+
+    b2PolygonShape poly;
+    poly.Set(vertices, 4);
+    SetFixture(fixture[0]->GetBody()->CreateFixture(&poly, fixture[0]->GetDensity()));
 }

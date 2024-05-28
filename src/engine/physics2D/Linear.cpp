@@ -12,7 +12,7 @@ bool Linear::Imgui() {
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
     if (ImGui::TreeNodeEx("Linear", ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen)) {
         res = MyImGui::DrawVec2Control("velocity", velocity, 0, 0.5f);
-        res = res || MyImGui::DrawFloatControl("damp", damp);
+        res = MyImGui::DrawFloatControl("damp", damp) || res;
         ImGui::TreePop();
     }
     ImGui::PopStyleColor();

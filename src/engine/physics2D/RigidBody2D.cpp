@@ -27,7 +27,7 @@ void RigidBody2D::Update(float dt)  {
         transform.ApplyDataByLocalMatrix(dParentMat);
 
         auto vel = rawBody->GetLinearVelocity();
-        linear.velocity = glm::vec2(vel.x, vel.y) * Setting::PHYSICS_SCALE;
+        linear.velocity = glm::vec2(vel.x, vel.y);
 
         auto angV = rawBody->GetAngularVelocity();
         angular.velocity = angV;
@@ -53,7 +53,7 @@ const glm::vec2 &RigidBody2D::GetLinearVelocity() const {
 void RigidBody2D::SetLinearVelocity(const glm::vec2 &velocity_) {
     linear.velocity = velocity_;
     if (rawBody != nullptr) {
-        rawBody->SetLinearVelocity(Setting::PHYSICS_SCALE_INV* b2Vec2(velocity_.x, velocity_.y));
+        rawBody->SetLinearVelocity(Setting::PHYSICS_SCALE_INV * b2Vec2(velocity_.x, velocity_.y));
     }
 }
 
@@ -64,7 +64,7 @@ const float &RigidBody2D::GetAngularVelocity() const {
 void RigidBody2D::SetAngularVelocity(const float &velocity_) {
     angular.velocity = velocity_;
     if (rawBody != nullptr) {
-        rawBody->SetAngularVelocity(velocity_);
+        rawBody->SetAngularVelocity(Setting::PHYSICS_SCALE_INV * velocity_);
     }
 }
 
@@ -74,6 +74,8 @@ float RigidBody2D::GetAngularDamping() const {
 
 void RigidBody2D::SetAngularDamping(float angularDamping_) {
     angular.damp = angularDamping_;
+    if (rawBody)
+        rawBody->SetAngularDamping(angularDamping_);
 }
 
 float RigidBody2D::GetLinearDamping() const {
@@ -125,7 +127,10 @@ b2Body *RigidBody2D::GetRawBody() const {
 }
 
 void RigidBody2D::SetRawBody(b2Body *rawBody_) {
-    RigidBody2D::rawBody = rawBody_;
+    if (rawBody != nullptr) {
+        rawBody->GetWorld()->DestroyBody(rawBody);
+    }
+    rawBody = rawBody_;
 }
 
 BodyType RigidBody2D::GetBodyType() const {
@@ -160,13 +165,13 @@ void RigidBody2D::Imgui() {
         ShowImgui();
 
         if (linear.Imgui()) {
-            rawBody->SetLinearVelocity({linear.velocity.x, linear.velocity.y});
-            rawBody->SetLinearDamping(linear.damp);
+            SetLinearVelocity({linear.velocity.x, linear.velocity.y});
+            SetLinearDamping(linear.damp);
         }
 
         if (angular.Imgui()) {
-            rawBody->SetAngularVelocity(angular.velocity);
-            rawBody->SetAngularDamping(angular.damp);
+            SetAngularVelocity(angular.velocity);
+            SetAngularDamping(angular.damp);
         }
     }
 }

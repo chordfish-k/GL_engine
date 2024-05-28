@@ -8,10 +8,15 @@ glm::vec2 ACollider::GetOffset() {
     return offset;
 }
 
-b2Fixture *ACollider::GetFixture() const {
+std::vector<b2Fixture*> &ACollider::GetFixture() {
     return fixture;
 }
 
-void ACollider::SetFixture(b2Fixture *fixture_) {
-    fixture = fixture_;
+void ACollider::SetFixture(b2Fixture *fixture_, int index) {
+    if (index >= fixture.size()) return;
+    if (fixture[index]) {
+        fixture[index]->GetBody()->DestroyFixture(fixture[index]);
+    }
+    fixture[index] = fixture_;
 }
+

@@ -2,6 +2,8 @@
 
 #include <rttr/registration>
 #include "engine/node/IUnselectableNode.hpp"
+#include "engine/physics2D/Box2DCollider.hpp"
+#include "engine/physics2D/CircleCollider.hpp"
 
 RTTR_REGISTRATION  {
 
@@ -23,6 +25,7 @@ RTTR_REGISTRATION  {
         .property("frame", &Animation::GetFrame, &Animation::SetFrame);
 
     rttr::registration::class_<IUnselectableNode>("IUnselectableNode");
+
     rttr::registration::class_<Node>("Node")
         .constructor<>()(
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
@@ -61,9 +64,26 @@ RTTR_REGISTRATION  {
         .property("fixed rotation", &RigidBody2D::IsFixedRotation, &RigidBody2D::SetFixedRotation)
         .property("continuous", &RigidBody2D::IsContinuousCollision, &RigidBody2D::SetContinuousCollision);
 
+    rttr::registration::enumeration<ShapeType>("ShapeType")(
+        rttr::value("Box2DCollider", ShapeType::Box2DCollider),
+        rttr::value("CircleCollider", ShapeType::CircleCollider)
+    );
+
+    rttr::registration::class_<ACollider>("ACollider");
+
+    rttr::registration::class_<Box2DCollider>("Box2DCollider")
+        .constructor<ColliderShape2D*>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        );
+
+    rttr::registration::class_<CircleCollider>("CircleCollider")
+        .constructor<ColliderShape2D*>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        );
+
     rttr::registration::class_<ColliderShape2D>("ColliderShape2D")
         .constructor<>()(
             rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
             )
-        ;
+        .property("shape", &ColliderShape2D::GetShapeType, &ColliderShape2D::SetShapeType);
 }
