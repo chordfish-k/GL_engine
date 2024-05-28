@@ -6,7 +6,7 @@
 #include "engine/core/Camera.hpp"
 #include "engine/editor/GameViewWindow.hpp"
 #include "engine/core/MainWindow.hpp"
-
+#include "engine/util/Mat4Utils.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/vector_angle.hpp>
 
@@ -35,13 +35,9 @@ void EditorSpriteGizmo::EditorUpdate(float dt) {
 void EditorSpriteGizmo::DrawBorderAndPoints() {
     // 画外框
     auto *spr = (SpriteRenderer*)activeNode;
-    Transform t = spr->GetTransform();
-    auto scale = t.scale;
-    auto position = t.position;
     auto size = spr->GetSize();
     auto offset_ = spr->GetOffset();
     auto center = spr->IsCentered() ? glm::vec2(0.5f, 0.5f) : glm::vec2(1, 1);
-    auto modelMat = spr->GetModelMatrix();
 
     // 计算外框顶点坐标
     float xAdd = size.x * center.x;
@@ -57,7 +53,8 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
             yAdd = size.y * center.y;
         }
 
-        auto pos = modelMat * glm::translate(glm::mat4(1), {offset_, 0}) *
+        auto pos = spr->GetModelMatrix() *
+                   glm::translate(glm::mat4(1), {offset_, 0}) *
                    glm::vec4(xAdd, yAdd, 0, 1);
         vs.emplace_back(pos);
     }
@@ -76,24 +73,25 @@ void EditorSpriteGizmo::DrawBorderAndPoints() {
         auto &to = vs[i % 4];
         DebugDraw::AddLine2D(from, to);
 
-        if (zoom < 3) {
-            auto cen = (from + to) * 0.5f; // 线条中心
-            cen = cen + glm::vec2(glm::normalize(cen- spriteCenter)) * circleR; // 往法线方向偏移
-            scaleCircleCenter.push_back(cen);
-            DebugDraw::AddCircle(cen, circleR);
-            if (mode == SCALE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
-                DebugDraw::AddCircle(cen, circleR * 0.5f);
-            }
+        if (zoom > 3)
+            continue;
 
-            // 顶点的圆圈（旋转用）
-            auto n2 = glm::normalize(from - spriteCenter);
-            auto cen2 = from;
-            cen2 = cen2 + n2 * circleR;
-            rotateCircleCenter.push_back(cen2);
-            DebugDraw::AddCircle(cen2, circleR, {1, 0, 0, 1});
-            if (mode == ROTATE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
-                DebugDraw::AddCircle(cen2, circleR * 0.5f, {1, 0, 0, 1});
-            }
+        auto cen = (from + to) * 0.5f; // 线条中心
+        cen = cen + glm::vec2(glm::normalize(cen- spriteCenter)) * circleR; // 往法线方向偏移
+        scaleCircleCenter.push_back(cen);
+        DebugDraw::AddCircle(cen, circleR);
+        if (mode == SCALE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
+            DebugDraw::AddCircle(cen, circleR * 0.5f);
+        }
+
+        // 顶点的圆圈（旋转用）
+        auto n2 = glm::normalize(from - spriteCenter);
+        auto cen2 = from;
+        cen2 = cen2 + n2 * circleR;
+        rotateCircleCenter.push_back(cen2);
+        DebugDraw::AddCircle(cen2, circleR, {1, 0, 0, 1});
+        if (mode == ROTATE && i-1 == selectedPointIndex) { // 同心圆表示强调选中
+            DebugDraw::AddCircle(cen2, circleR * 0.5f, {1, 0, 0, 1});
         }
     }
 }
@@ -108,11 +106,12 @@ void EditorSpriteGizmo::CheckAndApplyMove() {
     if (mode == MOVE) {
         if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
             auto dp = glm::vec2(MouseListener::GetWorldDx(), MouseListener::GetWorldDy());
-            auto dWorldMat = glm::translate(glm::mat4(1), {dp.x, dp.y, 0});
+
+            auto dWorldMat = TransformMatBuilder().Translate(dp).Build();
             auto oldWorldMat = activeNode->GetModelMatrix();
             auto newWorldMat = dWorldMat * oldWorldMat;
             auto dParentMat = glm::inverse(activeNode->parent->GetModelMatrix()) * newWorldMat;
-            activeNode->transform.position = activeNode->GetTransformByModelMatrix(dParentMat).position;
+            activeNode->transform.ApplyDataByLocalMatrix(dParentMat);
 
             ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
         }

@@ -24,14 +24,13 @@ public:
 
     bool Imgui();
 
+    glm::mat4 GetLocalMatrix() const;
+
+    void ApplyDataByLocalMatrix(const glm::mat4 &mat);
 
 
-    Transform operator+(Transform b) const {
-        Transform res;
-        res.position = position + b.position;
-        res.scale = scale * b.scale;
-        res.rotation = rotation + b.rotation;
-        return res;
-    }
+    Transform operator+(Transform b) const;
+
+
 };
 

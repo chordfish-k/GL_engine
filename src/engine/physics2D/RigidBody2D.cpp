@@ -1,6 +1,7 @@
 #include "engine/physics2D/RigidBody2D.hpp"
 #include "engine/core/MainWindow.hpp"
 #include "engine/physics2D/Box2DCollider.hpp"
+#include "engine/util/Mat4Utils.hpp"
 
 RigidBody2D::RigidBody2D() {
     mass = 10;
@@ -10,25 +11,26 @@ RigidBody2D::~RigidBody2D() {
 }
 
 void RigidBody2D::Update(float dt)  {
-    if (rawBody != nullptr) {
+    if (rawBody != nullptr && bodyType == BodyType::Dynamic) {
         // 更新rawBody的实际位置到gameObject的transform组件
-        Transform tr;
-        tr.position = {rawBody->GetPosition().x * Setting::PHYSICS_SCALE,
-                              rawBody->GetPosition().y * Setting::PHYSICS_SCALE};
-        tr.rotation = (float) glm::degrees(rawBody->GetAngle());
 
-        if (parent) {
-            auto ptr = parent->transform;
-            transform.position = tr.position - ptr.position;
-            transform.rotation = tr.rotation - ptr.rotation;
-        }
-        else {
-            transform.position = tr.position;
-            transform.rotation = tr.rotation;
-        }
+        auto dp = glm::vec2(rawBody->GetPosition().x,rawBody->GetPosition().y) * Setting::PHYSICS_SCALE;
+        Transform temp;
+        temp.ApplyDataByLocalMatrix(GetModelMatrix());
+        auto dWorldMat = TransformMatBuilder()
+                             .Translate(dp)
+                             .Rotate(rawBody->GetAngle())
+                             .Scale(temp.scale)
+                             .Build();
+
+        auto dParentMat = glm::inverse(parent->GetModelMatrix()) * dWorldMat;
+        transform.ApplyDataByLocalMatrix(dParentMat);
 
         auto vel = rawBody->GetLinearVelocity();
         linear.velocity = glm::vec2(vel.x, vel.y) * Setting::PHYSICS_SCALE;
+
+        auto angV = rawBody->GetAngularVelocity();
+        angular.velocity = angV;
     }
 
     Node::Update(dt);
@@ -36,10 +38,10 @@ void RigidBody2D::Update(float dt)  {
 
 void RigidBody2D::EditorUpdate(float dt)  {
     if (rawBody != nullptr){
-        auto tr = GetTransform();
-        auto pos = Setting::PHYSICS_SCALE_INV * b2Vec2(tr.position.x, tr.position.y);
-        auto ro = glm::radians(tr.rotation);
-        rawBody->SetTransform(pos, ro);
+        auto pmat = GetModelMatrix();
+        auto p = pmat * glm::vec4(0, 0, 0, 1);
+        auto ro = glm::radians(GetTransform().rotation);
+        rawBody->SetTransform({Setting::PHYSICS_SCALE_INV * p.x, Setting::PHYSICS_SCALE_INV * p.y}, ro);
     }
     Node::EditorUpdate(dt);
 }

@@ -207,7 +207,7 @@ void SceneHierarchyWindow::NodeDropTarget(Node *target) {
             // 如果 s 是 t 直接子节点，或者 t 是 s 的直接子节点，不做任何事
             if (source->parent != target && target->parent != source) {
 
-                source->transform = source->GetTransformByModelMatrix(
+                source->transform.ApplyDataByLocalMatrix(
                                               source->GetModelMatrixRelativeTo(target));
 
                 // 将 s 移动到 t 的下面

@@ -71,6 +71,35 @@ void ColliderShape2D::Imgui() {
 }
 
 void ColliderShape2D::Update(float dt) {
+
+    Transform t = GetTransform();
+    auto offset_ =  transform.position;
+    auto center = glm::vec2(0.5f, 0.5f);
+    auto modelMat = GetModelMatrix();
+    auto size = (dynamic_cast<Box2DCollider*>(collider)->size);
+
+    // 计算外框顶点坐标
+    float xAdd = size.x * (center.x - 1);
+    float yAdd = size.y * (center.y - 1);
+
+    b2Vec2 vertices[4];
+    for (int i = 0; i < 4; i++) {
+        if (i == 1) {
+            xAdd = size.x * center.x;
+        } else if (i == 2) {
+            yAdd = size.y * center.y;
+        } else if (i == 3) {
+            xAdd = size.x * (center.y - 1);
+        }
+
+        auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
+        pos = pos * Setting::PHYSICS_SCALE_INV;
+        auto p = collider->GetFixture()->GetBody()->GetLocalPoint({pos.x, pos.y});
+        vertices[i] = {p.x, p.y};
+    }
+
+    ((b2PolygonShape*)collider->GetFixture()->GetShape())->Set(vertices, 4);
+
     if (collider != nullptr && Setting::PHYSICS_DRAW_DEBUG) {
         collider->EditorUpdate(dt);
     }
@@ -78,6 +107,34 @@ void ColliderShape2D::Update(float dt) {
 }
 
 void ColliderShape2D::EditorUpdate(float dt) {
+
+    Transform t = GetTransform();
+    auto offset_ =  transform.position;
+    auto center = glm::vec2(0.5f, 0.5f);
+    auto modelMat = GetModelMatrix();
+    auto size = (dynamic_cast<Box2DCollider*>(collider)->size);
+
+    // 计算外框顶点坐标
+    float xAdd = size.x * (center.x - 1);
+    float yAdd = size.y * (center.y - 1);
+
+    b2Vec2 vertices[4];
+    for (int i = 0; i < 4; i++) {
+        if (i == 1) {
+            xAdd = size.x * center.x;
+        } else if (i == 2) {
+            yAdd = size.y * center.y;
+        } else if (i == 3) {
+            xAdd = size.x * (center.y - 1);
+        }
+
+        auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
+        pos = pos * Setting::PHYSICS_SCALE_INV;
+        auto p = collider->GetFixture()->GetBody()->GetLocalPoint({pos.x, pos.y});
+        vertices[i] = {p.x, p.y};
+    }
+
+    ((b2PolygonShape*)collider->GetFixture()->GetShape())->Set(vertices, 4);
 
     if (!(lastTransform.Equals(transform))) {
         lastTransform = transform;

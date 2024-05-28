@@ -90,9 +90,7 @@ public:
 
     glm::mat4 GetModelMatrix();
 
-    glm::mat4 GetModelMatrixRelativeTo(Node *target);
-
-    Transform GetTransformByModelMatrix(const glm::mat4& mat);
+    glm::mat4 GetModelMatrixRelativeTo(Node *by);
 
     bool ShouldDestroy() const;
 

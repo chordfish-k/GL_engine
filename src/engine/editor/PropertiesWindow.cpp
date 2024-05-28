@@ -27,7 +27,9 @@ void PropertiesWindow::Imgui() {
         auto pSize = MainWindow::GetScene()->GetCamera()->GetProjectionSize();
         auto zoom = MainWindow::GetScene()->GetCamera()->GetZoom();
         auto circleR = 0.008f * zoom * (pSize.x < pSize.y ? pSize.x : pSize.y); // 圆圈半径
-        auto center = activeNode->GetTransform().position;
+        Transform temp;
+        temp.ApplyDataByLocalMatrix(activeNode->GetModelMatrix());
+        auto center = temp.position;
         DebugDraw::AddCircle(center, circleR);
     }
     ImGui::End();

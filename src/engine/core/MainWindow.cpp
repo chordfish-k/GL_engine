@@ -39,8 +39,6 @@ void MainWindow::Loop() {
         // 快捷键事件
         KeyListener::DoShortcutKeys();
 
-//        auto currentScene = Get()->currentScene;
-
         if (currentScene) {
             // 渲染到拾取纹理
             glDisable(GL_BLEND);

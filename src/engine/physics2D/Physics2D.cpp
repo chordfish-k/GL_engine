@@ -3,6 +3,7 @@
 #include "engine/physics2D/Box2DCollider.hpp"
 #include "engine/util/Setting.hpp"
 #include "engine/physics2D/ColliderShape2D.hpp"
+#include "engine/core/MainWindow.hpp"
 
 Physics2D::Physics2D() {
     world = new b2World(gravity);
@@ -15,11 +16,17 @@ Physics2D::~Physics2D() {
 void Physics2D::Add(RigidBody2D *rb) {
     if (rb == nullptr || rb->GetRawBody() != nullptr) return;
 
-    Transform transform = rb->GetTransform();
+    auto pmat = rb->GetModelMatrix();
+    Transform temp;
+    temp.ApplyDataByLocalMatrix(pmat);
+    auto p = temp.position;
+    auto ro = glm::radians(temp.rotation);
 
     b2BodyDef bodyDef;
-    bodyDef.angle = (float) glm::radians(transform.rotation);
-    bodyDef.position = {transform.position.x, transform.position.y};
+    bodyDef.angle = ro;
+    bodyDef.position = {p.x, p.y};
+    bodyDef.position = Setting::PHYSICS_SCALE_INV * bodyDef.position;
+
     bodyDef.angularDamping = rb->GetAngularDamping();
     bodyDef.linearDamping = rb->GetLinearDamping();
     bodyDef.fixedRotation = rb->IsFixedRotation();
@@ -38,10 +45,6 @@ void Physics2D::Add(RigidBody2D *rb) {
         break;
     }
 
-    b2Vec2 pos = bodyDef.position;
-    float  xPos = pos.x;
-    float  yPos = pos.y;
-    bodyDef.position = Setting::PHYSICS_SCALE_INV * b2Vec2(xPos, yPos);
 
     b2Body *body = world->CreateBody(&bodyDef);
 
@@ -59,12 +62,11 @@ void Physics2D::Add(RigidBody2D *rb) {
         }
         else if (box2DCollider != nullptr) {
             auto *shape_ = new b2PolygonShape();
-            glm::vec2 halfSize =
-                box2DCollider->GetSize() * Setting::PHYSICS_SCALE_INV;
-//            glm::vec2 offset = box2DCollider->GetOffset();
-            glm::vec2 origin = Setting::PHYSICS_SCALE_INV * colliderShape2D->transform.position;//box2DCollider->GetOrigin();
-            glm::vec2 scale = colliderShape2D->GetTransform().scale;
-            shape_->SetAsBox(halfSize.x * scale.x, halfSize.y * scale.y,
+            glm::vec2 halfSize = Setting::PHYSICS_SCALE_INV * box2DCollider->GetSize() * 0.5f;
+            glm::vec2 origin = Setting::PHYSICS_SCALE_INV * colliderShape2D->transform.position;
+            glm::vec2 scale = Setting::PHYSICS_SCALE_INV * temp.scale;
+            shape_->SetAsBox(scale.x * halfSize.x,
+                             scale.y * halfSize.y,
                              {origin.x, origin.y},
                              glm::radians(colliderShape2D->transform.rotation));
             shape = shape_;
@@ -90,9 +92,8 @@ void Physics2D::Add(ColliderShape2D *cs) {
     }
     else if (box2DCollider != nullptr) {
         auto *shape_ = new b2PolygonShape();
-        glm::vec2 halfSize =
-            box2DCollider->GetSize() * cs->GetTransform().scale * Setting::PHYSICS_SCALE_INV;
-        glm::vec2 origin = Setting::PHYSICS_SCALE_INV * cs->transform.position;//box2DCollider->GetOrigin();
+        glm::vec2 halfSize = Setting::PHYSICS_SCALE_INV * box2DCollider->GetSize() * 0.5f;
+        glm::vec2 origin = Setting::PHYSICS_SCALE_INV * cs->transform.position;
         shape_->SetAsBox(halfSize.x, halfSize.y,
                          {origin.x, origin.y}, glm::radians(cs->transform.rotation));
         shape = shape_;
