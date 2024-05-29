@@ -11,7 +11,7 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/node/EditorMouseControls.hpp"
-#include "engine/core/Prefabs.hpp"
+#include "engine/util/PrefabsUtils.hpp"
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/node/EditorGridLines.hpp"
 #include "engine/node/EditorCameraControls.hpp"
@@ -78,8 +78,8 @@ public:
             ImGui::PushID(i);
             if (ImGui::ImageButton((void*)(intptr_t)id, {spriteWidth, spriteHeight}, {texCoords[0].x, texCoords[0].y}, {texCoords[2].x, texCoords[2].y})) {
 //                util::Println("Button" , i , " clicked");
-//                Node *node = Prefabs::GenerateSpriteNode(sprite, {1, 1});
-                Node *node = Prefabs::GenerateSpriteRendererFromSpriteSheet(sprites, i);
+//                Node *node = PrefabsUtils::GenerateSpriteNode(sprite, {1, 1});
+                Node *node = PrefabsUtils::GenerateSpriteRendererFromSpriteSheet(sprites, i);
                 mouseControls->PickupNode(node);
             }
             ImGui::PopID();
