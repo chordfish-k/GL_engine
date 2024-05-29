@@ -10,15 +10,26 @@
 #include "engine/util/Setting.hpp"
 #ifdef _WIN32
 #include <windows.h>
+#include "engine/editor/WindowsProjectFileMonitor.hpp"
 #endif
 
 fs::path FileSystemWindow::localPath;
+std::vector<std::string> FileSystemWindow::cache;
+
+void FileSystemWindow::Start() {
+    RefreshCache();
+}
 
 void FileSystemWindow::Imgui() {
     ImGui::Begin("Files");
 
+    WindowsProjectFileMonitor::Get()->SetOnChangeCallback([](auto s, auto a){
+        RefreshCache();
+    });
+
     ShowPath();
     ShowFilesAndDirs();
+    NodePrefabDragDrop();
 
     ImGui::End();
 }
@@ -41,15 +52,23 @@ void FileSystemWindow::ShowPath() {
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2.0f, 5.0f)); // 设置项之间的间距
 
-    auto tokens = util::String::Split(util::String::Replace(path, "/", "\\"), '\\');
+    auto tokens = util::String::Split(util::String::Replace(localPath.string(), "/", "\\"), '\\');
     float height = ImGui::GetTextLineHeight() + 4;
 
+    ImGui::PushID("~");
+
+    if (ImGui::Button("~", ImVec2(0, height))) {
+        localPath = fs::path(total);
+        RefreshCache();
+    }
+    ImGui::PopID();
+
+
     for (std::string &token: tokens) {
-        if (index > 0) {
-            ImGui::SameLine();
-            ImGui::Text("/");
-            total += '\\';
-        }
+        ImGui::SameLine();
+        ImGui::Text("/");
+        if (index > 0) total += '\\';
+
         std::string id = "pathBtn"+std::to_string(index++);
         total += token;
 
@@ -57,6 +76,7 @@ void FileSystemWindow::ShowPath() {
         ImGui::SameLine();
         if (ImGui::Button(token.c_str(), ImVec2(0, height))) {
             localPath = fs::path(total);
+            RefreshCache();
         }
         ImGui::PopID();
     }
@@ -141,23 +161,11 @@ void FileSystemWindow::ShowFilesAndDirs() {
 
         // 遍历指定路径下的所有文件和文件夹
         int index = 0;
-        int fileNum = 0;
-
-        // 获取文件夹和文件总数
-
-        auto fit = fs::directory_iterator(path);
-        for (const auto& entry : fit) {
-            fileNum++;
-        }
-
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5.0f, ImGui::GetTextLineHeight()+8));
-
-        fit = fs::directory_iterator(path);
-        for (const auto& entry : fit) {
-
-            std::string name = entry.path().filename().string();
+        auto cacheCopy = FileSystemWindow::cache;
+        for (const auto& name : cacheCopy) {
+            auto entry = Setting::PROJECT_ROOT / localPath / fs::path(name);
             std::string u8Name = util::String::TBS(name);
-
 
             ImVec2 btnSize = ImVec2(100, 100);
             std::string id = "fileBtn:"+name;
@@ -167,10 +175,11 @@ void FileSystemWindow::ShowFilesAndDirs() {
             if (fs::is_directory(entry)) {
                 if (ImGui::Button("Dir", btnSize)) {
                     localPath /= name;
+                    RefreshCache();
                 }
             }
             // 如果是文件
-            else if (fs::is_regular_file(entry)) {
+            else {
                 auto filePath = (fs::path(path)/name).string();
                 // 如果是场景文件，则打开场景
                 if (util::String::EndsWith(name, ".scene")) {
@@ -239,8 +248,6 @@ void FileSystemWindow::ShowFilesAndDirs() {
                         ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 300.0f);
                         ImGui::TextWrapped("%s", u8Name.c_str());
                         ImGui::PopTextWrapPos();
-//                        ImGui::Image((void*)(intptr_t)texId, btnSize,
-//                                     {0, 1}, {1, 0});
                         ImGui::EndDragDropSource();
                     }
                 }
@@ -274,19 +281,40 @@ void FileSystemWindow::ShowFilesAndDirs() {
             ImVec2 lastButtonPos = ImGui::GetItemRectMax();
             float lastButtonX2 = lastButtonPos.x;
             float nextButtonX2 = lastButtonX2 + itemSpacing.x + btnSize.x;
-            if (index++ < fileNum && nextButtonX2 < windowX2) {
+            if (index++ < cache.size() && nextButtonX2 < windowX2) {
                 ImGui::SameLine();
             }
         }
-
         ImGui::PopStyleVar();
     }
     catch (const std::exception& ex) {
         util::Println("Exception: ", ex.what());
+//        ImGui::EndChild();
     }
     ImGui::NewLine();
     ImGui::Dummy({0, ImGui::GetTextLineHeight()});
     ImGui::EndChild();
+}
+
+void FileSystemWindow::NodePrefabDragDrop() {
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("NODE"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(Node*));
+            Node *source = *((Node **)payload->Data);
+
+            // 以pref文件保存json
+            auto jsonText = source->Serialize().dump(2);
+            std::ofstream ofs( Setting::PROJECT_ROOT / localPath / (source->GetName() + ".pfb"),
+                              std::ios::trunc);
+            if (ofs.is_open()) {
+                ofs << jsonText;
+            }
+            ofs.close();
+        }
+        ImGui::EndDragDropTarget();
+    }
 }
 
 std::string FileSystemWindow::TruncateText(const std::string& text, float maxWidth)
@@ -309,4 +337,11 @@ std::string FileSystemWindow::TruncateText(const std::string& text, float maxWid
     }
 
     return truncatedText + ellipsis;
+}
+void FileSystemWindow::RefreshCache() {
+    fs::path p = Setting::PROJECT_ROOT / FileSystemWindow::localPath;
+    FileSystemWindow::cache.clear();
+    for (const auto &entry : fs::directory_iterator(p)) {
+        FileSystemWindow::cache.push_back(entry.path().filename().string());
+    }
 }

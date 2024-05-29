@@ -1,6 +1,7 @@
 ﻿#include "engine/editor/SceneHierarchyWindow.hpp"
 #include "engine/core/MainWindow.hpp"
 #include "engine/node/IUnselectableNode.hpp"
+#include "engine/util/PrefabsUtils.hpp"
 
 #define DISABLE_COLOR {0.2, 0.2, 0.2, 1}
 
@@ -164,23 +165,11 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
             // 将剪贴板的文本作为json反序列化为节点，作为子节点添加到node下
             auto jsonText = glfwGetClipboardString(MainWindow::GetGlfwWindow());
             auto j = Str2Json(jsonText);
-            auto &type = j["type"];
-
-            // 通过反射创建对应Node并序列化
-            auto t = rttr::type::get_by_name(type);
-            if (t.is_valid()) {
-                auto instance = t.create();
-                auto nodeClassPtr = rttr::type::get<Node*>();
-
-                if (nodeClassPtr.is_valid()) {
-                    auto nodePtr = instance.get_value<Node*>();
-                    nodePtr->Deserialize(j);
-                    nodePtr->TravelOnSubTree([](auto n) {
-                        n->GeneratedId(true);
-                    });
-                    MainWindow::GetScene()->AddNodeAsChild(node, nodePtr);
-                }
-            }
+            auto nodePtr = PrefabsUtils::GenerateNodeFromJson(j);
+            nodePtr->TravelOnSubTree([](auto n) {
+                n->GeneratedId(true);
+            });
+            MainWindow::GetScene()->AddNodeAsChild(node, nodePtr);
         }
         if (ImGui::MenuItem("Delete")) {
             // 删除该节点

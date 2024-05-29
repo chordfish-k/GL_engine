@@ -17,6 +17,7 @@ protected:
 
     ASceneInitializer *nextScene = nullptr;
 
+protected:
     MainWindow() {
         r = g = b = 0.2f;
         width = Setting::WINDOW_W;

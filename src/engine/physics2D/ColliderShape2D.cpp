@@ -4,8 +4,7 @@
 #include "engine/physics2D/CircleCollider.hpp"
 
 ColliderShape2D::ColliderShape2D() {
-//    auto coll = new Box2DCollider(this);
-    auto coll = new CircleCollider(this);
+    auto coll = new Box2DCollider(this);
     collider = coll;
 };
 

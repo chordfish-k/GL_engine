@@ -6,6 +6,7 @@
 #include "engine/editor/ProjectManagerWindow.hpp"
 #include "engine/editor/ImGuiFileDialog.h"
 #include "engine/editor/FileDialog.hpp"
+#include "engine/util/Common.hpp"
 
 Scene::Scene(ASceneInitializer *sceneInitializer)
     :sceneInitializer(sceneInitializer) {
@@ -129,17 +130,7 @@ void Scene::Load() {
     if (path == "") return;
 
     util::Println("Load:", path);
-
-    std::ifstream fin(path);
-    std::string jsonText;
-    if (fin.is_open()) {
-        std::stringstream ss;
-        ss << fin.rdbuf();
-        jsonText = ss.str();
-    }
-    if (jsonText.empty()) return;
-
-    root->Deserialize(Str2Json(jsonText));
+    root->Deserialize(util::LoadJsonFromFile(path));
 }
 
 void Scene::Destroy() {

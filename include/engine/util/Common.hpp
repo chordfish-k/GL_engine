@@ -3,6 +3,10 @@
 #include <cstddef>
 #include <malloc.h>
 #include <string>
+#include <fstream>
+#include <sstream>
+#include "Json.hpp"
+#include "Print.hpp"
 
 namespace util {
 
@@ -27,5 +31,34 @@ inline std::string Trim(std::string str) {
         return str.substr(first, last - first + 1);
     }
 }
+
+inline std::string LoadTextFromFile(const std::string &path) {
+    std::ifstream fin(path);
+    std::string text;
+    if (fin.is_open()) {
+        std::stringstream ss;
+        ss << fin.rdbuf();
+        text = ss.str();
+    } else {
+        util::Println("Open File Failed: ", path);
+    }
+    return text;
+}
+
+inline nlohmann::json Str2Json(const std::string &str) {
+    nlohmann::json j;
+    try{
+        j = nlohmann::json::parse(str);
+    }catch (std::exception &e) {
+        util::Println("Convert String to Json Failed.", e.what());
+    }
+    return j;
+}
+
+inline nlohmann::json LoadJsonFromFile(const std::string &path) {
+    return util::Str2Json(LoadTextFromFile(path));
+}
+
+
 
 } // namespace util

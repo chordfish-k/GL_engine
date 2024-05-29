@@ -30,7 +30,7 @@ public:
         if (j.empty()) return nullptr;
 
         auto &t = j["type"];
-        if (!t.empty() || !t.is_string()) return nullptr;
+        if (t.empty() || !t.is_string()) return nullptr;
 
         auto nodeType = rttr::type::get_by_name(t);
         if (!nodeType.is_valid()) return nullptr;

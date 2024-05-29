@@ -6,6 +6,7 @@
 #include "engine/util/Setting.hpp"
 #include "engine/core/MainWindow.hpp"
 #include "engine/core/EditorSceneInitializer.hpp"
+#include "engine/editor/WindowsProjectFileMonitor.hpp"
 
 bool ProjectManagerWindow::shouldOpen = false;
 
@@ -31,7 +32,7 @@ void ProjectManagerWindow::Imgui() {
             util::Println("New:", fileName);
             Setting::PROJECT_ROOT = fileName;
             ProjectManagerWindow::shouldOpen = false;
-
+            WindowsProjectFileMonitor::Get()->Init(filePath);
             std::filesystem::create_directory(fileName);
         });
     }
@@ -45,6 +46,7 @@ void ProjectManagerWindow::Imgui() {
             Setting::PROJECT_ROOT = filePath;
             FileSystemWindow::localPath = "";
             ProjectManagerWindow::shouldOpen = false;
+            WindowsProjectFileMonitor::Get()->Init(filePath);
             auto scene = MainWindow::GetScene();
             if (scene) scene->RemoveAllNodes();
 //            MainWindow::ChangeScene(new EditorSceneInitializer(Setting::PROJECT_ROOT));

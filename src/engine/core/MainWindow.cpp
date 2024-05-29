@@ -8,6 +8,7 @@
 #include "engine/editor/ProjectManagerWindow.hpp"
 
 #include "engine/reflect/Reflect.hpp"
+#include "engine/editor/WindowsProjectFileMonitor.hpp"
 
 MainWindow *MainWindow::window = nullptr;
 
@@ -183,6 +184,10 @@ void MainWindow::Run() {
     util::Println("Hello", "GLFW", "!");
 
     Setting::Load();
+    if (!Setting::PROJECT_ROOT.empty()) {
+        WindowsProjectFileMonitor::Get()->Init(Setting::PROJECT_ROOT);
+        FileSystemWindow::Start();
+    }
 
     Get()->Init();
     Get()->Loop();
@@ -201,6 +206,7 @@ void MainWindow::Run() {
     glfwSetErrorCallback(nullptr);
 
     Setting::Save();
+    WindowsProjectFileMonitor::Get()->Stop();
 }
 
 void MainWindow::ChangeScene(ASceneInitializer *sceneInitializer) {
