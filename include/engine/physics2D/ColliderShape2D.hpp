@@ -42,5 +42,5 @@ public:
     void SetShapeType(ShapeType shapeType);
 
 private:
-    void RefreshShapeByTransform();
+    void TryReshape();
 };

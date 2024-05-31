@@ -82,7 +82,7 @@ void ColliderShape2D::Imgui() {
 }
 
 void ColliderShape2D::Update(float dt) {
-    RefreshShapeByTransform();
+    TryReshape();
 
     if (collider != nullptr && Setting::PHYSICS_DRAW_DEBUG) {
         collider->EditorUpdate(dt);
@@ -92,7 +92,7 @@ void ColliderShape2D::Update(float dt) {
 
 void ColliderShape2D::EditorUpdate(float dt) {
 
-    RefreshShapeByTransform();
+    TryReshape();
 
     if (collider != nullptr) {
         collider->EditorUpdate(dt);
@@ -100,9 +100,14 @@ void ColliderShape2D::EditorUpdate(float dt) {
     Node::EditorUpdate(dt);
 }
 
-void ColliderShape2D::RefreshShapeByTransform() {
-    if (collider)
-        collider->RefreshShape();
+void ColliderShape2D::TryReshape() {
+    Transform newTr = GetTransform();
+    if (!newTr.Equals(lastTransform)) {
+        if (collider && rigidBody2D->GetRawBody()->IsAwake()) {
+            collider->RefreshShape();
+        }
+        newTr.CopyTo(lastTransform);
+    }
 }
 
 ShapeType ColliderShape2D::GetShapeType() const {

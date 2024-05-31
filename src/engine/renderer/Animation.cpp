@@ -8,7 +8,7 @@ void Animation::ApplyModifyToSprite(Sprite *sprite) {
         float spriteH = H / vFrames;
         sprite->SetWidth(spriteW);
         sprite->SetHeight(spriteH);
-        int i = hFrames -
+        int i = vFrames -
                 (frame / hFrames) - 1;
         int j = frame % hFrames;
         // 将坐标缩到[0,1]区间，作为texCoords
