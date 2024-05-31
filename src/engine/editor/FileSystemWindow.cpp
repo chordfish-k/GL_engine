@@ -183,6 +183,8 @@ void FileSystemWindow::ShowFilesAndDirs() {
                 // 如果是预制体
                 else if (util::String::CheckSuffix(name, ".pfb")) {
                     if (ImGui::Button("Pfb", btnSize)) {
+                        // 将其作为场景打开
+                        MainWindow::ChangeScene(new EditorSceneInitializer(filePath));
                     }
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
                         // 将字符串转换为字节数组

@@ -66,7 +66,7 @@ void Physics2D::Add(ColliderShape2D *cs) {
     while (p->parent) {
         rb = dynamic_cast<RigidBody2D *>(p->parent);
         if (rb && rb->GetRawBody()) {
-            auto fixture = rawBody = rb->GetRawBody();
+            rawBody = rb->GetRawBody();
             break;
         } else {
             p = p->parent;
@@ -141,27 +141,39 @@ void Physics2D::Update(float dt) {
 
 void Physics2D::DestroyNode(Node *node) {
     if (!node) return;
+    // 递归调用，从物理系统删除子节点
     for (auto n : node->children) {
         DestroyNode(n);
     }
 
     auto rb = dynamic_cast<RigidBody2D*>(node);
+    auto cs = dynamic_cast<ColliderShape2D*>(node);
+
+    // 1.如果是RigidBody，直接清除
     if (rb && rb->GetRawBody() && world) {
-//        world->DestroyBody(rb->GetRawBody());
         rb->SetRawBody(nullptr);
     }
-
-    auto cs = dynamic_cast<ColliderShape2D*>(node);
-    if (cs && cs->GetCollider() && world) {
+    // 2.如果是ColliderShape，则找到其依附的父节点RigidBody删去ColliderShape的fixture
+    else if (cs && cs->GetCollider() && world) {
         auto &fs = cs->GetCollider()->GetFixture();
-        if (!fs.empty()) {
-            auto parent = cs->parent;
-            auto rbb = dynamic_cast<RigidBody2D*>(parent);
-            if (rbb && rbb->GetRawBody()) {
-                for (auto &f : fs) {
-                    rbb->GetRawBody()->DestroyFixture(f);
+        if (fs.empty()) return;
+
+        // 往上找RigidBody
+        auto parent = cs->parent;
+        RigidBody2D *rbb = nullptr;
+        // 如果没有到达根节点并且还没找到最近的RigidBody则继续往上找
+        while (parent && !rbb) {
+            rbb = dynamic_cast<RigidBody2D*>(parent);
+            if (rbb) {
+                if (rbb->GetRawBody()) {
+                    // 循环删除所有fixture
+                    for (auto &f : fs) {
+                        rbb->GetRawBody()->DestroyFixture(f);
+                    }
                 }
-            }
+            } else{
+                parent = parent->parent;
+            };
         }
     }
 }

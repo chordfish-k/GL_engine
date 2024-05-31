@@ -3,12 +3,12 @@
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/core/MainWindow.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/matrix_decompose.hpp>
-
 int Node::ID_COUNTER = 0;
 
-Node::Node (glm::vec2 position, glm::vec2 scale) {}
+Node::Node (glm::vec2 position, glm::vec2 scale) {
+    transform.position = position;
+    transform.scale = scale;
+}
 
 Node::~Node(){
     Delete();
@@ -52,7 +52,6 @@ void Node::CheckDelete() {
 
     for (auto it = ch.begin(); it != ch.end();) {
         auto go = (*it);
-
 
         if (go->ShouldDestroy()) {
             it = ch.erase(it);
@@ -155,7 +154,7 @@ Node *Node::Deserialize(json j){
     return this;
 }
 
-void Node::TravelOnSubTree(std::function<void(Node*)> func) {
+void Node::TravelOnSubTree(const std::function<void(Node*)>& func) {
     func(this);
     for (auto n : children) {
         n->TravelOnSubTree(func);
@@ -189,11 +188,11 @@ bool Node::IsPickable() const {
     return isPickable;
 }
 
-void Node::SetIsPickable(bool isPickable) {
-    Node::isPickable = isPickable;
+void Node::SetIsPickable(bool isPickable_) {
+    Node::isPickable = isPickable_;
 }
 
-glm::mat4 Node::GetModelMatrix() {
+glm::mat4 Node::GetModelMatrix() const {
     // 构建当前节点的变换矩阵
     auto M = transform.GetLocalMatrix();
     // 累积变换矩阵
@@ -202,7 +201,7 @@ glm::mat4 Node::GetModelMatrix() {
 }
 
 
-glm::mat4 Node::GetModelMatrixRelativeTo(Node *by) {
+glm::mat4 Node::GetModelMatrixRelativeTo(Node *by) const {
     return glm::inverse(by->GetModelMatrix()) * GetModelMatrix();
 }
 
@@ -230,7 +229,7 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
 
     auto props = thisType.get_properties();
 
-    if (!props.size()) return;
+    if (props.empty()) return;
 
     ImGui::AlignTextToFramePadding();
 
@@ -315,7 +314,7 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
                 ++currentIndex;
             }
             // 使用 enum_names 的数据绘制 ImGui::Combo
-            if (MyImGui::DrawComboControl(std::string(p.get_name()), index, enum_names.data(), enum_names.size())){
+            if (MyImGui::DrawComboControl(std::string(p.get_name()), index, enum_names.data(), (int)enum_names.size())){
                 auto selected_value = enum_values[index];
                 p.set_value(obj, selected_value);
             }

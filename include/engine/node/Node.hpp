@@ -76,7 +76,7 @@ public:
 
     Node *Deserialize(json j) override;
 
-    void TravelOnSubTree(std::function<void(Node*)>);
+    void TravelOnSubTree(const std::function<void(Node*)>&);
 
     bool IsChildOf(Node *p);
 
@@ -86,9 +86,9 @@ public:
 
     int GetZIndex() const { return zIndex.GetZIndex(); }
 
-    glm::mat4 GetModelMatrix();
+    glm::mat4 GetModelMatrix() const;
 
-    glm::mat4 GetModelMatrixRelativeTo(Node *by);
+    glm::mat4 GetModelMatrixRelativeTo(Node *by) const;
 
     bool ShouldDestroy() const;
 

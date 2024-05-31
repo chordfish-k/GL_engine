@@ -82,7 +82,7 @@ bool Box2DCollider::Imgui() {
 }
 
 void Box2DCollider::RefreshShape() {
-    if (!colliderShape2D || fixture.empty()) return;
+    if (!colliderShape2D || fixture.empty() || !fixture[0]) return;
 
     auto center = glm::vec2(0.5f, 0.5f);
     auto modelMat = colliderShape2D->GetModelMatrix();
@@ -103,6 +103,8 @@ void Box2DCollider::RefreshShape() {
 
         auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
         pos = pos * Setting::PHYSICS_SCALE_INV;
+
+
         auto p = fixture[0]->GetBody()->GetLocalPoint({pos.x, pos.y});
         vertices[i] = {p.x, p.y};
     }

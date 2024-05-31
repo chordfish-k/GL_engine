@@ -1,6 +1,5 @@
 #include "engine/physics2D/RigidBody2D.hpp"
 #include "engine/core/MainWindow.hpp"
-#include "engine/physics2D/Box2DCollider.hpp"
 #include "engine/util/Mat4Utils.hpp"
 
 RigidBody2D::RigidBody2D() {
@@ -23,7 +22,8 @@ void RigidBody2D::Update(float dt)  {
                              .Scale(temp.scale)
                              .Build();
 
-        auto dParentMat = glm::inverse(parent->GetModelMatrix()) * dWorldMat;
+        auto pInvMat = parent ? glm::inverse(parent->GetModelMatrix()) : glm::mat4(1);
+        auto dParentMat = pInvMat * dWorldMat;
         transform.ApplyDataByLocalMatrix(dParentMat);
 
         auto vel = rawBody->GetLinearVelocity();

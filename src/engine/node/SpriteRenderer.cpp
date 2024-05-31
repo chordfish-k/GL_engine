@@ -8,7 +8,6 @@ SpriteRenderer::SpriteRenderer() {}
 SpriteRenderer::~SpriteRenderer() {
     delete sprite;
     delete animation;
-//    Node::~Node();
 }
 
 void SpriteRenderer::Start() {

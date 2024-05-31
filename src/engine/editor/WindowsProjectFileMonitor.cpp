@@ -54,7 +54,7 @@ void WindowsProjectFileMonitor::Update() {
             fileName = converter.to_bytes(fileName_);
             int action = pNotify->Action;
 
-            onChange(fileName, action);
+            if (onChange) onChange(fileName, action);
 
         } else {
             util::Println( "ERROR:Reading directory changes failed.");
