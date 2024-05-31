@@ -119,3 +119,11 @@ void ColliderShape2D::SetShapeType(ShapeType shapeType_) {
     }
     SetCollider(coll);
 }
+
+RigidBody2D *ColliderShape2D::GetRigidBody2D() const {
+    return rigidBody2D;
+}
+
+void ColliderShape2D::SetRigidBody2D(RigidBody2D *rigidBody2D) {
+    ColliderShape2D::rigidBody2D = rigidBody2D;
+}

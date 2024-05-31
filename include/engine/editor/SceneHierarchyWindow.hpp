@@ -3,13 +3,18 @@
 #include <imgui.h>
 #include <vector>
 #include "engine/core/Window.hpp"
-#include "PropertiesWindow.hpp"
+#include "engine/editor/PropertiesWindow.hpp"
+#include "engine/node/PrefabNode.hpp"
 
 class SceneHierarchyWindow{
 public:
     static int selectingUid;
+    static PrefabNode * prefabRoot;
+    static std::vector<Node *> nodeVisitPath;
 
 public:
+    static void Init();
+
     static void Imgui();
 
 private:

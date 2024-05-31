@@ -9,6 +9,7 @@
 
 #include "engine/reflect/Reflect.hpp"
 #include "engine/editor/WindowsProjectFileMonitor.hpp"
+#include "engine/editor/SceneHierarchyWindow.hpp"
 
 MainWindow *MainWindow::window = nullptr;
 
@@ -104,6 +105,7 @@ void MainWindow::Loop() {
             Get()->currentScene->Load();
             Get()->currentScene->Init();
             Get()->currentScene->Start();
+            SceneHierarchyWindow::Init();
         }
     }
 }
@@ -177,7 +179,7 @@ void MainWindow::Init() {
     imguiLayer->InitImgui();
 
     // 默认场景
-    MainWindow::ChangeScene(new EditorSceneInitializer(defaultScenePath));
+    MainWindow::ChangeScene(defaultScenePath);
 }
 
 void MainWindow::Run() {
@@ -222,6 +224,25 @@ void MainWindow::ChangeScene(ASceneInitializer *sceneInitializer) {
         Get()->currentScene->Load();
         Get()->currentScene->Init();
         Get()->currentScene->Start();
+        SceneHierarchyWindow::Init();
+    }
+}
+
+void MainWindow::ChangeScene(const std::string&filePath) {
+    if (Get()->currentScene != nullptr) {
+        // 销毁当前场景
+        Get()->currentScene->Destroy();
+    }
+    PropertiesWindow::SetActiveNode(nullptr);
+    auto sceneInitializer = new EditorSceneInitializer(filePath);
+    if (Get()->currentScene != nullptr) {
+        ChangeSceneLazy(sceneInitializer);
+    } else {
+        Get()->currentScene = new Scene(sceneInitializer);
+        Get()->currentScene->Load();
+        Get()->currentScene->Init();
+        Get()->currentScene->Start();
+        SceneHierarchyWindow::Init();
     }
 }
 

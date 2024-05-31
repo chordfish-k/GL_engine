@@ -177,14 +177,14 @@ void FileSystemWindow::ShowFilesAndDirs() {
                 // 如果是场景文件，则打开场景
                 if (util::String::EndsWith(name, ".scene")) {
                     if (ImGui::Button("Scene", btnSize)) {
-                        MainWindow::ChangeScene(new EditorSceneInitializer(filePath));
+                        MainWindow::ChangeScene(filePath);
                     }
                 }
                 // 如果是预制体
                 else if (util::String::CheckSuffix(name, ".pfb")) {
                     if (ImGui::Button("Pfb", btnSize)) {
                         // 将其作为场景打开
-                        MainWindow::ChangeScene(new EditorSceneInitializer(filePath));
+                        MainWindow::ChangeScene(filePath);
                     }
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
                         // 将字符串转换为字节数组
@@ -318,8 +318,12 @@ void FileSystemWindow::NodePrefabDragDrop() {
             IM_ASSERT(payload->DataSize == sizeof(Node*));
             Node *source = *((Node **)payload->Data);
 
-            // 以pref文件保存json
+            // 以pref文件保存json，统一将position设置成0
+            Transform temp = source->transform;
+            source->transform.position = {0, 0};
             auto jsonText = source->Serialize().dump(2);
+            source->transform = temp;
+            // TODO 弹出提示窗表示文件已存在，是否替换
             std::ofstream ofs( Setting::PROJECT_ROOT / localPath / (source->GetName() + ".pfb"),
                               std::ios::trunc);
             if (ofs.is_open()) {

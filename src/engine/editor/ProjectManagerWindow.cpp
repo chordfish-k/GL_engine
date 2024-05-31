@@ -49,7 +49,6 @@ void ProjectManagerWindow::Imgui() {
             WindowsProjectFileMonitor::Get()->Init(filePath);
             auto scene = MainWindow::GetScene();
             if (scene) scene->RemoveAllNodes();
-//            MainWindow::ChangeScene(new EditorSceneInitializer(Setting::PROJECT_ROOT));
         });
     }
 

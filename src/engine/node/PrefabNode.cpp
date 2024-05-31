@@ -56,6 +56,10 @@ Node *PrefabNode::Deserialize(json j) {
     return this;
 }
 
+const std::string &PrefabNode::GetPrefabFile() const {
+    return prefabFile;
+}
+
 std::string PrefabNode::GetName() {
     return Node::GetName();
 }
@@ -66,7 +70,6 @@ void PrefabNode::SetPrefabFile(const std::string &filePath) {
     name = std::filesystem::path(filePath).stem().string();
     SetNode(node);
 }
-
 void PrefabNode::Imgui() {
     Node::Imgui();
 }

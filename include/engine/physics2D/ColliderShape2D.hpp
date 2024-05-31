@@ -9,7 +9,7 @@ class ColliderShape2D : public Node{
     RTTR_ENABLE(Node)
 private:
     ACollider *collider = nullptr;
-
+    RigidBody2D *rigidBody2D = nullptr;
     Transform lastTransform;
     ShapeType shapeType = ShapeType::Box2DCollider;
 public:
@@ -20,6 +20,10 @@ public:
     ACollider *GetCollider() const;
 
     void SetCollider(ACollider *shape);
+
+    RigidBody2D *GetRigidBody2D() const;
+
+    void SetRigidBody2D(RigidBody2D *rigidBody2D);
 
     void Start() override;
 

@@ -32,7 +32,7 @@ void Box2DCollider::SetSize(const glm::vec2 &size_) {
 
 
 void Box2DCollider::EditorUpdate(float dt) {
-    if (fixture.empty()) return;
+    if (fixture.empty() || !fixture[0]) return;
     auto shape = fixture[0]->GetShape();
     if (!shape)
         return;
@@ -46,8 +46,14 @@ void Box2DCollider::EditorUpdate(float dt) {
         int index = (i+1)%poly->m_count;
         b2Vec2 vPosA = {poly->m_vertices[i].x, poly->m_vertices[i].y};
         b2Vec2 vPosB = {poly->m_vertices[index].x, poly->m_vertices[index].y};
-        auto vA = Setting::PHYSICS_SCALE * fixture[0]->GetBody()->GetWorldPoint(vPosA);
-        auto vB = Setting::PHYSICS_SCALE * fixture[0]->GetBody()->GetWorldPoint(vPosB);
+
+        if (colliderShape2D->GetRigidBody2D()) {
+            auto body = colliderShape2D->GetRigidBody2D()->GetRawBody();
+            vPosA = body->GetWorldPoint(vPosA);
+            vPosB = body->GetWorldPoint(vPosB);
+        }
+        auto vA = Setting::PHYSICS_SCALE * vPosA;
+        auto vB = Setting::PHYSICS_SCALE * vPosB;
         DebugDraw::AddLine2D({vA.x, vA.y}, {vB.x, vB.y});
     }
 }

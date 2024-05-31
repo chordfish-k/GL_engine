@@ -29,26 +29,35 @@ void GameViewWindow::Imgui() {
     }
     ImGui::EndMenuBar();
 
-    ImGui::SetCursorPos(ImGui::GetCursorPos());
-    ImVec2 windowSize = GetLargestSizeForViewport();
-    ImVec2 windowPos = GetCenterPositionForViewport(windowSize);
-    ImGui::SetCursorPos(windowPos);
+    if (ImGui::BeginTabBar("Editor Tabs")) {
+        static bool tabItemOpen = true;
 
-    windowPos.x += ImGui::GetWindowPos().x;
-    windowPos.y += ImGui::GetWindowPos().y;
+        if(ImGui::BeginTabItem("Scene")) {
+            ImGui::SetCursorPos(ImGui::GetCursorPos());
+            ImVec2 windowSize = GetLargestSizeForViewport();
+            ImVec2 windowPos = GetCenterPositionForViewport(windowSize);
+            ImGui::SetCursorPos(windowPos);
 
-    leftX = windowPos.x;
-    bottomY = windowPos.y;
-    rightX = windowPos.x + windowSize.x;
-    topY = windowPos.y + windowSize.y;
+            windowPos.x += ImGui::GetWindowPos().x;
+            windowPos.y += ImGui::GetWindowPos().y;
 
-    auto textureId = MainWindow::GetFrameBuffer()->GetTexture()->GetId();
-    ImGui::Image((void*)(intptr_t)textureId,
-                 {windowSize.x, windowSize.y},
-                    {0,1}, {1, 0});
+            leftX = windowPos.x;
+            bottomY = windowPos.y;
+            rightX = windowPos.x + windowSize.x;
+            topY = windowPos.y + windowSize.y;
 
-    MouseListener::SetGameViewportPos({windowPos.x, windowPos.y});
-    MouseListener::SetGameViewportSize({windowSize.x, windowSize.y});
+            auto textureId = MainWindow::GetFrameBuffer()->GetTexture()->GetId();
+            ImGui::Image((void*)(intptr_t)textureId,
+                         {windowSize.x, windowSize.y},
+                         {0,1}, {1, 0});
+
+            MouseListener::SetGameViewportPos({windowPos.x, windowPos.y});
+            MouseListener::SetGameViewportSize({windowSize.x, windowSize.y});
+
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
 
     ImGui::End();
 }

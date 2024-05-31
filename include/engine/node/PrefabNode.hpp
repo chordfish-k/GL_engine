@@ -14,6 +14,7 @@ public:
     void SetNode(Node *node);
     Node *GetNode();
     void SetPrefabFile(const std::string &filePath);
+    const std::string &GetPrefabFile() const;
     void Start() override;
     void Update(float dt) override;
     void EditorUpdate(float dt) override;

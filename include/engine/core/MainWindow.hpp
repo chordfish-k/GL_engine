@@ -41,6 +41,8 @@ public:
 
     static void ChangeScene(ASceneInitializer *sceneInitializer);
 
+    static void ChangeScene(const std::string&filePath);
+
     void Notify(Node *node, Event event) override;
 
     // 属性

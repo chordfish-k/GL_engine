@@ -67,6 +67,7 @@ void Physics2D::Add(ColliderShape2D *cs) {
         rb = dynamic_cast<RigidBody2D *>(p->parent);
         if (rb && rb->GetRawBody()) {
             rawBody = rb->GetRawBody();
+            cs->SetRigidBody2D(rb);
             break;
         } else {
             p = p->parent;
@@ -158,22 +159,14 @@ void Physics2D::DestroyNode(Node *node) {
         auto &fs = cs->GetCollider()->GetFixture();
         if (fs.empty()) return;
 
-        // 往上找RigidBody
-        auto parent = cs->parent;
-        RigidBody2D *rbb = nullptr;
-        // 如果没有到达根节点并且还没找到最近的RigidBody则继续往上找
-        while (parent && !rbb) {
-            rbb = dynamic_cast<RigidBody2D*>(parent);
-            if (rbb) {
-                if (rbb->GetRawBody()) {
-                    // 循环删除所有fixture
-                    for (auto &f : fs) {
-                        rbb->GetRawBody()->DestroyFixture(f);
-                    }
+        auto *rbb = cs->GetRigidBody2D();
+        if (rbb) {
+            if (rbb->GetRawBody()) {
+                // 循环删除所有fixture
+                for (auto &f : fs) {
+                    rbb->GetRawBody()->DestroyFixture(f);
                 }
-            } else{
-                parent = parent->parent;
-            };
+            }
         }
     }
 }

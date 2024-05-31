@@ -9,26 +9,50 @@
 #define DISABLE_COLOR {0.2, 0.2, 0.2, 1}
 
 int SceneHierarchyWindow::selectingUid = -1;
-
 std::string SceneHierarchyWindow::selectedNodeType = "Node";
+PrefabNode * SceneHierarchyWindow::prefabRoot = nullptr;
+std::vector<Node *> SceneHierarchyWindow::nodeVisitPath;
+
+void SceneHierarchyWindow::Init() {
+    SceneHierarchyWindow::selectingUid = -1;
+    SceneHierarchyWindow::selectedNodeType = "Node";
+    SceneHierarchyWindow::prefabRoot = nullptr;
+    SceneHierarchyWindow::nodeVisitPath.clear();
+    SceneHierarchyWindow::nodeVisitPath.push_back(MainWindow::GetScene()->root);
+}
 
 void SceneHierarchyWindow::Imgui() {
-    ImGui::Begin("Scene Hierarchy");
+    ImGuiStyle &style = ImGui::GetStyle();
+    ImGuiStyle styleOrigin = ImGui::GetStyle();
+    style.IndentSpacing = 12.0f;            // 设置缩进间距
+    style.ItemSpacing = ImVec2(1.0f, 1.0f); // 设置项之间的间距
 
     auto scene = MainWindow::GetScene();
     if (scene) {
-        ImGuiStyle &style = ImGui::GetStyle();
-        ImGuiStyle styleOrigin = ImGui::GetStyle();
-        style.IndentSpacing = 12.0f;            // 设置缩进间距
-        style.ItemSpacing = ImVec2(1.0f, 1.0f); // 设置项之间的间距
-
-//        ShowAddNodePopup(scene->root);
-        ShowNodeTree();
-
-        style.IndentSpacing = styleOrigin.IndentSpacing; // 设置缩进间距
-        style.ItemSpacing = styleOrigin.ItemSpacing; // 设置项之间的间距}
+        if (nodeVisitPath.size() == 1) {
+            ImGui::Begin("Scene Hierarchy");
+            ShowSubNodes(nodeVisitPath[0]);
+            ImGui::End();
+        }
+        /*
+        else if (nodeVisitPath.size() > 1){
+            ImGui::Begin("Prefab Hierarchy");
+            float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
+            ImVec2 buttonSize(ImGui::GetContentRegionAvail().x, lineHeight);
+            if (ImGui::Button("Back", buttonSize)) {
+                nodeVisitPath.pop_back();
+            }
+            auto *fb = dynamic_cast<PrefabNode*>(nodeVisitPath[nodeVisitPath.size()-1]);
+            if (fb)
+                ShowSubNodes(fb->GetNode());
+            ImGui::End();
+        }
+        */
     }
-    ImGui::End();
+
+    style.IndentSpacing = styleOrigin.IndentSpacing; // 设置缩进间距
+    style.ItemSpacing = styleOrigin.ItemSpacing; // 设置项之间的间距}
+
 }
 
 void SceneHierarchyWindow::ShowNodeTree() {
@@ -38,11 +62,21 @@ void SceneHierarchyWindow::ShowNodeTree() {
                      ImGuiTreeNodeFlags_OpenOnArrow |
                      ImGuiTreeNodeFlags_SpanAvailWidth;
 
+    auto nodeFlags = baseFlags;
+    if (selectingUid == root->GetUid()) {
+        nodeFlags |= ImGuiTreeNodeFlags_Selected;
+    }
 
     bool treeNodeOpen = ImGui::TreeNodeEx(
         (void*)(intptr_t)(root->GetUid()),
-        baseFlags,
+        nodeFlags,
         "%s", root->GetName().c_str());
+
+    // select
+    if (ImGui::IsItemClicked()) {
+        selectingUid = root->GetUid();
+        PropertiesWindow::SetActiveNode(root);
+    }
 
     NodeMenu(root);
 
@@ -61,52 +95,61 @@ void SceneHierarchyWindow::ShowSubNodes(Node *root) {
                      ImGuiTreeNodeFlags_OpenOnArrow |
                      ImGuiTreeNodeFlags_FramePadding |
                      ImGuiTreeNodeFlags_SpanAvailWidth;
+    auto &obj = root;
 
-    for (auto obj : root->children) {
-        if (!obj->IsDoSerialization()) {
-            continue;
-        }
+    auto nodeFlags = baseFlags;
+    if (selectingUid == obj->GetUid()) {
+        nodeFlags |= ImGuiTreeNodeFlags_Selected;
+    }
 
-        auto nodeFlags = baseFlags;
-        if (selectingUid == obj->GetUid()) {
-            nodeFlags |= ImGuiTreeNodeFlags_Selected;
-        }
+    if (obj->children.empty()) {
+        nodeFlags |= ImGuiTreeNodeFlags_Leaf;
+    }
 
-        if (obj->children.empty()) {
-            nodeFlags |= ImGuiTreeNodeFlags_Leaf;
-        }
+    bool treeNodeOpen = ImGui::TreeNodeEx(
+        (void*)(intptr_t)(obj->GetUid()),
+        nodeFlags,
+        "%s", obj->GetName().c_str());
 
-        bool treeNodeOpen = ImGui::TreeNodeEx(
-            (void*)(intptr_t)(obj->GetUid()),
-            nodeFlags,
-            "%s", obj->GetName().c_str());
+    // select
+    if (ImGui::IsItemClicked()) {
+        selectingUid = obj->GetUid();
+        PropertiesWindow::SetActiveNode(obj);
+    }
 
-        // select
-        if (ImGui::IsItemClicked()) {
-            selectingUid = obj->GetUid();
-            PropertiesWindow::SetActiveNode(obj);
-        }
+    // 如果是prefab，则允许双击展开
+    if (ImGui::IsItemHovered()
+        && ImGui::GetIO().MouseDoubleClicked[GLFW_MOUSE_BUTTON_LEFT]
+        && dynamic_cast<PrefabNode*>(obj)) {
+//        nodeVisitPath.push_back(dynamic_cast<PrefabNode*>(obj));
+        MainWindow::ChangeScene((dynamic_cast<PrefabNode*>(obj))->GetPrefabFile());
+    }
 
-        NodeMenu(obj);
+    NodeMenu(obj);
 
-        // 拖拽变更子节点相对位置
-        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-        {
-            // Set payload to carry the index of our item (could be anything)
-            ImGui::SetDragDropPayload("NODE", &obj, sizeof(Node*));
-            ImGui::Text("%s", obj->GetName().c_str());
-            ImGui::EndDragDropSource();
-        }
+    // 拖拽变更子节点相对位置
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+    {
+        // Set payload to carry the index of our item (could be anything)
+        ImGui::SetDragDropPayload("NODE", &obj, sizeof(Node*));
+        ImGui::Text("%s", obj->GetName().c_str());
+        ImGui::EndDragDropSource();
+    }
 
-        NodeDropTarget(obj);
-        PrefabDropTarget(obj);
-        DummyDropTarget(obj);
+    NodeDropTarget(obj);
+    PrefabDropTarget(obj);
+    DummyDropTarget(obj);
 
-        if (treeNodeOpen) {
+    if (treeNodeOpen) {
+        for (auto obj_ : obj->children) {
+            if (!obj_->IsDoSerialization()) {
+                continue;
+            }
+
             // sub
-            ShowSubNodes(obj);
-            ImGui::TreePop();
+            ShowSubNodes(obj_);
         }
+        ImGui::TreePop();
     }
 }
 
