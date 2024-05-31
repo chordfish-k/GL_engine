@@ -19,6 +19,8 @@ private:
 
     static void NodeDropTarget(Node *target);
 
+    static void PrefabDropTarget(Node *target);
+
     static void DummyDropTarget(Node *target);
 
     static void NodeMenu(Node *node);

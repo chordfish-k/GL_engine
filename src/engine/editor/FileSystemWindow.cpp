@@ -83,16 +83,9 @@ void FileSystemWindow::ShowPath() {
 
     ImGui::PopStyleVar();
 
-    // Home按钮，返回项目根目录
-    if (ImGui::Button("Home", ImVec2(0, height))) {
-        localPath = "";
-    }
-
     // 添加文件夹按钮和添加文件按钮
     static bool readyToAdd = false;
     static char buf[128] = {0};
-
-    ImGui::SameLine();
     if (!readyToAdd && ImGui::Button("Add", ImVec2(0, height))) {
         readyToAdd = true;
         buf[0] = 0;
@@ -187,6 +180,24 @@ void FileSystemWindow::ShowFilesAndDirs() {
                         MainWindow::ChangeScene(new EditorSceneInitializer(filePath));
                     }
                 }
+                // 如果是预制体
+                else if (util::String::CheckSuffix(name, ".pfb")) {
+                    if (ImGui::Button("Pfb", btnSize)) {
+                    }
+                    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                        // 将字符串转换为字节数组
+                        auto lPath =(Setting::PROJECT_ROOT / localPath / u8Name).string();
+                        const char* textData = lPath.c_str();
+                        size_t dataSize = (lPath.length() + 1) * sizeof(char); // 包括空字符 '\0'
+
+                        // 设置拖放负载
+                        ImGui::SetDragDropPayload("PREFAB", textData, dataSize);
+                        ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 300.0f);
+                        ImGui::TextWrapped("%s", u8Name.c_str());
+                        ImGui::PopTextWrapPos();
+                        ImGui::EndDragDropSource();
+                    }
+                }
                 // 如果是图像文件
                 else if (util::String::CheckSuffix(name, ".png|.jpg")) {
                     auto tex = AssetPool::GetTexture(filePath);
@@ -237,6 +248,7 @@ void FileSystemWindow::ShowFilesAndDirs() {
                     // 绘制图片
                     drawList->AddImage((void*)(intptr_t)texId, imageMin, imageMax);
 
+                    // 拖放源：给属性窗口赋值文件路径
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
                         // 将字符串转换为字节数组
                         auto lPath =(Setting::PROJECT_ROOT / localPath / u8Name).string();
@@ -338,6 +350,7 @@ std::string FileSystemWindow::TruncateText(const std::string& text, float maxWid
 
     return truncatedText + ellipsis;
 }
+
 void FileSystemWindow::RefreshCache() {
     fs::path p = Setting::PROJECT_ROOT / FileSystemWindow::localPath;
     FileSystemWindow::cache.clear();

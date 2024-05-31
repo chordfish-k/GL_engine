@@ -4,6 +4,7 @@
 #include "engine/node/IUnselectableNode.hpp"
 #include "engine/physics2D/Box2DCollider.hpp"
 #include "engine/physics2D/CircleCollider.hpp"
+#include "engine/node/PrefabNode.hpp"
 
 RTTR_REGISTRATION  {
 
@@ -32,6 +33,11 @@ RTTR_REGISTRATION  {
         )
         .method("Deserialize", &Node::Deserialize)
         .method("Imgui", &Node::Imgui);
+
+    rttr::registration::class_<PrefabNode>("PrefabNode")
+        .constructor<>()(
+            rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+    );
 
     rttr::registration::class_<SpriteRenderer>("SpriteRenderer")
         .constructor<>()(

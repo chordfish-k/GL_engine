@@ -55,8 +55,6 @@ public:
 
     void CheckDelete();
 
-//    void Imgui() override;
-
     virtual void Destroy() {
         shouldDestroy = true;
     }
@@ -74,9 +72,9 @@ public:
 
     void RemoveAllNodes();
 
-    virtual json Serialize();
+    json Serialize() override;
 
-    virtual Node *Deserialize(json j);
+    Node *Deserialize(json j) override;
 
     void TravelOnSubTree(std::function<void(Node*)>);
 
@@ -102,18 +100,18 @@ public:
 
     Node *SetDoSerialization(bool enable) { doSerialization = enable; return this; }
 
-    Transform GetTransform() { return parent ? parent->GetTransform() + transform : transform;}
+    Transform GetTransform() const { return parent ? parent->GetTransform() + transform : transform;}
 
     virtual std::string GetName() { return name == "" ? GetNodeType() : name; }
 
-    Node *SetName(const std::string &name) {
-        this->name = name;
+    Node *SetName(const std::string &name_) {
+        this->name = name_;
         return this;
     }
 
-    Node *SetZIndex(int zIndex) {
-        zIndex = zIndex >= 0 ? zIndex : 0;
-        this->zIndex = zIndex <= 100 ? zIndex : 100;
+    Node *SetZIndex(int zIndex_) {
+        zIndex_ = zIndex_ >= 0 ? zIndex_ : 0;
+        this->zIndex = zIndex_ <= 100 ? zIndex_ : 100;
         return this;
     }
 

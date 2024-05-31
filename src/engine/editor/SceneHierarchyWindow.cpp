@@ -2,6 +2,9 @@
 #include "engine/core/MainWindow.hpp"
 #include "engine/node/IUnselectableNode.hpp"
 #include "engine/util/PrefabsUtils.hpp"
+#include "engine/util/Common.hpp"
+#include "engine/node/PrefabNode.hpp"
+#include <filesystem>
 
 #define DISABLE_COLOR {0.2, 0.2, 0.2, 1}
 
@@ -44,6 +47,7 @@ void SceneHierarchyWindow::ShowNodeTree() {
     NodeMenu(root);
 
     NodeDropTarget(root);
+    PrefabDropTarget(root);
 
     if (treeNodeOpen) {
         // sub
@@ -95,7 +99,7 @@ void SceneHierarchyWindow::ShowSubNodes(Node *root) {
         }
 
         NodeDropTarget(obj);
-
+        PrefabDropTarget(obj);
         DummyDropTarget(obj);
 
         if (treeNodeOpen) {
@@ -133,6 +137,7 @@ void SceneHierarchyWindow::DummyDropTarget(Node *target) {
         ImGui::EndDragDropTarget();
     }
 }
+
 
 void SceneHierarchyWindow::NodeMenu(Node *node) {
     // 右键菜单
@@ -210,6 +215,23 @@ void SceneHierarchyWindow::NodeDropTarget(Node *target) {
 
 }
 
+void SceneHierarchyWindow::PrefabDropTarget(Node *target) {
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB"))
+        {
+            const char *path_ = ((char *)payload->Data);
+
+            auto prefab = new PrefabNode();
+            prefab->SetPrefabFile(path_);
+            prefab->Start();
+            // 添加prefab到target
+            target->AddNode(prefab);
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
 void SceneHierarchyWindow::ShowAddNodePopup(Node *node) {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
@@ -237,7 +259,6 @@ void SceneHierarchyWindow::ShowAddNodePopup(Node *node) {
         ImGui::EndPopup();
     }
 }
-
 void SceneHierarchyWindow::ShowNodeDerivedTree(const rttr::type& t, int level) {
 
     auto nodeFlags =ImGuiTreeNodeFlags_OpenOnArrow |
