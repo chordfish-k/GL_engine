@@ -22,6 +22,7 @@ private:
     bool isDirty = true; // 脏标记，表示数据有变化
 
 protected:
+    bool visitable = true;
     bool centered = true; // 从纹理的正中心开始算offset
     Color color = {1, 1, 1, 1};
     Sprite *sprite = new Sprite();
@@ -79,6 +80,10 @@ public:
     void SetDirty() { isDirty = true; }
 
     void SetClean() { isDirty = false; }
+
+    bool IsVisitable() const;
+
+    void SetVisitable(bool visitable);
 
     void Imgui() override;
 

@@ -21,3 +21,8 @@ TransformMatBuilder &TransformMatBuilder::Scale(const glm::vec2 &s) {
 glm::mat4 TransformMatBuilder::Build() {
     return mat;
 }
+
+glm::vec2 util::TransformPoint(const glm::mat4 &mat, const glm::vec2 &p) {
+    auto res = mat * glm::vec4(p.x, p.y, 0, 1);
+    return {res.x, res.y};
+}

@@ -134,6 +134,18 @@ SpriteRenderer *SpriteRenderer::Deserialize(json j) {
     return this;
 }
 
+bool SpriteRenderer::IsVisitable() const {
+    return visitable;
+}
+
+void SpriteRenderer::SetVisitable(bool visitable_) {
+    if (visitable != visitable_) {
+        visitable = visitable_;
+        isDirty = true;
+    }
+}
+
+
 void SpriteRenderer::Imgui(){
     Node::Imgui();
     ImGui::Dummy({1, 5});

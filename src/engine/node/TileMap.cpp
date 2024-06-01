@@ -1,5 +1,12 @@
 ﻿#include "engine/node/TileMap.hpp"
 #include "engine/node/SpriteRenderer.hpp"
+#include "engine/editor/GameViewWindow.hpp"
+#include "engine/editor/PropertiesWindow.hpp"
+#include "engine/core/MouseListener.hpp"
+#include "engine/core/MainWindow.hpp"
+#include "engine/core/Camera.hpp"
+#include "engine/renderer/DebugDraw.hpp"
+#include "engine/util/Mat4Utils.hpp"
 
 void TileCell::SetIndex(int index_) {
     index = index_;
@@ -23,16 +30,6 @@ TileSet::TileSet(Texture *pTexture, int rows, int columns)
     : texture(pTexture), rows(rows), columns(columns){}
 
 TileMap::TileMap() {
-    // Test Only
-//    AddTileSet({
-//        AssetPool::GetTexture("assets/image/spritesheets/decorationsAndBlocks.png"),
-//        12, 7
-//    });
-//    AddTileCell(0, 0, 0, 0);
-//    AddTileCell(1, 0, 0, 1);
-//    AddTileCell(0, 1, 0, 2);
-//    AddTileCell(-1, 0, 0, 3);
-//    AddTileCell(0, -1, 0, 4);
 }
 
 TileMap::~TileMap() {
@@ -41,6 +38,8 @@ TileMap::~TileMap() {
         delete t.spriteRenderer; // 自动从渲染器删除spriteRenderer
         t.spriteRenderer = nullptr;
     }
+//    if (hasChosenTile)
+//        delete cursorTile.spriteRenderer;
 }
 
 json TileMap::Serialize(){
@@ -142,6 +141,8 @@ void TileMap::Imgui(){
 
                 bool open = ImGui::TreeNodeEx(label.c_str());
                 if (open) {
+                    ImGui::Indent(5);
+
                     std::filesystem::path p = ts.texture->GetFilePath();
                     auto text = p.stem().string();
                     if (MyImGui::DrawButton("texture", text)) {
@@ -151,7 +152,7 @@ void TileMap::Imgui(){
                     MyImGui::DrawIntSpinner("rows", ts.rows, 1);
 
                     std::string treeLabel = "tiles##" + std::to_string(index);
-                    if (ImGui::TreeNodeEx(treeLabel.c_str())){
+                    if (ImGui::TreeNodeEx(treeLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)){
 
                         int spNum = ts.rows * ts.columns;
                         float width = ImGui::GetContentRegionAvail().x -
@@ -211,7 +212,15 @@ void TileMap::Imgui(){
                                         ts.texture->GetId()),
                                     btnSize, uv0, uv1)) {
                                     selectTsIndex = index;
-                                    btnChoose = i;
+
+                                    if (!selected) {
+                                        btnChoose = i;
+                                        SetCursorTile(index, i);
+                                        hasChosenTile = true;
+                                    } else {
+                                        btnChoose = -1;
+//                                        hasChosenTile = false;
+                                    }
                                 }
                                 ImGui::PopID();
                                 if (selected)
@@ -267,6 +276,11 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
     TileCell cell;
     cell.tileMapPtr = this;
 
+    cell.tileX = x;
+    cell.tileY = y;
+    cell.index = tileIndex;
+    cell.tileSetIndex = tileSetIndex;
+
     TileSet &tileSet = tileSetList[tileSetIndex];
     cell.tileSetPtr = &tileSet;
 
@@ -278,13 +292,14 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
     ani->SetFrame(tileIndex);
     ani->SetVFrames(tileSet.rows);
     ani->SetHFrames(tileSet.columns);
+    ani->ApplyModifyToSprite(spr->GetSprite());
 
     auto &tr = spr->transform;
 
     // 设置position
     tr.position = {
-        (x + 0.5) * GetCellWidth() * GetTransform().scale.x,
-        (y + 0.5) * GetCellHeight() * GetTransform().scale.y
+        (x + 0.5) * GetCellWidth(),
+        (y + 0.5) * GetCellHeight()
     };
 
     // 设置scale，使其与cellSize吻合
@@ -301,7 +316,6 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
 }
 
 void TileMap::Update(float dt) {
-
     for (auto &t : tileList) {
         // 统一设置z-index
         if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
@@ -313,6 +327,10 @@ void TileMap::Update(float dt) {
 }
 
 void TileMap::EditorUpdate(float dt) {
+    if (PropertiesWindow::GetActiveNode() == this) {
+        ShowTileMapGrids();
+    }
+
     for (auto &t : tileList) {
         // 统一设置z-index
         if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
@@ -320,7 +338,159 @@ void TileMap::EditorUpdate(float dt) {
         }
         t.spriteRenderer->EditorUpdate(dt);
     }
+
+    if (hasChosenTile) {
+
+        if (GameViewWindow::GetWantCaptureMouse()) {
+
+            cursorTile.spriteRenderer->SetVisitable(true);
+
+            if (PropertiesWindow::GetActiveNode() == this) {
+                if (zIndex.GetZIndex() !=
+                    cursorTile.spriteRenderer->GetZIndex()) {
+                    cursorTile.spriteRenderer->SetZIndex(zIndex.GetZIndex());
+                }
+                // TODO 将编辑操作拆分出来
+
+                // 检测鼠标位置
+                auto mPos = MouseListener::GetWorldPos();
+                // 转换为TileMap的坐标系
+                auto pos = util::TransformPoint(glm::inverse(GetModelMatrix()), mPos);
+                pos = pos / glm::vec2(GetCellWidth(), GetCellHeight()) - glm::vec2(0.5, 0.5);
+                int x = (int)round(pos.x);
+                int y = (int)round(pos.y);
+                cursorTile.SetPosition(x, y);
+
+                cursorTile.spriteRenderer->SetDirty();
+                cursorTile.spriteRenderer->EditorUpdate(dt);
+
+                static std::vector<glm::vec2> historyPos;
+                if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+                    // 添加
+                    glm::vec2 a = glm::vec2(x, y);
+                    if (historyPos.end() == std::find(historyPos.begin(), historyPos.end(), a)) {
+                        AddTileCell(x, y, cursorTile.tileSetIndex, cursorTile.index);
+                        util::Println(x,",", y,",", cursorTile.tileSetIndex,",", cursorTile.index);
+                        historyPos.emplace_back(x, y);
+                    }
+                } else {
+                    historyPos.clear();
+                }
+            }
+        } else {
+            cursorTile.spriteRenderer->SetVisitable(false);
+        }
+    }
+
     Node::EditorUpdate(dt);
 }
 
+void TileMap::SetCursorTile(int tileSetIndex, int tileIndex) {
+    if (tileSetIndex >= tileSetList.size()) return;
 
+    TileCell &cell = cursorTile;
+    cell.tileMapPtr = this;
+    cell.index = tileIndex;
+    cell.tileSetIndex = tileSetIndex;
+
+    TileSet &tileSet = tileSetList[tileSetIndex];
+    cell.tileSetPtr = &tileSet;
+
+    bool first = false;
+    if (!cell.spriteRenderer) {
+        cell.spriteRenderer = new SpriteRenderer();
+        first = true;
+    }
+
+    auto spr = cell.spriteRenderer;
+    spr->SetTexture(tileSet.texture);
+
+    auto ani = spr->GetAnimation();
+    ani->SetFrame(tileIndex);
+    ani->SetVFrames(tileSet.rows);
+    ani->SetHFrames(tileSet.columns);
+    ani->ApplyModifyToSprite(spr->GetSprite());
+
+    auto &tr = spr->transform;
+
+    // 设置scale，使其与cellSize吻合
+    tr.scale = {
+        tileSet.cellWidth / (tileSet.texture->GetWidth() / tileSet.columns),
+        tileSet.cellHeight / (tileSet.texture->GetHeight() / tileSet.rows)
+    };
+
+    if (first) {
+        // 设置position
+        tr.position = {
+            (1.5) * GetCellWidth() * GetTransform().scale.x,
+            (1.5) * GetCellHeight() * GetTransform().scale.y
+        };
+
+        spr->Start(); // 将spriteRenderer加入渲染器
+        spr->parent = this; // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
+
+        spr->SetColor({0.2, 0.2, 0.2, 0.2});
+    }
+}
+
+void TileMap::ShowTileMapGrids() {
+    int cellW = GetCellWidth();
+    int cellH = GetCellHeight();
+
+    if (cellW == 0 || cellH == 0) return;
+
+    auto camera = MainWindow::GetScene()->GetCamera();
+    auto cameraPos = camera->position;
+    auto cameraZoom = camera->GetZoom();
+    auto projSize = camera->GetProjectionSize();
+
+    int mWH = cellW < cellH ? cellW : cellH;
+    //    util::Println(cameraZoom / mWH);
+    if (cameraZoom / mWH  > 0.12) return;
+
+    auto mat = GetModelMatrix();
+
+    int begin = 0;
+    int end = 2 * (int)(projSize.x * cameraZoom * .5f + cameraPos.x);
+    for (int i = begin; i < end; i += cellW) {
+        glm::vec2 center = {i, 0};
+        glm::vec2 down = {center.x, 2 * (int)(projSize.y * cameraZoom * -.5f + cameraPos.y)};
+        glm::vec2 up = {center.x, 2 * (int)(projSize.y * cameraZoom * .5f + cameraPos.y)};
+        down = util::TransformPoint(mat, down);
+        up = util::TransformPoint(mat, up);
+        DebugDraw::AddLine2D(up, down, {0.45, 0.35, 0.32, 1});
+    }
+
+    begin = 0;
+    end = 2 * (int)(projSize.x * cameraZoom * -.5f + cameraPos.x);
+    for (int i = begin; i > end; i -= cellW) {
+        glm::vec2 center = {i, 0};
+        glm::vec2 down = {center.x, 2 * (int)(projSize.y * cameraZoom * -.5f + cameraPos.y)};
+        glm::vec2 up = {center.x, 2 * (int)(projSize.y * cameraZoom * .5f + cameraPos.y)};
+        down = util::TransformPoint(mat, down);
+        up = util::TransformPoint(mat, up);
+        DebugDraw::AddLine2D(up, down, {0.45, 0.35, 0.32, 1});
+    }
+
+    begin = 0;
+    end = 2 * (int)(projSize.y * cameraZoom * .5f + cameraPos.y);
+    for (int i = begin; i < end; i += cellH) {
+        glm::vec2 center = {0, i};
+        glm::vec2 left = {2 * (int)(projSize.x * cameraZoom * -.5f + cameraPos.x), center.y};
+        glm::vec2 right = {2 * (int)(projSize.x * cameraZoom * .5f + cameraPos.x), center.y};
+        left = util::TransformPoint(mat, left);
+        right = util::TransformPoint(mat, right);
+        DebugDraw::AddLine2D(left, right, {0.45, 0.35, 0.32, 1});
+    }
+
+    begin = 0;
+    end = 2 * (int)(projSize.y * cameraZoom * -.5f + cameraPos.y);
+    for (int i = begin; i >= end; i -= cellH) {
+        glm::vec2 center = {0, i};
+        glm::vec2 left = {2 * (int)(projSize.x * cameraZoom * -.5f + cameraPos.x), center.y};
+        glm::vec2 right = {2 * (int)(projSize.x * cameraZoom * .5f + cameraPos.x), center.y};
+        left = util::TransformPoint(mat, left);
+        right = util::TransformPoint(mat, right);
+        DebugDraw::AddLine2D(left, right, {0.45, 0.35, 0.32, 1});
+    }
+}

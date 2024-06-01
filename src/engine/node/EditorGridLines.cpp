@@ -4,9 +4,9 @@
 
 void EditorGridLines::EditorUpdate(float dt) {
     Node *node = PropertiesWindow::GetActiveNode();
-    if (node != nullptr && node->GetNodeType() == "TileMap") {
-        ShowTileMapGrids(dynamic_cast<TileMap *>(node));
-    }
+//    if (node != nullptr && node->GetNodeType() == "TileMap") {
+//        ShowTileMapGrids(dynamic_cast<TileMap *>(node));
+//    }
 
     auto camera = MainWindow::GetScene()->GetCamera();
     auto cameraPos = camera->position;

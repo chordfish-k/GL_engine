@@ -14,3 +14,7 @@ public:
     TransformMatBuilder &Scale(const glm::vec2 &s);
     glm::mat4 Build();
 };
+
+namespace util {
+    glm::vec2 TransformPoint(const glm::mat4 &mat, const glm::vec2 &p);
+};

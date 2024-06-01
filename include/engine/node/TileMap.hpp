@@ -40,6 +40,9 @@ protected:
     int cellHeight = 16;
     std::vector<TileSet> tileSetList;
     std::vector<TileCell> tileList;
+    TileCell cursorTile;
+    bool hasChosenTile = false;
+    bool firstSetCursorTile = true;
 
 public:
     TileMap();
@@ -71,4 +74,9 @@ public:
     void Update(float dt) override;
 
     void EditorUpdate(float dt) override;
+
+private:
+    void SetCursorTile(int tileSetIndex, int tileIndex);
+
+    void ShowTileMapGrids();
 };

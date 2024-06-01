@@ -44,6 +44,7 @@ RTTR_REGISTRATION  {
                 rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
             )
         .property("centered", &SpriteRenderer::IsCentered, &SpriteRenderer::SetCentered)
+        .property("visitable", &SpriteRenderer::IsVisitable, &SpriteRenderer::SetVisitable)
         .property("color", &SpriteRenderer::GetColor, &SpriteRenderer::SetColor)
         .property("offset", &SpriteRenderer::GetOffset, &SpriteRenderer::SetOffset)
         .property("sprite", &SpriteRenderer::GetSprite, &SpriteRenderer::SetSprite);
