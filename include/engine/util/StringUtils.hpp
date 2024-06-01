@@ -31,10 +31,12 @@ public:
     static std::string Replace(const std::string &str, const std::string &from,
                                const std::string &to);
 
-    // 使用不定参数模板函数拼接多个字符串
-    template <typename... Args>
-    static std::string Concat(const Args &...args) {
-        return (args + ...);
+    // 辅助函数，提供简便接口
+    template<typename... Args>
+    std::string Concat(Args&&... args) {
+        std::stringstream ss;
+        appendToStream(ss, std::forward<Args>(args)...);
+        return ss.str();
     }
 
     static std::string GetSuffix(const std::string &str, char c);
@@ -46,6 +48,19 @@ public:
     static std::string LowercaseFirst(const std::string &str);
 
     static std::string TBS(const std::string &str);
+
+private:
+    // 可变参数模板函数，用于递归拼接字符串
+    template<typename T, typename... Args>
+    static void AppendToStream(std::stringstream& ss, T&& first, Args&&... rest) {
+        ss << std::forward<T>(first);
+        appendToStream(ss, std::forward<Args>(rest)...);
+    }
+
+    // 基础模板函数，用于终止递归
+    static void AppendToStream(std::stringstream& ss) {
+        // 终止条件：不做任何操作
+    }
 };
 
 }

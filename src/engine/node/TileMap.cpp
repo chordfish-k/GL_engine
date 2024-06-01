@@ -123,6 +123,129 @@ void TileMap::Imgui(){
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
         ShowImgui();
+
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+        if (ImGui::TreeNodeEx("TileSets",
+                              ImGuiTreeNodeFlags_Selected |
+                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+
+            static std::string path;
+            if (MyImGui::DrawResourceDragDropBoxWithBtn("add from",path, "Add")) {
+                AddTileSet({AssetPool::GetTexture(path), 1, 1});
+            }
+
+            ImGui::Indent(3);
+            int index = 0;
+            static int selectTsIndex = 0;
+            for (auto &ts : tileSetList) {
+                std::string label = "TileSet " + std::to_string(index);
+
+                bool open = ImGui::TreeNodeEx(label.c_str());
+                if (open) {
+                    std::filesystem::path p = ts.texture->GetFilePath();
+                    auto text = p.stem().string();
+                    if (MyImGui::DrawButton("texture", text)) {
+                        FileSystemWindow::localPath = p.parent_path();
+                    }
+                    MyImGui::DrawIntSpinner("columns", ts.columns, 1);
+                    MyImGui::DrawIntSpinner("rows", ts.rows, 1);
+
+                    std::string treeLabel = "tiles##" + std::to_string(index);
+                    if (ImGui::TreeNodeEx(treeLabel.c_str())){
+
+                        int spNum = ts.rows * ts.columns;
+                        float width = ImGui::GetContentRegionAvail().x -
+                                      ImGui::GetStyle().ScrollbarSize;
+                        ImVec2 tsSize = {width,
+                                         width / ts.texture->GetWidth() *
+                                         ts.texture->GetHeight()};
+                        float btnWidth = fmin(32, tsSize.x / ts.columns);
+                        ImVec2 btnSize = {btnWidth, btnWidth /
+                                                    ts.cellWidth *
+                                                    ts.cellHeight};
+                        ImVec2 windowPos = ImGui::GetWindowPos();
+                        ImVec2 windowSize = ImGui::GetWindowSize();
+                        float windowWidthX2 = windowPos.x + windowSize.x;
+                        ImVec2 itemSpacing = ImGui::GetStyle().ItemSpacing;
+
+                        if (ImGui::BeginChild("tiles-child")) {
+
+                            float borderSize = 2;
+                            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,
+                                                {borderSize, borderSize});
+                            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,
+                                                {2, 2});
+                            ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize,
+                                                borderSize);
+                            // 显示图片按钮
+                            static int btnChoose = -1;
+                            for (int i = 0; i < spNum; ++i) {
+                                int currentX = (i % ts.columns) * ts.cellWidth;
+                                int currentY = (ts.rows - (i / ts.columns)-1) * ts.cellHeight;
+                                // 将坐标缩到[0,1]区间，作为texCoords
+                                float topY = (currentY + ts.cellHeight) /
+                                             (float)ts.texture->GetHeight();
+                                float rightX = (currentX + ts.cellWidth) /
+                                               (float)ts.texture->GetWidth();
+                                float leftX =
+                                    currentX / (float)ts.texture->GetWidth();
+                                float bottomY =
+                                    currentY / (float)ts.texture->GetHeight();
+
+                                std::vector<glm::vec2> texCoords = {
+                                    glm::vec2(rightX, topY),
+                                    glm::vec2(rightX, bottomY),
+                                    glm::vec2(leftX, bottomY),
+                                    glm::vec2(leftX, topY),
+                                };
+
+                                ImVec2 uv0 = {leftX, topY};
+                                ImVec2 uv1 = {rightX, bottomY};
+
+                                bool selected = btnChoose == i && selectTsIndex == index;
+                                if (selected)
+                                    ImGui::PushStyleColor(ImGuiCol_Border, {0.95, 0.9, 0.15, 1});
+                                ImGui::PushID(util::Concat("tsbtnid.", index, ".", i).c_str());
+                                if (ImGui::ImageButton(
+                                    reinterpret_cast<ImTextureID>(
+                                        ts.texture->GetId()),
+                                    btnSize, uv0, uv1)) {
+                                    selectTsIndex = index;
+                                    btnChoose = i;
+                                }
+                                ImGui::PopID();
+                                if (selected)
+                                    ImGui::PopStyleColor();
+
+                                // 判断是否要换行
+                                ImVec2 lastButtonPos = ImGui::GetItemRectMax();
+                                float nextButtonX2 = lastButtonPos.x + itemSpacing.x + btnWidth*2;
+                                if (i + 1 < spNum && nextButtonX2 < windowWidthX2) {
+                                    ImGui::SameLine();
+                                }
+                            }
+                            ImGui::PopStyleVar(3);
+                            ImGui::EndChild();
+                        }
+                        ImGui::TreePop();
+                    }
+                    ImGui::PushStyleColor(ImGuiCol_Button, {0.8, 0.2, 0.2, 1});
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0.6, 0.1, 0.15, 1});
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0.7, 0.2, 0.2, 1});
+                    if (ImGui::Button("Delete", {ImGui::GetContentRegionAvail().x,
+                                                 ImGui::GetTextLineHeight()+ImGui::GetStyle().FramePadding.y*2})) {
+                        // TODO 删除tileSet
+
+                    }
+                    ImGui::PopStyleColor(3);
+                    ImGui::TreePop();
+                }
+                ++index;
+            }
+            ImGui::Indent();
+            ImGui::TreePop();
+        }
+        ImGui::PopStyleColor();
     }
 }
 

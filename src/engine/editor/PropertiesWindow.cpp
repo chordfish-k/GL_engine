@@ -56,11 +56,18 @@ void PropertiesWindow::EditorUpdate(float dt) {
         int y = (int) MouseListener::GetScreenY();
         int uid = MainWindow::GetPickingTexture()->ReadPixel(x, y)+1;
 
-        // 顺便改变层级树选择的节点
-        SceneHierarchyWindow::selectingUid = uid;
-
+        Node *pickedNode = nullptr;
         if (uid != 0) {
-            Node *pickedNode = scene->GetNodeByUid(uid);
+            pickedNode = scene->GetNodeByUid(uid);
+        }
+
+        // 如果当前是TileMap，而拾取的不是，则不执行任何操作
+        if (activeNode && activeNode->GetNodeType() == "TileMap"
+            && (pickedNode == nullptr || pickedNode->GetNodeType() != "TileMap")) {
+            return;
+        }
+
+        if (pickedNode) {
             if (pickedNode != nullptr && pickedNode->IsPickable()) {
                 activeNode = pickedNode;
             } else if (pickedNode == nullptr && !MouseListener::IsDragging()) {
@@ -71,6 +78,9 @@ void PropertiesWindow::EditorUpdate(float dt) {
         else if (!remainInThisFrame){
             activeNode = nullptr;
         }
+
+        // 顺便改变层级树选择的节点
+        SceneHierarchyWindow::selectingUid = uid;
     }
     remainInThisFrame = false;
 }

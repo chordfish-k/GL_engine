@@ -356,7 +356,7 @@ bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &pat
         FileSystemWindow::localPath = path1.parent_path().string();
     }
 
-    if (ImGui::IsItemHovered()) {
+    if (ImGui::IsItemHovered() && !name.empty()) {
         ImGui::SetTooltip("%s", name.c_str());
     }
 
@@ -370,6 +370,65 @@ bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &pat
             res = true;
         }
         ImGui::EndDragDropTarget();
+    }
+
+    ImGui::PopItemWidth();
+
+    ImGui::Columns(1);
+    ImGui::PopID();
+    return res;
+}
+
+bool MyImGui::DrawResourceDragDropBoxWithBtn(const std::string &label, std::string &path, const std::string &btnTex) {
+    bool res = false;
+    auto lb = label.c_str();
+    ImGui::PushID(lb);
+
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
+    ImGui::Text("%s", lb);
+    ImGui::NextColumn();
+
+    ImGui::PushItemWidth(-1);
+    float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
+    float btnWidth = 0;
+    if (!btnTex.empty()) {
+        btnWidth = ImGui::CalcTextSize(btnTex.c_str()).x + 6;
+    }
+    float boxWidth = ImGui::CalcItemWidth() - btnWidth - ImGui::GetStyle().FramePadding.x;
+
+    std::filesystem::path path1 = path;
+    std::string name = path1.filename().string();
+
+    if (ImGui::Button(name.c_str(), {boxWidth, lineHeight})) {
+        FileSystemWindow::localPath = path1.parent_path().string();
+    }
+
+    if (ImGui::BeginDragDropTarget())
+    {
+        // TODO 添加类别判断
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+        {
+            const char *path_ = ((char *)payload->Data);
+            path = path_;
+            util::Println(path);
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    ImGui::SameLine();
+    ImGui::Dummy({ImGui::GetStyle().FramePadding.x, 0});
+    ImGui::SameLine();
+    if (ImGui::Button(btnTex.c_str(), {btnWidth, lineHeight})) {
+        res = true;
+    }
+
+    ImGui::Indent();
+
+    if (ImGui::IsItemHovered() && !name.empty()) {
+        ImGui::SetTooltip("%s", name.c_str());
     }
 
     ImGui::PopItemWidth();
@@ -426,5 +485,49 @@ bool MyImGui::DrawComboControl(const std::string& label, int &index, const char*
 
     ImGui::Columns(1);
     ImGui::PopID();
+    return res;
+}
+
+void MyImGui::DrawText(const std::string &label, std::string &value) {
+    auto lb = label.c_str();
+    ImGui::PushID(lb);
+
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
+    ImGui::Text("%s", lb);
+    ImGui::NextColumn();
+
+    ImGui::PushItemWidth(-1);
+    ImGui::Text("%s", value.c_str());
+    ImGui::PopItemWidth();
+
+    ImGui::Columns(1);
+    ImGui::PopID();
+}
+
+bool MyImGui::DrawButton(const std::string &label, std::string &value) {
+    bool res = false;
+    auto lb = label.c_str();
+    ImGui::PushID(lb);
+
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, COLUMN_WIDTH);
+    ImGui::Dummy({8,1});
+    ImGui::SameLine();
+    ImGui::Text("%s", lb);
+    ImGui::NextColumn();
+
+    ImGui::PushItemWidth(-1);
+    float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.f;
+    if (ImGui::Button(value.c_str(), {ImGui::CalcItemWidth(), lineHeight})){
+        res = true;
+    }
+    ImGui::PopItemWidth();
+
+    ImGui::Columns(1);
+    ImGui::PopID();
+
     return res;
 }

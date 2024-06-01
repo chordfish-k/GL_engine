@@ -32,7 +32,13 @@ public:
 
     static bool DrawResourceDragDropBox(const std::string &label, std::string &path);
 
+    static bool DrawResourceDragDropBoxWithBtn(const std::string &label, std::string &path, const std::string &btnTex);
+
     static bool DrawTextInput(const std::string &label, std::string &value);
+
+    static void DrawText(const std::string &label, std::string &value);
+
+    static bool DrawButton(const std::string &label, std::string &value);
 
     static bool DrawComboControl(const std::string &label, int &index,
                           const char *values[], int size);
