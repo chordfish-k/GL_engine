@@ -28,6 +28,7 @@ protected:
     ZIndex zIndex = 0;
     bool active = true;
 
+
 public:
     Node *parent = nullptr;
     std::list<Node *> children;
@@ -142,10 +143,9 @@ public:
 
     virtual void Imgui();
 
-    bool IsAncestorOrSelf(Node *ancestor);
-
-protected:
     void ShowImgui(std::vector<std::string> notShowFields = {});
+
+    bool IsAncestorOrSelf(Node *ancestor);
 };
 
 #define COMPONENT(name_)                                        \

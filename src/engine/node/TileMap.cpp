@@ -36,8 +36,8 @@ TileSet::TileSet(Texture *pTexture, int rows, int columns)
 TileMap::TileMap() {
     rigidBody2D = new RigidBody2D();
     rigidBody2D->parent = this;
+    rigidBody2D->transform.position = {0, 0};
     rigidBody2D->SetBodyType(BodyType::Static);
-    MainWindow::GetScene()->GetPhysics2D()->Add(rigidBody2D);
 }
 
 TileMap::~TileMap() {
@@ -70,6 +70,10 @@ json TileMap::Serialize(){
         j["data"]["tiles"][index] = {t.tileX, t.tileY, t.tileSetIndex, t.index};
         ++index;
     }
+
+    j["data"]["rigidBody"]["bodyType"] = GetNameByBodyType(rigidBody2D->GetBodyType());
+    j["data"]["rigidBody"]["fixedRotation"] = rigidBody2D->IsFixedRotation();
+    j["data"]["rigidBody"]["mass"] = rigidBody2D->GetMass();
 
     return j;
 }
@@ -105,6 +109,23 @@ TileMap *TileMap::Deserialize(json j){
             if (tc.size() != 4)
                 continue;
             AddTileCell(tc[0], tc[1], tc[2], tc[3]);
+        }
+    }
+
+    // 设置内置的rigidBody
+    auto &rb = data["rigidBody"];
+    if (!rb.empty()) {
+        auto &bt = rb["bodyType"];
+        if (!bt.empty()) {
+            rigidBody2D->SetBodyType(GetBodyTypeByName(bt));
+        }
+        auto &fr = rb["fixedRotation"];
+        if (!fr.empty()) {
+            rigidBody2D->SetFixedRotation(fr);
+        }
+        auto &ma = rb["mass"];
+        if (!ma.empty()) {
+            rigidBody2D->SetMass(ma);
         }
     }
 
@@ -148,6 +169,15 @@ void TileMap::Imgui(){
                 };
             }
         }
+
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+        if (ImGui::TreeNodeEx("RigidBody",
+                              ImGuiTreeNodeFlags_Selected |
+                                  ImGuiTreeNodeFlags_DefaultOpen)) {
+            rigidBody2D->ShowImgui();
+            ImGui::TreePop();
+        }
+        ImGui::PopStyleColor();
 
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
         if (ImGui::TreeNodeEx("TileSets",
@@ -351,6 +381,7 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
     // 添加碰撞体
     auto coll = spr->AddNode<ColliderShape2D>();
     auto box = new Box2DCollider(coll);
+//    coll->transform.position = tr.position;
     box->SetSize({GetCellWidth(), GetCellHeight()});
     coll->SetCollider(box);
 
@@ -368,14 +399,14 @@ void TileMap::Update(float dt) {
 
     if (!active) return;
 
-//    for (auto &t : tileList) {
-//        // 统一设置z-index
-//        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
-//            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
-//        }
-//        t.spriteRenderer->Update(dt);
-//    }
+    for (auto &t : tileList) {
+        // 统一设置z-index
+        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
+            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
+        }
+    }
     rigidBody2D->Update(dt);
+
     Node::Update(dt);
 }
 
@@ -394,13 +425,12 @@ void TileMap::EditorUpdate(float dt) {
     }
 
 
-//    for (auto &t : tileList) {
-//        // 统一设置z-index
-//        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
-//            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
-//        }
-//        t.spriteRenderer->EditorUpdate(dt);
-//    }
+    for (auto &t : tileList) {
+        // 统一设置z-index
+        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
+            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
+        }
+    }
 
     rigidBody2D->EditorUpdate(dt);
 

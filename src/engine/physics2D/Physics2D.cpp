@@ -92,7 +92,7 @@ void Physics2D::Add(ColliderShape2D *cs) {
     auto *box2DCollider = dynamic_cast<Box2DCollider*>(collider);
 
     b2PolygonShape poly;
-    poly.SetAsBox(1, 1);
+    poly.SetAsBox(0.001, 0.001);
     // 默认随便给一个fixture
     collider->SetFixture(rawBody->CreateFixture(&poly, rb->GetMass()));
 }

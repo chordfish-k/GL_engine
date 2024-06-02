@@ -15,11 +15,10 @@ void RigidBody2D::Update(float dt)  {
     if (rawBody != nullptr && bodyType == BodyType::Dynamic) {
         // 更新rawBody的实际位置到gameObject的transform组件
 
-        auto dp = glm::vec2(rawBody->GetPosition().x,rawBody->GetPosition().y) * Setting::PHYSICS_SCALE;
         Transform temp;
         temp.ApplyDataByLocalMatrix(GetModelMatrix());
         auto dWorldMat = TransformMatBuilder()
-                             .Translate(dp)
+                             .Translate(glm::vec2(rawBody->GetPosition().x,rawBody->GetPosition().y) * Setting::PHYSICS_SCALE)
                              .Rotate(rawBody->GetAngle())
                              .Scale(temp.scale)
                              .Build();

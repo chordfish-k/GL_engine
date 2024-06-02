@@ -227,7 +227,7 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
     }
 
     if (openAddNodePopup) {
-        ImGui::OpenPopup(("Add Node" + std::to_string(node->GetUid())).c_str());
+        ImGui::OpenPopup(("Add Node##" + std::to_string(node->GetUid())).c_str());
     }
     // 渲染内部弹窗
     ShowAddNodePopup(node);
@@ -279,7 +279,7 @@ void SceneHierarchyWindow::ShowAddNodePopup(Node *node) {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-    if (ImGui::BeginPopupModal(("Add Node" + std::to_string(node->GetUid())).c_str(),
+    if (ImGui::BeginPopupModal(("Add Node##" + std::to_string(node->GetUid())).c_str(),
                                 NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         auto t = rttr::type::get<Node>();
