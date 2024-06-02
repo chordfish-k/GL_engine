@@ -575,55 +575,37 @@ void TileMap::ShowTileMapGrids() {
     auto projSize = camera->GetProjectionSize();
 
     int mWH = cellW < cellH ? cellW : cellH;
-    //    util::Println(cameraZoom / mWH);
-    if (cameraZoom / mWH  > 0.12) return;
+    if (cameraZoom / mWH > 0.12) return;
 
     auto mat = GetModelMatrix();
+    auto pos =  util::TransformPoint(parent->GetModelMatrix(), transform.position);
+    cameraPos -= pos;
 
-    int begin = 0;
-    int end = 2 * (int)(projSize.x * cameraZoom * .5f + cameraPos.x);
-    for (int i = begin; i < end; i += cellW) {
-        glm::vec2 center = {i, 0};
-        glm::vec2 down = {center.x, 2 * (int)(projSize.y * cameraZoom * -.5f + cameraPos.y)};
-        glm::vec2 up = {center.x, 2 * (int)(projSize.y * cameraZoom * .5f + cameraPos.y)};
+    // 计算视口边界
+    float left = (cameraPos.x - (projSize.x * 0.5f * cameraZoom));
+    float right = (cameraPos.x + (projSize.x * 0.5f * cameraZoom));
+    float top = (cameraPos.y + (projSize.y * 0.5f * cameraZoom));
+    float bottom = (cameraPos.y - (projSize.y * 0.5f * cameraZoom));
+
+    // 绘制垂直网格线
+    for (int i = (int)left - (int)left % cellW; i < (int)right; i += cellW) {
+        glm::vec2 down = {i, bottom};
+        glm::vec2 up = {i, top};
         down = util::TransformPoint(mat, down);
         up = util::TransformPoint(mat, up);
         DebugDraw::AddLine2D(up, down, {0.45, 0.35, 0.32, 1});
     }
 
-    begin = 0;
-    end = 2 * (int)(projSize.x * cameraZoom * -.5f + cameraPos.x);
-    for (int i = begin; i > end; i -= cellW) {
-        glm::vec2 center = {i, 0};
-        glm::vec2 down = {center.x, 2 * (int)(projSize.y * cameraZoom * -.5f + cameraPos.y)};
-        glm::vec2 up = {center.x, 2 * (int)(projSize.y * cameraZoom * .5f + cameraPos.y)};
-        down = util::TransformPoint(mat, down);
-        up = util::TransformPoint(mat, up);
-        DebugDraw::AddLine2D(up, down, {0.45, 0.35, 0.32, 1});
-    }
-
-    begin = 0;
-    end = 2 * (int)(projSize.y * cameraZoom * .5f + cameraPos.y);
-    for (int i = begin; i < end; i += cellH) {
-        glm::vec2 center = {0, i};
-        glm::vec2 left = {2 * (int)(projSize.x * cameraZoom * -.5f + cameraPos.x), center.y};
-        glm::vec2 right = {2 * (int)(projSize.x * cameraZoom * .5f + cameraPos.x), center.y};
-        left = util::TransformPoint(mat, left);
-        right = util::TransformPoint(mat, right);
-        DebugDraw::AddLine2D(left, right, {0.45, 0.35, 0.32, 1});
-    }
-
-    begin = 0;
-    end = 2 * (int)(projSize.y * cameraZoom * -.5f + cameraPos.y);
-    for (int i = begin; i >= end; i -= cellH) {
-        glm::vec2 center = {0, i};
-        glm::vec2 left = {2 * (int)(projSize.x * cameraZoom * -.5f + cameraPos.x), center.y};
-        glm::vec2 right = {2 * (int)(projSize.x * cameraZoom * .5f + cameraPos.x), center.y};
-        left = util::TransformPoint(mat, left);
-        right = util::TransformPoint(mat, right);
-        DebugDraw::AddLine2D(left, right, {0.45, 0.35, 0.32, 1});
+    // 绘制水平网格线
+    for (int i = (int)bottom - (int)bottom % cellH; i < (int)top; i += cellH) {
+        glm::vec2 left_ = {left, i};
+        glm::vec2 right_ = {right, i};
+        left_ = util::TransformPoint(mat, left_);
+        right_ = util::TransformPoint(mat, right_);
+        DebugDraw::AddLine2D(left_, right_, {0.45, 0.35, 0.32, 1});
     }
 }
+
 
 glm::vec2 TileMap::WorldPosToGridPos(const glm::vec2 &wp) {
     auto pos = util::TransformPoint(glm::inverse(GetModelMatrix()), wp);
