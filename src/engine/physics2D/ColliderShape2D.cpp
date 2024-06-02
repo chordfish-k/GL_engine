@@ -105,11 +105,14 @@ void ColliderShape2D::EditorUpdate(float dt) {
 
 void ColliderShape2D::TryReshape() {
     Transform newTr = GetTransform();
-    if (!newTr.Equals(lastTransform)) {
-        if (collider && rigidBody2D->GetRawBody()->IsAwake()) {
-            collider->RefreshShape();
+    if (collider) {
+        util::Println(collider->IsDirty());
+        if (!newTr.Equals(lastTransform) || collider->IsDirty()) {
+//            if (rigidBody2D->GetRawBody()->IsAwake()) {
+                collider->RefreshShape();
+//            }
+            newTr.CopyTo(lastTransform);
         }
-        newTr.CopyTo(lastTransform);
     }
 }
 

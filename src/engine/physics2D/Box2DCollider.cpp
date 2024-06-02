@@ -14,20 +14,10 @@ const glm::vec2 &Box2DCollider::GetSize() const {
 }
 
 void Box2DCollider::SetSize(const glm::vec2 &size_) {
-    size = size_;
-
-    if (fixture.empty())
-        return;
-
-    auto shape = fixture[0]->GetShape();
-    if (!shape)
-        return;
-
-    auto poly = dynamic_cast<b2PolygonShape*>(shape);
-    if (!poly)
-        return;
-
-//    poly->SetAsBox(size.x * 0.5f, size.y * 0.5f,poly->m_centroid, 0);
+    if (size != size_) {
+        size = size_;
+        SetDirty(true);
+    }
 }
 
 
@@ -77,9 +67,10 @@ bool Box2DCollider::Imgui() {
     bool res = false;
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
     if (ImGui::TreeNodeEx("Box2DCollider", ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen)) {
-        res = MyImGui::DrawVec2Control("size", size) || res;
+        auto siz = size;
+        res = MyImGui::DrawVec2Control("size", siz);
         if (res) {
-            SetSize(size);
+            SetSize(siz);
         }
         ImGui::TreePop();
     }
@@ -118,4 +109,6 @@ void Box2DCollider::RefreshShape() {
     b2PolygonShape poly;
     poly.Set(vertices, 4);
     SetFixture(fixture[0]->GetBody()->CreateFixture(&poly, fixture[0]->GetDensity()));
+
+    SetDirty(false);
 }

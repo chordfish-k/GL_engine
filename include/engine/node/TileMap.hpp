@@ -75,6 +75,8 @@ public:
 
     void EditorUpdate(float dt) override;
 
+    glm::vec2 WorldPosToGridPos(const glm::vec2 &wp);
+
 private:
     void SetCursorTile(int tileSetIndex, int tileIndex);
 

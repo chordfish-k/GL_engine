@@ -20,3 +20,10 @@ void ACollider::SetFixture(b2Fixture *fixture_, int index) {
     fixture[index] = fixture_;
 }
 
+bool ACollider::IsDirty() {
+    return isDirty;
+}
+
+void ACollider::SetDirty(bool dirty) {
+    isDirty = dirty;
+}

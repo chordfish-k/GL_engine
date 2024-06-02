@@ -17,6 +17,7 @@ float CircleCollider::GetRadius() const {
 void CircleCollider::SetRadius(float radius_) {
     if (radius != radius_) {
         radius = radius_;
+        SetDirty(true);
     }
 }
 
@@ -108,5 +109,5 @@ void CircleCollider::RefreshShape() {
 //        fixtures[i]
         SetFixture(fixture[0]->GetBody()->CreateFixture(&poly, fixture[0]->GetDensity()), i);
     }
-
+    SetDirty(false);
 }

@@ -54,7 +54,7 @@ void Sprite::SetHeight(float height) {
 
 void Sprite::SetTexture(Texture *texture) {
     if (texture != nullptr) {
-        if (this->texture) delete this->texture;
+//        if (this->texture) delete this->texture;
         this->texture = texture;
         this->width = (float) texture->GetWidth();
         this->height = (float) texture->GetHeight();

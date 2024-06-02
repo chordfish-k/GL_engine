@@ -343,3 +343,14 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
         }
     }
 }
+
+bool Node::HasAncestor(Node *ancestor) {
+    Node *p = this;
+    while (p->parent) {
+        if (p->parent == ancestor) {
+            return true;
+        }
+        p = p->parent;
+    }
+    return false;
+}

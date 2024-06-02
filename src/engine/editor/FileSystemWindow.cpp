@@ -364,3 +364,8 @@ void FileSystemWindow::RefreshCache() {
         FileSystemWindow::cache.push_back(entry.path().filename().string());
     }
 }
+
+void FileSystemWindow::SetLocalPath(const std::filesystem::path &path1) {
+    localPath = path1;
+    RefreshCache();
+}

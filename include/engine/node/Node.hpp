@@ -139,8 +139,10 @@ public:
         transform = t;
         return this;
     }
-public:
+
     virtual void Imgui();
+
+    bool HasAncestor(Node *ancestor);
 
 protected:
     void ShowImgui(std::vector<std::string> notShowFields = {});

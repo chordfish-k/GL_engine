@@ -9,6 +9,8 @@ public:
     static fs::path localPath;
     static std::vector<std::string> cache;
 
+    static void SetLocalPath(const std::filesystem::path &path1);
+
 public:
     static void Start();
     static void Imgui();

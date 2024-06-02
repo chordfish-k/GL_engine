@@ -7,6 +7,7 @@
 #include "engine/core/Camera.hpp"
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/util/Mat4Utils.hpp"
+#include "engine/core/KeyListener.hpp"
 
 std::vector<TileSet> TileMap::tileSetList;
 
@@ -127,7 +128,18 @@ void TileMap::Imgui(){
     ImGui::Dummy({1,2});
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(GetNodeType().c_str())) {
+        int lastCellW = cellWidth, lastCellH = cellHeight;
         ShowImgui();
+
+        if (lastCellW != cellWidth || lastCellH != cellHeight) {
+            for (auto &ts : tileList) {
+                // 设置position
+                ts.spriteRenderer->transform.position = {
+                    (ts.tileX + 0.5) * GetCellWidth(),
+                    (ts.tileY + 0.5) * GetCellHeight()
+                };
+            }
+        }
 
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
         if (ImGui::TreeNodeEx("TileSets",
@@ -142,17 +154,19 @@ void TileMap::Imgui(){
             ImGui::Indent(3);
             int index = 0;
             static int selectTsIndex = 0;
-            for (auto &ts : tileSetList) {
-                std::string label = "TileSet " + std::to_string(index);
+            for (int i = 0; i < tileSetList.size(); ++i) {
+                auto &ts = tileSetList[i];
 
+                std::filesystem::path p = ts.texture->GetFilePath();
+                auto textNameText = p.stem().string();
+
+                std::string label = util::Concat("TileSet-", textNameText, "##", ts.texture->GetId());
                 bool open = ImGui::TreeNodeEx(label.c_str());
                 if (open) {
                     ImGui::Indent(5);
 
-                    std::filesystem::path p = ts.texture->GetFilePath();
-                    auto text = p.stem().string();
-                    if (MyImGui::DrawButton("texture", text)) {
-                        FileSystemWindow::localPath = p.parent_path();
+                    if (MyImGui::DrawButton("texture", textNameText)) {
+                        FileSystemWindow::SetLocalPath(p.parent_path());
                     }
                     if (MyImGui::DrawIntSpinner("columns", ts.columns, 1)) {
                         ts.cellWidth = ts.texture->GetWidth() / ts.columns;
@@ -161,7 +175,7 @@ void TileMap::Imgui(){
                         ts.cellHeight = ts.texture->GetHeight() / ts.rows;
                     }
 
-                    std::string treeLabel = "tiles##" + std::to_string(index);
+                    std::string treeLabel = util::Concat("tiles##" + label);
                     if (ImGui::TreeNodeEx(treeLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)){
 
                         int spNum = ts.rows * ts.columns;
@@ -179,7 +193,7 @@ void TileMap::Imgui(){
                         float windowWidthX2 = windowPos.x + windowSize.x;
                         ImVec2 itemSpacing = ImGui::GetStyle().ItemSpacing;
 
-                        if (ImGui::BeginChild("tiles-child")) {
+                        //if (ImGui::BeginChild(util::Concat("tiles-child##", index).c_str())) {
 
                             float borderSize = 2;
                             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,
@@ -190,6 +204,7 @@ void TileMap::Imgui(){
                                                 borderSize);
                             // 显示图片按钮
                             static int btnChoose = -1;
+
                             for (int i = 0; i < spNum; ++i) {
                                 int currentX = (i % ts.columns) * ts.cellWidth;
                                 int currentY = (ts.rows - (i / ts.columns)-1) * ts.cellHeight;
@@ -203,20 +218,13 @@ void TileMap::Imgui(){
                                 float bottomY =
                                     currentY / (float)ts.texture->GetHeight();
 
-                                std::vector<glm::vec2> texCoords = {
-                                    glm::vec2(rightX, topY),
-                                    glm::vec2(rightX, bottomY),
-                                    glm::vec2(leftX, bottomY),
-                                    glm::vec2(leftX, topY),
-                                };
-
                                 ImVec2 uv0 = {leftX, topY};
                                 ImVec2 uv1 = {rightX, bottomY};
 
                                 bool selected = btnChoose == i && selectTsIndex == index;
                                 if (selected)
                                     ImGui::PushStyleColor(ImGuiCol_Border, {0.95, 0.9, 0.15, 1});
-                                ImGui::PushID(util::Concat("tsbtnid.", index, ".", i).c_str());
+                                ImGui::PushID(util::Concat("btn", label, "-", i).c_str());
                                 if (ImGui::ImageButton(
                                     reinterpret_cast<ImTextureID>(
                                         ts.texture->GetId()),
@@ -229,7 +237,7 @@ void TileMap::Imgui(){
                                         hasChosenTile = true;
                                     } else {
                                         btnChoose = -1;
-//                                        hasChosenTile = false;
+                                        hasChosenTile = false;
                                     }
                                 }
                                 ImGui::PopID();
@@ -244,18 +252,26 @@ void TileMap::Imgui(){
                                 }
                             }
                             ImGui::PopStyleVar(3);
-                            ImGui::EndChild();
-                        }
+                            //ImGui::EndChild();
+                        //}
+
                         ImGui::TreePop();
                     }
                     ImGui::PushStyleColor(ImGuiCol_Button, {0.8, 0.2, 0.2, 1});
                     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0.6, 0.1, 0.15, 1});
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0.7, 0.2, 0.2, 1});
+
+                    ImGui::PushID(util::Concat("Delete##", index).c_str());
                     if (ImGui::Button("Delete", {ImGui::GetContentRegionAvail().x,
                                                  ImGui::GetTextLineHeight()+ImGui::GetStyle().FramePadding.y*2})) {
                         // TODO 删除tileSet
-
+                        for (int j = i; j < tileSetList.size()-1; ++j) {
+                            tileSetList[j] = tileSetList[j+1];
+                        }
+                        tileSetList.pop_back();
                     }
+                    ImGui::PopID();
+
                     ImGui::PopStyleColor(3);
                     ImGui::TreePop();
                 }
@@ -368,47 +384,82 @@ void TileMap::EditorUpdate(float dt) {
         t.spriteRenderer->EditorUpdate(dt);
     }
 
-    if (hasChosenTile) {
+    // 世界转换为TileMap的坐标系
+    auto pos = WorldPosToGridPos(MouseListener::GetWorldPos());
+    int x = (int) pos.x, y = (int) pos.y;
 
-        if (GameViewWindow::GetWantCaptureMouse()) {
+    // TODO 将编辑操作拆分出来
+    if (GameViewWindow::GetWantCaptureMouse() && HasAncestor(PropertiesWindow::GetActiveNode())) {
+        // 右键删除
+        if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)) {
+            static int lastX = x+1, lastY = y+1;
+            if (lastX != x || lastY != y) {
+                for (int i = 0; i < tileList.size(); ++i) {
+                    auto &tc = tileList[i];
+                    if (tc.tileX != x || tc.tileY != y)
+                        continue;
+                    MainWindow::GetScene()->GetRenderer()->Remove(tc.spriteRenderer);
+                    delete tc.spriteRenderer;
+                    for (int j = i; j < tileList.size() - 1; ++j) {
+                        tileList[j] = tileList[j+1];
+                    }
+                    tileList.pop_back();
+                    break;
+                }
 
+                lastX = x;
+                lastY = y;
+            }
+        }
+
+        if (hasChosenTile) {
+            // 光标显示
             cursorTile.spriteRenderer->SetVisitable(true);
 
-            if (PropertiesWindow::GetActiveNode() == this) {
-                if (zIndex.GetZIndex() !=
-                    cursorTile.spriteRenderer->GetZIndex()) {
-                    cursorTile.spriteRenderer->SetZIndex(zIndex.GetZIndex());
-                }
-                // TODO 将编辑操作拆分出来
+            if (zIndex.GetZIndex() !=
+                cursorTile.spriteRenderer->GetZIndex()) {
+                cursorTile.spriteRenderer->SetZIndex(zIndex.GetZIndex());
+            }
 
-                // 检测鼠标位置
-                auto mPos = MouseListener::GetWorldPos();
-                // 转换为TileMap的坐标系
-                auto pos = util::TransformPoint(glm::inverse(GetModelMatrix()), mPos);
-                pos = pos / glm::vec2(GetCellWidth(), GetCellHeight()) - glm::vec2(0.5, 0.5);
-                int x = (int)round(pos.x);
-                int y = (int)round(pos.y);
-                cursorTile.SetPosition(x, y);
+            cursorTile.SetPosition(x, y);
 
-                cursorTile.spriteRenderer->SetDirty();
-                cursorTile.spriteRenderer->EditorUpdate(dt);
+            cursorTile.spriteRenderer->SetDirty();
+            cursorTile.spriteRenderer->EditorUpdate(dt);
 
-                static std::vector<glm::vec2> historyPos;
-                if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
-                    // 添加
-                    glm::vec2 a = glm::vec2(x, y);
-                    if (historyPos.end() == std::find(historyPos.begin(), historyPos.end(), a)) {
-                        AddTileCell(x, y, cursorTile.tileSetIndex, cursorTile.index);
-                        util::Println(x,",", y,",", cursorTile.tileSetIndex,",", cursorTile.index);
-                        historyPos.emplace_back(x, y);
+            // 左键绘画
+            if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+                static int lastX = x+1, lastY = y+1;
+                // 添加
+                if (lastX != x || lastY != y) {
+                    bool shouldAdd = true;
+                    for (auto &tc : tileList) {
+                        if (tc.tileX == x && tc.tileY == y) {
+                            shouldAdd = false;
+                            break;
+                        }
                     }
-                } else {
-                    historyPos.clear();
+                    if (shouldAdd) {
+                        AddTileCell(x, y, cursorTile.tileSetIndex, cursorTile.index);
+                    }
+
+                    lastX = x;
+                    lastY = y;
                 }
             }
-        } else {
-            cursorTile.spriteRenderer->SetVisitable(false);
         }
+
+        // esc取消绘画
+        if (KeyListener::IsKeyPressed(GLFW_KEY_ESCAPE)) {
+            if (hasChosenTile) {
+                hasChosenTile = false;
+                cursorTile.spriteRenderer->SetVisitable(false);
+            }
+        }
+    }
+    // 鼠标不在视窗范围内，不显示光标
+    else {
+        if (hasChosenTile)
+            cursorTile.spriteRenderer->SetVisitable(false);
     }
 
     Node::EditorUpdate(dt);
@@ -522,4 +573,12 @@ void TileMap::ShowTileMapGrids() {
         right = util::TransformPoint(mat, right);
         DebugDraw::AddLine2D(left, right, {0.45, 0.35, 0.32, 1});
     }
+}
+
+glm::vec2 TileMap::WorldPosToGridPos(const glm::vec2 &wp) {
+    auto pos = util::TransformPoint(glm::inverse(GetModelMatrix()), wp);
+    pos = pos / glm::vec2(GetCellWidth(), GetCellHeight()) - glm::vec2(0.5, 0.5);
+    int x = (int)round(pos.x);
+    int y = (int)round(pos.y);
+    return {x, y};
 }

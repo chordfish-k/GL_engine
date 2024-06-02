@@ -15,6 +15,8 @@ protected:
     glm::vec2 offset = {0, 0};
     std::vector<b2Fixture*> fixture;
     ColliderShape2D * colliderShape2D = nullptr;
+    bool isDirty = true;
+
 public:
     virtual ~ACollider();
 
@@ -29,4 +31,8 @@ public:
     virtual bool Imgui() = 0;
 
     virtual void RefreshShape() = 0;
+
+    bool IsDirty();
+
+    void SetDirty(bool dirty);
 };
