@@ -10,6 +10,8 @@ RigidBody2D::~RigidBody2D() {
 }
 
 void RigidBody2D::Update(float dt)  {
+    if (!active) return;
+
     if (rawBody != nullptr && bodyType == BodyType::Dynamic) {
         // 更新rawBody的实际位置到gameObject的transform组件
 
@@ -37,6 +39,8 @@ void RigidBody2D::Update(float dt)  {
 }
 
 void RigidBody2D::EditorUpdate(float dt)  {
+    if (!active) return;
+
     if (rawBody != nullptr){
         auto pmat = GetModelMatrix();
         auto p = pmat * glm::vec4(0, 0, 0, 1);
@@ -238,4 +242,18 @@ RigidBody2D *RigidBody2D::Deserialize(json j) {
             SetAngularDamping(d);
     }
     return this;
+}
+
+void RigidBody2D::SetActive(bool active) {
+
+    if (active) {
+        rawBody->SetAwake(active);
+        MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
+        MainWindow::GetScene()->GetPhysics2D()->Add(this);
+    }
+    else {
+        rawBody->SetAwake(active);
+        MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
+    }
+    Node::SetActive(active);
 }

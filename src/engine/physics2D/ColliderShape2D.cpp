@@ -82,6 +82,8 @@ void ColliderShape2D::Imgui() {
 }
 
 void ColliderShape2D::Update(float dt) {
+    if (!active) return;
+
     TryReshape();
 
     if (collider != nullptr && Setting::PHYSICS_DRAW_DEBUG) {
@@ -91,6 +93,7 @@ void ColliderShape2D::Update(float dt) {
 }
 
 void ColliderShape2D::EditorUpdate(float dt) {
+    if (!active) return;
 
     TryReshape();
 

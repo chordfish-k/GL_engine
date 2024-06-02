@@ -8,6 +8,8 @@
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/util/Mat4Utils.hpp"
 
+std::vector<TileSet> TileMap::tileSetList;
+
 void TileCell::SetIndex(int index_) {
     index = index_;
     if (spriteRenderer != nullptr) {
@@ -35,11 +37,13 @@ TileMap::TileMap() {
 TileMap::~TileMap() {
     // 删除所有new创建的SpriteRenderer
     for (auto &t : tileList) {
+        MainWindow::GetScene()->GetRenderer()->Remove(t.spriteRenderer);
         delete t.spriteRenderer; // 自动从渲染器删除spriteRenderer
-        t.spriteRenderer = nullptr;
     }
-//    if (hasChosenTile)
-//        delete cursorTile.spriteRenderer;
+    if (hasChosenTile) {
+        MainWindow::GetScene()->GetRenderer()->Remove(cursorTile.spriteRenderer);
+        delete cursorTile.spriteRenderer;
+    }
 }
 
 json TileMap::Serialize(){
@@ -75,6 +79,7 @@ TileMap *TileMap::Deserialize(json j){
     // 载入tileSet
     auto &tss = data["tileSets"];
     if (!tss.empty()) {
+        tileSetList.clear();
         for (auto &ts : tss) {
             if (ts.size() != 3)
                 continue;
@@ -86,6 +91,7 @@ TileMap *TileMap::Deserialize(json j){
     // 载入tileCell
     auto &tcs = data["tiles"];
     if (!tcs.empty()) {
+        tileList.clear();
         for (auto &tc : tcs) {
             if (tc.size() != 4)
                 continue;
@@ -148,8 +154,12 @@ void TileMap::Imgui(){
                     if (MyImGui::DrawButton("texture", text)) {
                         FileSystemWindow::localPath = p.parent_path();
                     }
-                    MyImGui::DrawIntSpinner("columns", ts.columns, 1);
-                    MyImGui::DrawIntSpinner("rows", ts.rows, 1);
+                    if (MyImGui::DrawIntSpinner("columns", ts.columns, 1)) {
+                        ts.cellWidth = ts.texture->GetWidth() / ts.columns;
+                    }
+                    if (MyImGui::DrawIntSpinner("rows", ts.rows, 1)) {
+                        ts.cellHeight = ts.texture->GetHeight() / ts.rows;
+                    }
 
                     std::string treeLabel = "tiles##" + std::to_string(index);
                     if (ImGui::TreeNodeEx(treeLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)){
@@ -317,6 +327,15 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
 
 void TileMap::Update(float dt) {
     for (auto &t : tileList) {
+        // 统一设置visitable
+        if (t.spriteRenderer->IsVisitable() != active) {
+            t.spriteRenderer->SetVisitable(active);
+        }
+    }
+
+    if (!active) return;
+
+    for (auto &t : tileList) {
         // 统一设置z-index
         if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
             t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
@@ -327,9 +346,19 @@ void TileMap::Update(float dt) {
 }
 
 void TileMap::EditorUpdate(float dt) {
+    for (auto &t : tileList) {
+        // 统一设置visitable
+        if (t.spriteRenderer->IsVisitable() != active) {
+            t.spriteRenderer->SetVisitable(active);
+        }
+    }
+
+    if (!active) return;
+
     if (PropertiesWindow::GetActiveNode() == this) {
         ShowTileMapGrids();
     }
+
 
     for (auto &t : tileList) {
         // 统一设置z-index

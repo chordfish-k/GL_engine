@@ -90,4 +90,5 @@ public:
     json Serialize() override;
 
     SpriteRenderer *Deserialize(json j) override;
+    void SetActive(bool active) override;
 };

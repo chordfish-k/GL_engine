@@ -38,7 +38,7 @@ class TileMap : public Node {
 protected:
     int cellWidth = 16;
     int cellHeight = 16;
-    std::vector<TileSet> tileSetList;
+    static std::vector<TileSet> tileSetList;
     std::vector<TileCell> tileList;
     TileCell cursorTile;
     bool hasChosenTile = false;

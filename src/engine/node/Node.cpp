@@ -36,12 +36,14 @@ void Node::Start() {
 }
 
 void Node::Update(float dt) {
+    if (!active) return;
     for (auto go : children) {
         go->Update(dt);
     }
 }
 
 void Node::EditorUpdate(float dt) {
+    if (!active) return;
     for (auto go : children) {
         go->EditorUpdate(dt);
     }
@@ -79,6 +81,7 @@ json Node::Serialize() {
         auto &scale = transform.scale;
         auto &rotation = transform.rotation;
         j["name"] = GetName();
+//        j["active"] = active;
         j["data"]["transform"]["position"] = {pos.x, pos.y};
         j["data"]["transform"]["scale"] = {scale.x, scale.y};
         j["data"]["transform"]["rotation"] = rotation;
@@ -101,6 +104,10 @@ Node *Node::Deserialize(json j){
     auto &n = j["name"];
     if (!n.empty())
         SetName(n);
+
+//    auto &a = j["active"];
+//    if (!a.empty())
+//        SetActive(a);
 
     auto &data = j["data"];
     if (!data.empty()) {
@@ -206,11 +213,27 @@ glm::mat4 Node::GetModelMatrixRelativeTo(Node *by) const {
 }
 
 
+bool Node::IsActive() const {
+    return active;
+}
+
+void Node::SetActive(bool active_) {
+    active = active_;
+    for (auto ch : children) {
+        ch->SetActive(active_);
+    }
+}
+
 void Node::Imgui() {
     auto name_ = GetName();
     if (MyImGui::DrawTextInput("name", name_)){
         name = name_;
     }
+
+//    auto act = IsActive();
+//    if (MyImGui::DrawCheckbox("active", act)) {
+//        SetActive(act);
+//    }
 
     ImGui::Dummy({1, 5});
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
@@ -219,7 +242,6 @@ void Node::Imgui() {
         zIndex.Imgui();
     }
 }
-
 
 void Node::ShowImgui(std::vector<std::string> notShowFields){
     auto &obj = *(this);

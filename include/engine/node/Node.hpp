@@ -26,6 +26,7 @@ private:
 
 protected:
     ZIndex zIndex = 0;
+    bool active = true;
 
 public:
     Node *parent = nullptr;
@@ -95,6 +96,10 @@ public:
     bool IsPickable() const;
 
     void SetIsPickable(bool isPickable);
+
+    virtual bool IsActive() const;
+
+    virtual void SetActive(bool active);
 
     bool IsDoSerialization() const { return doSerialization; }
 

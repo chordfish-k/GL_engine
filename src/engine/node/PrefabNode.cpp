@@ -70,6 +70,14 @@ void PrefabNode::SetPrefabFile(const std::string &filePath) {
     name = std::filesystem::path(filePath).stem().string();
     SetNode(node);
 }
+
+void PrefabNode::SetActive(bool active_) {
+    if (active != active_) {
+        if (node) node->SetActive(active_);
+        active = active_;
+    }
+}
+
 void PrefabNode::Imgui() {
     Node::Imgui();
 }

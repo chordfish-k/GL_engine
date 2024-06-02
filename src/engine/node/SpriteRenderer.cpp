@@ -20,6 +20,8 @@ void SpriteRenderer::Start() {
 }
 
 void SpriteRenderer::Update(float dt) {
+    if (!active) return;
+
     Transform t = GetTransform();
 
     // 监测Animation的变化，重设TexCoord
@@ -38,6 +40,8 @@ void SpriteRenderer::Update(float dt) {
 }
 
 void SpriteRenderer::EditorUpdate(float dt) {
+    if (!active) return;
+
     Transform t = GetTransform();
 
     // 监测Animation的变化，重设TexCoord
@@ -175,3 +179,11 @@ void SpriteRenderer::Imgui(){
     }
 }
 
+void SpriteRenderer::SetActive(bool active) {
+    Node::SetActive(active);
+    MainWindow::GetScene()->GetRenderer()->DestroyNode(this);
+    if (active) {
+        MainWindow::GetScene()->GetRenderer()->Add(this);
+    }
+    isDirty = true;
+}

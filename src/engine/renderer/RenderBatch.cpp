@@ -222,10 +222,11 @@ void RenderBatch::LoadVertexProperties(int index) {
 //        util::Println( pos.x, ", ",  pos.y);
 
         // 载入颜色信息
-        vertices[offset + 2] = sprite->IsVisitable() ? color.x : 0;
-        vertices[offset + 3] = sprite->IsVisitable() ? color.y : 0;
-        vertices[offset + 4] = sprite->IsVisitable() ? color.z : 0;
-        vertices[offset + 5] = sprite->IsVisitable() ? color.w : 0;
+        bool visitable = sprite->IsActive() && sprite->IsVisitable();
+        vertices[offset + 2] = visitable ? color.x : 0;
+        vertices[offset + 3] = visitable ? color.y : 0;
+        vertices[offset + 4] = visitable ? color.z : 0;
+        vertices[offset + 5] = visitable ? color.w : 0;
 
         // 载入材质坐标
         vertices[offset + 6] = texCoords[i].x;
