@@ -8,8 +8,9 @@
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/util/Mat4Utils.hpp"
 #include "engine/core/KeyListener.hpp"
+#include "engine/physics2D/Box2DCollider.hpp"
 
-//std::vector<TileSet> TileMap::tileSetList;
+// std::vector<TileSet> TileMap::tileSetList;
 
 void TileCell::SetIndex(int index_) {
     index = index_;
@@ -33,14 +34,21 @@ TileSet::TileSet(Texture *pTexture, int rows, int columns)
     : texture(pTexture), rows(rows), columns(columns){}
 
 TileMap::TileMap() {
+    rigidBody2D = new RigidBody2D();
+    rigidBody2D->parent = this;
+    rigidBody2D->SetBodyType(BodyType::Static);
+    MainWindow::GetScene()->GetPhysics2D()->Add(rigidBody2D);
 }
 
 TileMap::~TileMap() {
+    MainWindow::GetScene()->GetPhysics2D()->DestroyNode(rigidBody2D);
+    delete rigidBody2D;
+
     // 删除所有new创建的SpriteRenderer
-    for (auto &t : tileList) {
-        MainWindow::GetScene()->GetRenderer()->Remove(t.spriteRenderer);
-        delete t.spriteRenderer; // 自动从渲染器删除spriteRenderer
-    }
+//    for (auto &t : tileList) {
+//        MainWindow::GetScene()->GetRenderer()->Remove(t.spriteRenderer);
+//        delete t.spriteRenderer; // 自动从渲染器删除spriteRenderer
+//    }
     if (hasChosenTile) {
         MainWindow::GetScene()->GetRenderer()->Remove(cursorTile.spriteRenderer);
         delete cursorTile.spriteRenderer;
@@ -334,11 +342,20 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
         tileSet.cellHeight / (tileSet.texture->GetHeight() / tileSet.rows)
     };
 
-    spr->Start(); // 将spriteRenderer加入渲染器
-    spr->parent = this; // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
+
+    rigidBody2D->AddNode(spr); // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
 
     // tileCell加入数组
     tileList.push_back(cell);
+
+    // 添加碰撞体
+    auto coll = spr->AddNode<ColliderShape2D>();
+    auto box = new Box2DCollider(coll);
+    box->SetSize({GetCellWidth(), GetCellHeight()});
+    coll->SetCollider(box);
+
+    if (MainWindow::GetScene()->IsRunning())
+        spr->Start(); // 初始化节点
 }
 
 void TileMap::Update(float dt) {
@@ -351,13 +368,14 @@ void TileMap::Update(float dt) {
 
     if (!active) return;
 
-    for (auto &t : tileList) {
-        // 统一设置z-index
-        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
-            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
-        }
-        t.spriteRenderer->Update(dt);
-    }
+//    for (auto &t : tileList) {
+//        // 统一设置z-index
+//        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
+//            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
+//        }
+//        t.spriteRenderer->Update(dt);
+//    }
+    rigidBody2D->Update(dt);
     Node::Update(dt);
 }
 
@@ -376,13 +394,15 @@ void TileMap::EditorUpdate(float dt) {
     }
 
 
-    for (auto &t : tileList) {
-        // 统一设置z-index
-        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
-            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
-        }
-        t.spriteRenderer->EditorUpdate(dt);
-    }
+//    for (auto &t : tileList) {
+//        // 统一设置z-index
+//        if (zIndex.GetZIndex() != t.spriteRenderer->GetZIndex()) {
+//            t.spriteRenderer->SetZIndex(zIndex.GetZIndex());
+//        }
+//        t.spriteRenderer->EditorUpdate(dt);
+//    }
+
+    rigidBody2D->EditorUpdate(dt);
 
     // 世界转换为TileMap的坐标系
     auto pos = WorldPosToGridPos(MouseListener::GetWorldPos());
@@ -399,7 +419,6 @@ void TileMap::EditorUpdate(float dt) {
                     auto &tc = tileList[i];
                     if (tc.tileX != x || tc.tileY != y)
                         continue;
-                    MainWindow::GetScene()->GetRenderer()->Remove(tc.spriteRenderer);
                     delete tc.spriteRenderer;
                     for (int j = i; j < tileList.size() - 1; ++j) {
                         tileList[j] = tileList[j+1];
@@ -508,7 +527,7 @@ void TileMap::SetCursorTile(int tileSetIndex, int tileIndex) {
         };
 
         spr->Start(); // 将spriteRenderer加入渲染器
-        spr->parent = this; // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
+        spr->parent = rigidBody2D; // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
 
         spr->SetColor({0.2, 0.2, 0.2, 0.2});
     }
@@ -582,4 +601,9 @@ glm::vec2 TileMap::WorldPosToGridPos(const glm::vec2 &wp) {
     int x = (int)round(pos.x);
     int y = (int)round(pos.y);
     return {x, y};
+}
+
+void TileMap::Start() {
+    rigidBody2D->Start();
+    Node::Start();
 }

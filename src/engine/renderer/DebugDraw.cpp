@@ -2,7 +2,6 @@
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/util/AssetPool.hpp"
-#include "engine/util/Print.hpp"
 #include "engine/core/MainWindow.hpp"
 
 #define DEBUG_DEFAULT_COLOR {1, 0.4, 0, 1}

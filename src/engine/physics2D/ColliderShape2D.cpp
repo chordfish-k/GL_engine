@@ -86,9 +86,6 @@ void ColliderShape2D::Update(float dt) {
 
     TryReshape();
 
-    if (collider != nullptr && Setting::PHYSICS_DRAW_DEBUG) {
-        collider->EditorUpdate(dt);
-    }
     Node::Update(dt);
 }
 
@@ -105,13 +102,18 @@ void ColliderShape2D::EditorUpdate(float dt) {
 
 void ColliderShape2D::TryReshape() {
     Transform newTr = GetTransform();
+    newTr.position = transform.position;
     if (collider) {
-        util::Println(collider->IsDirty());
-        if (!newTr.Equals(lastTransform) || collider->IsDirty()) {
-//            if (rigidBody2D->GetRawBody()->IsAwake()) {
-                collider->RefreshShape();
-//            }
+        if (lastTransform.scale != newTr.scale
+            || lastTransform.rotation != newTr.rotation
+            || lastTransform.position != newTr.position
+            ) {
+            collider->RefreshShape();
             newTr.CopyTo(lastTransform);
+        }
+        if (collider->IsDirty()) {
+            collider->RefreshShape();
+            collider->SetDirty(false);
         }
     }
 }

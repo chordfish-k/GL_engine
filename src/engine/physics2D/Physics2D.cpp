@@ -1,12 +1,18 @@
 ﻿#include "engine/physics2D/Physics2D.hpp"
 #include "engine/physics2D/CircleCollider.hpp"
 #include "engine/physics2D/Box2DCollider.hpp"
-#include "engine/util/Setting.hpp"
-#include "engine/physics2D/ColliderShape2D.hpp"
 #include "engine/core/MainWindow.hpp"
 
 Physics2D::Physics2D() {
     world = new b2World(gravity);
+
+    debugDraw.SetFlags(b2Draw::e_shapeBit // fixture形状
+//                       | b2Draw::e_jointBit // 关节
+//                       | b2Draw::e_aabbBit  // 外包围盒
+//                       | b2Draw::e_pairBit // 碰撞对连线
+                       | b2Draw::e_centerOfMassBit // 质心
+                       );
+    world->SetDebugDraw(&debugDraw);
 }
 
 Physics2D::~Physics2D() {
@@ -50,7 +56,6 @@ void Physics2D::Add(RigidBody2D *rb) {
         break;
     }
 
-
     b2Body *body = world->CreateBody(&bodyDef);
     body->SetFixedRotation(rb->IsFixedRotation());
     rb->SetRawBody(body);
@@ -86,50 +91,10 @@ void Physics2D::Add(ColliderShape2D *cs) {
     auto *circleCollider = dynamic_cast<CircleCollider*>(collider);
     auto *box2DCollider = dynamic_cast<Box2DCollider*>(collider);
 
-    if (circleCollider != nullptr) {
-        // 生成椭圆顶点
-        int segments = 16;
-        std::vector<b2Vec2> vertices(segments);
-        float angleIncrement = 2.0f * b2_pi / segments;
-        for (int i = 0; i < segments; ++i) {
-            float angle = i * angleIncrement;
-            b2Vec2 p = {circleCollider->GetRadius() * cosf(angle),
-                        circleCollider->GetRadius() * sinf(angle)};
-            p = Setting::PHYSICS_SCALE_INV * p;
-            vertices[i].Set(p.x, p.y);
-        }
-
-        // 分割顶点并创建多个多边形
-        for (int i = 0; i < segments; i++) {
-            b2Vec2 polygonVertices[3];
-            int32 vertexCount = 0;
-
-            // 第一个顶点是多边形的中心
-            polygonVertices[vertexCount++] = b2Vec2(0, 0);
-
-            // 复制顶点到多边形
-            for (int j = 0; j < 2; ++j) {
-                polygonVertices[vertexCount++] = vertices[(i + j) % segments];
-            }
-
-            // 创建新的多边形形状
-            b2PolygonShape poly;
-            poly.Set(polygonVertices, vertexCount);
-
-            // 创建新的fixture
-            circleCollider->SetFixture(rawBody->CreateFixture(&poly, rb->GetMass()), i);
-        }
-    }
-    else if (box2DCollider != nullptr) {
-        auto *shape_ = new b2PolygonShape();
-        glm::vec2 halfSize = Setting::PHYSICS_SCALE_INV * box2DCollider->GetSize() * 0.5f;
-        glm::vec2 origin = Setting::PHYSICS_SCALE_INV * cs->transform.position;
-        shape_->SetAsBox(halfSize.x, halfSize.y, {origin.x, origin.y},
-                         glm::radians(cs->transform.rotation));
-        shape = shape_;
-
-        box2DCollider->SetFixture(rawBody->CreateFixture(shape, rb->GetMass()));
-    }
+    b2PolygonShape poly;
+    poly.SetAsBox(1, 1);
+    // 默认随便给一个fixture
+    collider->SetFixture(rawBody->CreateFixture(&poly, rb->GetMass()));
 }
 
 void Physics2D::Update(float dt) {
@@ -138,6 +103,9 @@ void Physics2D::Update(float dt) {
         world->Step(dt, velocityIterations, positionIterations);
         physicsTime -= physicsTimeStep;
     }
+
+    if (Setting::PHYSICS_DRAW_DEBUG)
+        world->DebugDraw();
 }
 
 void Physics2D::DestroyNode(Node *node) {

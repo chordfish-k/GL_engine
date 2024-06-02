@@ -164,3 +164,7 @@ Node *Scene::GetNodeByUid(int uid) {
 ASceneInitializer *Scene::GetSceneInitializer() const {
     return sceneInitializer;
 }
+
+bool Scene::IsRunning() const {
+    return isRunning;
+}

@@ -3,6 +3,7 @@
 #include "engine/util/Setting.hpp"
 #include "engine/core/MainWindow.hpp"
 #include "engine/core/Camera.hpp"
+#include "engine/util/Mat4Utils.hpp"
 
 Box2DCollider::Box2DCollider(ColliderShape2D *collider) {
     colliderShape2D = collider;
@@ -98,17 +99,20 @@ void Box2DCollider::RefreshShape() {
             xAdd = size.x * (center.y - 1);
         }
 
-        auto pos = modelMat * glm::vec4(xAdd, yAdd, 0, 1);
+        auto pos = util::TransformPoint(modelMat, {xAdd, yAdd});
         pos = pos * Setting::PHYSICS_SCALE_INV;
 
 
-        auto p = fixture[0]->GetBody()->GetLocalPoint({pos.x, pos.y});
+        auto p = colliderShape2D->GetRigidBody2D()
+                     ->GetRawBody()->GetLocalPoint({pos.x, pos.y});
         vertices[i] = {p.x, p.y};
     }
 
     b2PolygonShape poly;
     poly.Set(vertices, 4);
-    SetFixture(fixture[0]->GetBody()->CreateFixture(&poly, fixture[0]->GetDensity()));
+    SetFixture(colliderShape2D->GetRigidBody2D()->GetRawBody()
+                   ->CreateFixture(&poly,
+                                   colliderShape2D->GetRigidBody2D()->GetMass()));
 
     SetDirty(false);
 }

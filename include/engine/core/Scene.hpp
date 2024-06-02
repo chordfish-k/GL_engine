@@ -46,6 +46,8 @@ public:
 
     virtual void EditorUpdate(float dt);
 
+    bool IsRunning() const;
+
     void SceneImgui();
 
     virtual void Imgui();

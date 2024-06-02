@@ -3,6 +3,7 @@
 #include <box2d/box2d.h>
 #include "RigidBody2D.hpp"
 #include "ColliderShape2D.hpp"
+#include "engine/renderer/Box2dDebugDraw.hpp"
 
 class Physics2D {
 private:
@@ -12,6 +13,7 @@ private:
     float physicsTimeStep = 1.f / 60.f;
     int velocityIterations = 8; // 速度求解迭代次数
     int positionIterations = 3; // 位置求解迭代次数
+    Box2DDebugDraw debugDraw;
 
 public:
     Physics2D();

@@ -11,7 +11,7 @@ class CircleCollider : public ACollider{
     RTTR_ENABLE(ACollider)
 private:
     float radius = 1.f;
-    b2Vec2 vs[CIRCLE_SEGMENTS_MAX];
+    b2Vec2 vs[CIRCLE_SEGMENTS_MAX+1];
     int segments = CIRCLE_SEGMENTS;
 public:
     CircleCollider(ColliderShape2D *collider);

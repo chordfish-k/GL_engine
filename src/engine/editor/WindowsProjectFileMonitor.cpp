@@ -1,6 +1,5 @@
 ﻿#include "engine/editor/WindowsProjectFileMonitor.hpp"
 #include "engine/util/Print.hpp"
-#include <stdio.h>
 #include <Windows.h>
 #include <codecvt>
 #include <filesystem>

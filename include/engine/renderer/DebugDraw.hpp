@@ -4,7 +4,7 @@
 #include "Line2D.hpp"
 #include "Shader.hpp"
 
-#define DEBUG_MAX_LINES 800
+#define DEBUG_MAX_LINES 2000
 
 class DebugDraw {
 private:

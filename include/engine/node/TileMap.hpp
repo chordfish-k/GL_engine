@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/node/Node.hpp"
+#include "engine/physics2D/RigidBody2D.hpp"
 
 struct TileCell;
 class TileMap;
@@ -43,6 +44,7 @@ protected:
     TileCell cursorTile;
     bool hasChosenTile = false;
     bool firstSetCursorTile = true;
+    RigidBody2D *rigidBody2D = nullptr;
 
 public:
     TileMap();
@@ -70,6 +72,8 @@ public:
     void AddTileSet(TileSet tileSet);
 
     void AddTileCell(int x, int y, int tileSetIndex=0, int tileIndex=0);
+
+    void Start() override;
 
     void Update(float dt) override;
 

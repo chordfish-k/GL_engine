@@ -4,6 +4,7 @@
 #include "engine/core/MainWindow.hpp"
 #include "engine/core/Camera.hpp"
 #include "engine/renderer/DebugDraw.hpp"
+#include "engine/util/Mat4Utils.hpp"
 
 CircleCollider::CircleCollider(ColliderShape2D *collider) {
     colliderShape2D = collider;
@@ -22,7 +23,7 @@ void CircleCollider::SetRadius(float radius_) {
 }
 
 void CircleCollider::EditorUpdate(float dt) {
-    if (fixture.empty()) return;
+    if (fixture.empty() || !fixture[0]) return;
 
     for (int i = 0; i < segments; i++) {
         // 画出碰撞体包围盒
@@ -65,49 +66,51 @@ bool CircleCollider::Imgui() {
 }
 
 void CircleCollider::RefreshShape() {
-    if (!colliderShape2D) return;
+    if (!colliderShape2D || fixture.empty() || !fixture[0]) return;
 
-    auto center = glm::vec2(0.5f, 0.5f);
     auto modelMat = colliderShape2D->GetModelMatrix();
 
-    segments = 16;
-    if (radius >= 30) {
-        auto r = radius <= 350 ? radius : 350;
-        segments += (int)(radius - 30) / 10;
-    }
+    segments = CIRCLE_SEGMENTS;
+//    if (radius >= 30) {
+//        auto r = radius <= 350 ? radius : 350;
+//        segments += (int)(r - 30) / 10;
+//    }
 
     float angleIncrement = 2.0f * b2_pi / segments;
+    glm::vec2 center = colliderShape2D->transform.position * Setting::PHYSICS_SCALE_INV;
+    vs[segments+1] = {center.x, center.y};
     for (int i = 0; i < segments; ++i) {
         float angle = i * angleIncrement;
-
-        glm::vec4 pos = modelMat * glm::vec4(radius * cosf(angle),radius * sinf(angle), 0, 1);
-        pos = pos * Setting::PHYSICS_SCALE_INV;
-        auto p = fixture[0]->GetBody()->GetLocalPoint({pos.x, pos.y});
+        float xAdd = radius * cosf(angle);
+        float yAdd = radius * sinf(angle);
+        auto pos = util::TransformPoint(modelMat, {xAdd, yAdd})
+            * Setting::PHYSICS_SCALE_INV;
+        auto p = colliderShape2D->GetRigidBody2D()
+                     ->GetRawBody()->GetLocalPoint({pos.x, pos.y});
         vs[i].Set(p.x, p.y);
     }
 
     // 分割顶点并创建多个多边形
-    glm::vec4 po = Setting::PHYSICS_SCALE_INV * modelMat * glm::vec4(0, 0, 0, 1);
-       for (int i = 0; i < segments; i++) {
-        b2Vec2 polygonVertices[3] = {b2Vec2(po.x, po.y)};
+    for (int i = 0; i < segments; i++) {
+        b2Vec2 polygonVertices[3];
+        polygonVertices[0] = vs[segments+1];
         int32 vertexCount = 1;
-
-        // 第一个顶点是多边形的中心
-//        polygonVertices[vertexCount++] = b2Vec2(0, 0);
 
         // 复制顶点到多边形
         // TODO 提高单个fixture顶点数
         for (int j = 0; j < 2; ++j) {
-            polygonVertices[vertexCount++] = vs[(i + j) % segments];
+            polygonVertices[vertexCount] = vs[(i + j) % segments];
+            vertexCount++;
         }
 
-
         // 创建新的多边形形状
-        b2PolygonShape poly;//dynamic_cast<b2PolygonShape*>(fixture[i]->GetShape());
+        b2PolygonShape poly;
         poly.Set(polygonVertices, vertexCount);
 
-//        fixtures[i]
-        SetFixture(fixture[0]->GetBody()->CreateFixture(&poly, fixture[0]->GetDensity()), i);
+        SetFixture(colliderShape2D->GetRigidBody2D()->GetRawBody()
+                       ->CreateFixture(&poly,
+                                       colliderShape2D->GetRigidBody2D()->GetMass()), i);
+
     }
     SetDirty(false);
 }
