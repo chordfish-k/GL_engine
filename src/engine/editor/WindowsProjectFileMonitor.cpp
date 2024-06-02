@@ -77,6 +77,9 @@ void WindowsProjectFileMonitor::Init(const std::string &projectRootPath_) {
     std::filesystem::path abPath = curath / projectRootPath_;
     const char *pszDirectory = projectRootPath_.c_str();
     projectRootPath = projectRootPath_;
+    if (hFile != INVALID_HANDLE_VALUE) {
+        CloseHandle(hFile);
+    }
     hFile = CreateFile(pszDirectory,
                        FILE_LIST_DIRECTORY,
                        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -85,8 +88,11 @@ void WindowsProjectFileMonitor::Init(const std::string &projectRootPath_) {
                        FILE_FLAG_BACKUP_SEMANTICS,
                        NULL);
 
-    threadRunning = true;
-    monitorThread = std::thread(&WindowsProjectFileMonitor::Update, this);
+
+    if (!threadRunning) {
+        monitorThread = std::thread(&WindowsProjectFileMonitor::Update, this);
+        threadRunning = true;
+    }
 }
 
 

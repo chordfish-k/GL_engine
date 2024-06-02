@@ -6,5 +6,6 @@
 6. Reduce Reshape Function Call Times √
 7. Info Modal
 8. Tilemap Render √
-9. Tilemap TileSet UI
-10.Add or Erase Tile By TileSet UI
+9. Tilemap TileSet UI √
+10.Add or Erase Tile By TileSet UI √
+11.Split TileSet System to Global

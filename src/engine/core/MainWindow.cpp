@@ -8,7 +8,7 @@
 #include "engine/editor/ProjectManagerWindow.hpp"
 
 #include "engine/reflect/Reflect.hpp"
-#include "engine/editor/WindowsProjectFileMonitor.hpp"
+//#include "engine/editor/WindowsProjectFileMonitor.hpp"
 #include "engine/editor/SceneHierarchyWindow.hpp"
 
 MainWindow *MainWindow::window = nullptr;
@@ -187,7 +187,7 @@ void MainWindow::Run() {
 
     Setting::Load();
     if (!Setting::PROJECT_ROOT.empty()) {
-        WindowsProjectFileMonitor::Get()->Init(Setting::PROJECT_ROOT);
+//        WindowsProjectFileMonitor::Get()->Init(Setting::PROJECT_ROOT);
         FileSystemWindow::Start();
     }
 
@@ -208,7 +208,7 @@ void MainWindow::Run() {
     glfwSetErrorCallback(nullptr);
 
     Setting::Save();
-    WindowsProjectFileMonitor::Get()->Stop();
+//    WindowsProjectFileMonitor::Get()->Stop();
 }
 
 void MainWindow::ChangeScene(ASceneInitializer *sceneInitializer) {

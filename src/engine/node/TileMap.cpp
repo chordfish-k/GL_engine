@@ -9,7 +9,7 @@
 #include "engine/util/Mat4Utils.hpp"
 #include "engine/core/KeyListener.hpp"
 
-std::vector<TileSet> TileMap::tileSetList;
+//std::vector<TileSet> TileMap::tileSetList;
 
 void TileCell::SetIndex(int index_) {
     index = index_;
@@ -389,7 +389,8 @@ void TileMap::EditorUpdate(float dt) {
     int x = (int) pos.x, y = (int) pos.y;
 
     // TODO 将编辑操作拆分出来
-    if (GameViewWindow::GetWantCaptureMouse() && HasAncestor(PropertiesWindow::GetActiveNode())) {
+    if (GameViewWindow::GetWantCaptureMouse() &&
+        IsAncestorOrSelf(PropertiesWindow::GetActiveNode())) {
         // 右键删除
         if (MouseListener::IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)) {
             static int lastX = x+1, lastY = y+1;

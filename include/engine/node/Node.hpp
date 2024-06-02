@@ -142,7 +142,7 @@ public:
 
     virtual void Imgui();
 
-    bool HasAncestor(Node *ancestor);
+    bool IsAncestorOrSelf(Node *ancestor);
 
 protected:
     void ShowImgui(std::vector<std::string> notShowFields = {});

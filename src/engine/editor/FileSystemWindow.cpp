@@ -10,7 +10,7 @@
 #include "engine/util/Setting.hpp"
 #ifdef _WIN32
 #include <windows.h>
-#include "engine/editor/WindowsProjectFileMonitor.hpp"
+//#include "engine/editor/WindowsProjectFileMonitor.hpp"
 #endif
 
 fs::path FileSystemWindow::localPath;
@@ -23,9 +23,9 @@ void FileSystemWindow::Start() {
 void FileSystemWindow::Imgui() {
     ImGui::Begin("Files");
 
-    WindowsProjectFileMonitor::Get()->SetOnChangeCallback([](auto s, auto a){
+//    WindowsProjectFileMonitor::Get()->SetOnChangeCallback([](auto s, auto a){
         RefreshCache();
-    });
+//    });
 
     ShowPath();
     ShowFilesAndDirs();

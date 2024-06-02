@@ -344,8 +344,9 @@ void Node::ShowImgui(std::vector<std::string> notShowFields){
     }
 }
 
-bool Node::HasAncestor(Node *ancestor) {
+bool Node::IsAncestorOrSelf(Node *ancestor) {
     Node *p = this;
+    if (p == ancestor) return true;
     while (p->parent) {
         if (p->parent == ancestor) {
             return true;
