@@ -8,7 +8,7 @@
 
 std::vector<Line2D> DebugDraw::lines;
 
-float DebugDraw::vertexArray[DEBUG_MAX_LINES * 7 * 2];
+std::vector<float> DebugDraw::vertexArray(DEBUG_MAX_LINES * 7 * 2);
 
 Shader *DebugDraw::shader = nullptr;
 
@@ -27,7 +27,7 @@ void DebugDraw::Start() {
     glGenBuffers(1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBufferData(GL_ARRAY_BUFFER, (long) (DEBUG_MAX_LINES * 7 * 2) * sizeof(float),
-                 vertexArray, GL_DYNAMIC_DRAW);
+                 vertexArray.data(), GL_DYNAMIC_DRAW);
 
     // 启用顶点属性
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 7 * sizeof(float), 0);
@@ -85,7 +85,7 @@ void DebugDraw::Draw() {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, index * sizeof(float), vertexArray);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, index * sizeof(float), vertexArray.data());
 
     // 使用shader
     shader->Use();
@@ -129,7 +129,7 @@ void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
 
 void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec4 color,
                           int lifeTime) {
-    if (lines.size() >= DEBUG_MAX_LINES) return;
+//    if (lines.size() >= DEBUG_MAX_LINES) return;
     DebugDraw::lines.emplace_back(from, to, color, lifeTime);
 }
 

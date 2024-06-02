@@ -10,7 +10,7 @@ class DebugDraw {
 private:
     static std::vector<Line2D> lines;
     // 每个顶点6个浮点数，每条线两个顶点
-    static float vertexArray[DEBUG_MAX_LINES * 7 * 2];
+    static std::vector<float> vertexArray;
     static Shader *shader;
     static unsigned int vaoID, vboID;
     static bool started;
