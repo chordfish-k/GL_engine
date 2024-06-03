@@ -29,7 +29,7 @@ inline BodyType GetBodyTypeByName(const std::string &type) {
 }
 
 BEGIN_RTTR_REG(BodyType)
-rttr::registration::enumeration<BodyType>("BodyType")(
+RTTR_ENUM(BodyType)(
     rttr::value("Kinematic", BodyType::Kinematic),
     rttr::value("Dynamic", BodyType::Dynamic),
     rttr::value("Static", BodyType::Static)

@@ -26,7 +26,7 @@ inline ShapeType GetShapeTypeByName(const std::string &type) {
 }
 
 BEGIN_RTTR_REG(ShapeType)
-rttr::registration::enumeration<ShapeType>("ShapeType")(
+RTTR_ENUM(ShapeType)(
     rttr::value("Box2DCollider", ShapeType::Box2DCollider),
     rttr::value("CircleCollider", ShapeType::CircleCollider)
 );

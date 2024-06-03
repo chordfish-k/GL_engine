@@ -621,7 +621,7 @@ void TileMap::Start() {
 }
 
 BEGIN_RTTR_REG(TileMap)
-rttr::registration::class_<TileMap>("TileMap")
+RTTR_CLASS(TileMap)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )

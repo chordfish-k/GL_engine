@@ -30,5 +30,5 @@ void ACollider::SetDirty(bool dirty) {
 }
 
 BEGIN_RTTR_REG(ACollider)
-rttr::registration::class_<ACollider>("ACollider");
+RTTR_CLASS(ACollider);
 END_RTTR_REG(ACollider)

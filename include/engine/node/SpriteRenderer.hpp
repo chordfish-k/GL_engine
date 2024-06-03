@@ -94,10 +94,3 @@ public:
     void SetActive(bool active) override;
 };
 
-BEGIN_RTTR_REG(Animation)
-rttr::registration::class_<Animation>("Animation")
-    .constructor<>()
-    .property("hFrames", &Animation::GetHFrames, &Animation::SetHFrames)
-    .property("vFrames", &Animation::GetVFrames, &Animation::SetVFrames)
-    .property("frame", &Animation::GetFrame, &Animation::SetFrame);
-END_RTTR_REG(Animation)

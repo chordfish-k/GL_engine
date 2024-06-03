@@ -357,7 +357,7 @@ bool Node::IsAncestorOrSelf(Node *ancestor) {
 }
 
 BEGIN_RTTR_REG(Node)
-rttr::registration::class_<Node>("Node")
+RTTR_CLASS(Node)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )

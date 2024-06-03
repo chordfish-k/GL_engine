@@ -8,5 +8,5 @@ class IUnselectableNode {
 };
 
 BEGIN_RTTR_REG(IUnselectableNode)
-rttr::registration::class_<IUnselectableNode>("IUnselectableNode");
+RTTR_CLASS(IUnselectableNode);
 END_RTTR_REG(IUnselectableNode)

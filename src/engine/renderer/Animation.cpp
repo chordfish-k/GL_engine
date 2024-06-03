@@ -1,4 +1,5 @@
 #include "engine/renderer/Animation.hpp"
+#include "engine/util/ReflectUtil.hpp"
 
 void Animation::ApplyModifyToSprite(Sprite *sprite) {
     if (modified && sprite->GetTexture()) {
@@ -106,3 +107,11 @@ void Animation::SetFrame(int frame) {
 bool Animation::IsModified() { return modified; }
 
 void Animation::ClearModify() {modified = false;}
+
+BEGIN_RTTR_REG(Animation)
+RTTR_CLASS(Animation)
+    .constructor<>()
+    .property("hFrames", &Animation::GetHFrames, &Animation::SetHFrames)
+    .property("vFrames", &Animation::GetVFrames, &Animation::SetVFrames)
+    .property("frame", &Animation::GetFrame, &Animation::SetFrame);
+END_RTTR_REG(Animation)

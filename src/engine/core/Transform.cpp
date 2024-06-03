@@ -81,7 +81,7 @@ void Transform::ApplyDataByLocalMatrix(const glm::mat4 &mat) {
 }
 
 BEGIN_RTTR_REG(Transform)
-rttr::registration::class_<Transform>("Transform")
+RTTR_CLASS(Transform)
     .constructor<>()
     .property("position", &Transform::position)
     .property("scale", &Transform::scale)

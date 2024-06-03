@@ -83,7 +83,7 @@ void PrefabNode::Imgui() {
 }
 
 BEGIN_RTTR_REG(PrefabNode)
-rttr::registration::class_<PrefabNode>("PrefabNode")
+RTTR_CLASS(PrefabNode)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
     );

@@ -258,7 +258,7 @@ void RigidBody2D::SetActive(bool active) {
 }
 
 BEGIN_RTTR_REG(RigidBody2D)
-rttr::registration::class_<RigidBody2D>("RigidBody2D")
+RTTR_CLASS(RigidBody2D)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )

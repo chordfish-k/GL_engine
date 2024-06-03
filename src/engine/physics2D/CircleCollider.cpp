@@ -116,7 +116,7 @@ void CircleCollider::RefreshShape() {
 }
 
 BEGIN_RTTR_REG(CircleCollider)
-rttr::registration::class_<CircleCollider>("CircleCollider")
+RTTR_CLASS(CircleCollider)
     .constructor<ColliderShape2D*>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
     );

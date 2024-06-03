@@ -142,7 +142,7 @@ void ColliderShape2D::SetRigidBody2D(RigidBody2D *rigidBody2D) {
 }
 
 BEGIN_RTTR_REG(ColliderShape2D)
-rttr::registration::class_<ColliderShape2D>("ColliderShape2D")
+RTTR_CLASS(ColliderShape2D)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )
