@@ -1,5 +1,7 @@
 #pragma once
 
+#include "engine/util/ReflectUtil.hpp"
+
 enum class BodyType {
     Static = 0,
     Dynamic,
@@ -25,3 +27,11 @@ inline BodyType GetBodyTypeByName(const std::string &type) {
     if (type == "Kinematic") return BodyType::Kinematic;
     return BodyType::Dynamic;
 }
+
+BEGIN_RTTR_REG(BodyType)
+rttr::registration::enumeration<BodyType>("BodyType")(
+    rttr::value("Kinematic", BodyType::Kinematic),
+    rttr::value("Dynamic", BodyType::Dynamic),
+    rttr::value("Static", BodyType::Static)
+);
+END_RTTR_REG(BodyType)

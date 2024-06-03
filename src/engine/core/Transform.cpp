@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "engine/core/Transform.hpp"
 #include "engine/editor/MyImGui.hpp"
+#include "engine/util/ReflectUtil.hpp"
 
 Transform::Transform(glm::vec2 position, glm::vec2 scale, float rotation)
     :position(position), scale(scale), rotation(rotation){}
@@ -78,3 +79,11 @@ void Transform::ApplyDataByLocalMatrix(const glm::mat4 &mat) {
     scale = newScale;
     rotation = eulerAngleDegrees.z;
 }
+
+BEGIN_RTTR_REG(Transform)
+rttr::registration::class_<Transform>("Transform")
+    .constructor<>()
+    .property("position", &Transform::position)
+    .property("scale", &Transform::scale)
+    .property("rotation", &Transform::rotation);
+END_RTTR_REG(Transform)

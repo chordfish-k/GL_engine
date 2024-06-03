@@ -13,6 +13,7 @@
 #include "engine/core/ZIndex.hpp"
 #include "engine/util/AssetPool.hpp"
 #include "engine/core/AGuiObj.hpp"
+#include "engine/util/ReflectUtil.hpp"
 
 class Node : public ASerializableObj{
     RTTR_ENABLE()

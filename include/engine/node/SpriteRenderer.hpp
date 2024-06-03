@@ -6,6 +6,7 @@
 #include "engine/core/Transform.hpp"
 #include "engine/renderer/Color.hpp"
 #include "engine/renderer/Animation.hpp"
+#include "engine/util/ReflectUtil.hpp"
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -92,3 +93,11 @@ public:
     SpriteRenderer *Deserialize(json j) override;
     void SetActive(bool active) override;
 };
+
+BEGIN_RTTR_REG(Animation)
+rttr::registration::class_<Animation>("Animation")
+    .constructor<>()
+    .property("hFrames", &Animation::GetHFrames, &Animation::SetHFrames)
+    .property("vFrames", &Animation::GetVFrames, &Animation::SetVFrames)
+    .property("frame", &Animation::GetFrame, &Animation::SetFrame);
+END_RTTR_REG(Animation)

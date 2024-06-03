@@ -1,13 +1,9 @@
 ﻿#include "engine/core/MainWindow.hpp"
-#include "engine/renderer/DebugDraw.hpp"
-#include "engine/util/Print.hpp"
 #include "engine/core/MouseListener.hpp"
 #include "engine/core/EditorSceneInitializer.hpp"
 #include "engine/core/KeyListener.hpp"
-#include "engine/editor/PropertiesWindow.hpp"
 #include "engine/editor/ProjectManagerWindow.hpp"
 
-#include "engine/reflect/Reflect.hpp"
 //#include "engine/editor/WindowsProjectFileMonitor.hpp"
 #include "engine/editor/SceneHierarchyWindow.hpp"
 

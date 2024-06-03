@@ -2,6 +2,8 @@
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/renderer/DebugDraw.hpp"
 #include "engine/core/MainWindow.hpp"
+#include "engine/util/ReflectUtil.hpp"
+
 
 SpriteRenderer::SpriteRenderer() {}
 
@@ -187,3 +189,15 @@ void SpriteRenderer::SetActive(bool active) {
     }
     isDirty = true;
 }
+
+BEGIN_RTTR_REG (SpriteRenderer)
+rttr::registration::class_<SpriteRenderer>("SpriteRenderer")
+    .constructor<>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        )
+    .property("centered", &SpriteRenderer::IsCentered, &SpriteRenderer::SetCentered)
+    .property("visitable", &SpriteRenderer::IsVisitable, &SpriteRenderer::SetVisitable)
+    .property("color", &SpriteRenderer::GetColor, &SpriteRenderer::SetColor)
+    .property("offset", &SpriteRenderer::GetOffset, &SpriteRenderer::SetOffset)
+    .property("sprite", &SpriteRenderer::GetSprite, &SpriteRenderer::SetSprite);
+END_RTTR_REG(SpriteRenderer)

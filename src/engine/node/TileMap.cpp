@@ -619,3 +619,12 @@ void TileMap::Start() {
     rigidBody2D->Start();
     Node::Start();
 }
+
+BEGIN_RTTR_REG(TileMap)
+rttr::registration::class_<TileMap>("TileMap")
+    .constructor<>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        )
+    .property("cellWidth", &TileMap::GetCellWidth, &TileMap::SetCellWidth)
+    .property("cellHeight", &TileMap::GetCellHeight, &TileMap::SetCellHeight);
+END_RTTR_REG(TileMap)

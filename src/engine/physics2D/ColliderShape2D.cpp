@@ -140,3 +140,11 @@ RigidBody2D *ColliderShape2D::GetRigidBody2D() const {
 void ColliderShape2D::SetRigidBody2D(RigidBody2D *rigidBody2D) {
     ColliderShape2D::rigidBody2D = rigidBody2D;
 }
+
+BEGIN_RTTR_REG(ColliderShape2D)
+rttr::registration::class_<ColliderShape2D>("ColliderShape2D")
+    .constructor<>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        )
+    .property("shape", &ColliderShape2D::GetShapeType, &ColliderShape2D::SetShapeType);
+END_RTTR_REG(ColliderShape2D)

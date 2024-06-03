@@ -116,3 +116,10 @@ void Box2DCollider::RefreshShape() {
 
     SetDirty(false);
 }
+
+BEGIN_RTTR_REG(Box2DCollider)
+rttr::registration::class_<Box2DCollider>("Box2DCollider")
+    .constructor<ColliderShape2D*>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+    );
+END_RTTR_REG(Box2DCollider)

@@ -114,3 +114,10 @@ void CircleCollider::RefreshShape() {
     }
     SetDirty(false);
 }
+
+BEGIN_RTTR_REG(CircleCollider)
+rttr::registration::class_<CircleCollider>("CircleCollider")
+    .constructor<ColliderShape2D*>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+    );
+END_RTTR_REG(CircleCollider)

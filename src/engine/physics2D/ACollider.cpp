@@ -1,4 +1,5 @@
 #include "engine/physics2D/ACollider.hpp"
+#include "engine/util/ReflectUtil.hpp"
 
 ACollider::~ACollider() = default;
 
@@ -27,3 +28,7 @@ bool ACollider::IsDirty() {
 void ACollider::SetDirty(bool dirty) {
     isDirty = dirty;
 }
+
+BEGIN_RTTR_REG(ACollider)
+rttr::registration::class_<ACollider>("ACollider");
+END_RTTR_REG(ACollider)

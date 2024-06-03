@@ -81,3 +81,10 @@ void PrefabNode::SetActive(bool active_) {
 void PrefabNode::Imgui() {
     Node::Imgui();
 }
+
+BEGIN_RTTR_REG(PrefabNode)
+rttr::registration::class_<PrefabNode>("PrefabNode")
+    .constructor<>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+    );
+END_RTTR_REG(PrefabNode)

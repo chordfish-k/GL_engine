@@ -355,3 +355,12 @@ bool Node::IsAncestorOrSelf(Node *ancestor) {
     }
     return false;
 }
+
+BEGIN_RTTR_REG(Node)
+rttr::registration::class_<Node>("Node")
+    .constructor<>()(
+        rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
+        )
+    .method("Deserialize", &Node::Deserialize)
+    .method("Imgui", &Node::Imgui);
+END_RTTR_REG(Node)
