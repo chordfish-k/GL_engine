@@ -11,6 +11,7 @@ aux_source_directory(src/engine/editor SOURCES)
 aux_source_directory(src/engine/util SOURCES)
 aux_source_directory(src/engine/event SOURCES)
 aux_source_directory(src/engine/physics2D SOURCES)
+aux_source_directory(src/engine/script SOURCES)
 
 file(GLOB_RECURSE HEADERS "./include/*.hpp")
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
@@ -35,6 +36,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE RTTR::Core)
 
 find_package(box2d CONFIG REQUIRED)
 target_link_libraries(main PRIVATE box2d::box2d)
+
+find_package(sol2 CONFIG REQUIRED)
+target_link_libraries(main PRIVATE sol2)
+
+find_package(Lua REQUIRED)
+target_include_directories(main PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(main PRIVATE ${LUA_LIBRARIES})
+
 
 # 将assets文件夹复制到输出目录
 file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -360,6 +360,7 @@ std::string FileSystemWindow::TruncateText(const std::string& text, float maxWid
 void FileSystemWindow::RefreshCache() {
     fs::path p = Setting::PROJECT_ROOT / FileSystemWindow::localPath;
     FileSystemWindow::cache.clear();
+    if (p == "") return;
     for (const auto &entry : fs::directory_iterator(p)) {
         FileSystemWindow::cache.push_back(entry.path().filename().string());
     }

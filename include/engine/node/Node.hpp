@@ -29,7 +29,6 @@ protected:
     ZIndex zIndex = 0;
     bool active = true;
 
-
 public:
     Node *parent = nullptr;
     std::list<Node *> children;
