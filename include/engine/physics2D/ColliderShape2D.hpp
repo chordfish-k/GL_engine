@@ -41,6 +41,8 @@ public:
 
     void SetShapeType(ShapeType shapeType);
 
+    void BindThisToScript(sol::table &table) override;
+
 private:
     void TryReshape();
 };

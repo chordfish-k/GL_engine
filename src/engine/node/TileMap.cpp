@@ -620,6 +620,10 @@ void TileMap::Start() {
     Node::Start();
 }
 
+void TileMap::BindThisToScript(sol::table &table) {
+    table["this"] = (TileMap*)this;
+}
+
 BEGIN_RTTR_REG(TileMap)
 RTTR_CLASS(TileMap)
     .constructor<>()(

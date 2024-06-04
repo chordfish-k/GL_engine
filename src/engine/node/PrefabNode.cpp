@@ -82,6 +82,11 @@ void PrefabNode::Imgui() {
     Node::Imgui();
 }
 
+void PrefabNode::BindThisToScript(sol::table &table) {
+    table["this"] = (PrefabNode*)this;
+}
+
+
 BEGIN_RTTR_REG(PrefabNode)
 RTTR_CLASS(PrefabNode)
     .constructor<>()(

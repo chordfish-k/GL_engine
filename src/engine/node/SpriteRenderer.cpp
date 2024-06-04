@@ -190,6 +190,14 @@ void SpriteRenderer::SetActive(bool active) {
     isDirty = true;
 }
 
+void SpriteRenderer::BindThisToScript(sol::table &table) {
+    table["this"] = (SpriteRenderer*)this;
+}
+
+SpriteRenderer *SpriteRenderer::GetNode() {
+    return (SpriteRenderer*)this;
+}
+
 BEGIN_RTTR_REG (SpriteRenderer)
 rttr::registration::class_<SpriteRenderer>("SpriteRenderer")
     .constructor<>()(

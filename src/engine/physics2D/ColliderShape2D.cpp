@@ -141,6 +141,11 @@ void ColliderShape2D::SetRigidBody2D(RigidBody2D *rigidBody2D) {
     ColliderShape2D::rigidBody2D = rigidBody2D;
 }
 
+void ColliderShape2D::BindThisToScript(sol::table &table) {
+    table["this"] = (ColliderShape2D*)this;
+}
+
+
 BEGIN_RTTR_REG(ColliderShape2D)
 RTTR_CLASS(ColliderShape2D)
     .constructor<>()(

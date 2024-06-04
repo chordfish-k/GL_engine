@@ -81,6 +81,8 @@ public:
 
     glm::vec2 WorldPosToGridPos(const glm::vec2 &wp);
 
+    void BindThisToScript(sol::table &table) override;
+
 private:
     void SetCursorTile(int tileSetIndex, int tileIndex);
 

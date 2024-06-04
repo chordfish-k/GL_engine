@@ -257,6 +257,11 @@ void RigidBody2D::SetActive(bool active) {
     Node::SetActive(active);
 }
 
+
+void RigidBody2D::BindThisToScript(sol::table &table) {
+    table["this"] = (RigidBody2D*)this;
+}
+
 BEGIN_RTTR_REG(RigidBody2D)
 RTTR_CLASS(RigidBody2D)
     .constructor<>()(

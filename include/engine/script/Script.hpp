@@ -1,12 +1,13 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
+#include <sol/state.hpp>
 
 class Script {
-private:
-    std::string filePath;
 public:
-    explicit Script(std::string filePath);
-    const std::string &GetFilePath() const;
-    void Execute() const;
+    std::string filePath;
+    sol::table self;
+public:
+    Script() {};
+    bool Imgui();
 };

@@ -200,6 +200,24 @@ void FileSystemWindow::ShowFilesAndDirs() {
                         ImGui::EndDragDropSource();
                     }
                 }
+                // 如果是脚本
+                else if (util::String::CheckSuffix(name, ".lua")) {
+                    if (ImGui::Button("Lua", btnSize)) {
+                    }
+                    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                        // 将字符串转换为字节数组
+                        auto lPath =(Setting::PROJECT_ROOT / localPath / u8Name).string();
+                        const char* textData = lPath.c_str();
+                        size_t dataSize = (lPath.length() + 1) * sizeof(char); // 包括空字符 '\0'
+
+                        // 设置拖放负载
+                        ImGui::SetDragDropPayload("SCRIPT", textData, dataSize);
+                        ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 300.0f);
+                        ImGui::TextWrapped("%s", u8Name.c_str());
+                        ImGui::PopTextWrapPos();
+                        ImGui::EndDragDropSource();
+                    }
+                }
                 // 如果是图像文件
                 else if (util::String::CheckSuffix(name, ".png|.jpg")) {
                     auto tex = AssetPool::GetTexture(filePath);

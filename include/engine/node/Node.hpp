@@ -14,6 +14,7 @@
 #include "engine/util/AssetPool.hpp"
 #include "engine/core/AGuiObj.hpp"
 #include "engine/util/ReflectUtil.hpp"
+#include "engine/script/Script.hpp"
 
 class Node : public ASerializableObj{
     RTTR_ENABLE()
@@ -35,6 +36,7 @@ public:
     Transform transform;
     const std::string nodeType = "Node";
     std::string name = "";
+    Script script;
 
 public:
     Node() : Node(glm::vec2(), glm::vec2(1,1)){};
@@ -54,6 +56,10 @@ public:
     virtual void Update(float dt);
 
     virtual void EditorUpdate(float dt);
+
+    virtual void BindThisToScript(sol::table &);
+
+    virtual Node *GetNode();
 
     void CheckDelete();
 
@@ -146,6 +152,8 @@ public:
     void ShowImgui(std::vector<std::string> notShowFields = {});
 
     bool IsAncestorOrSelf(Node *ancestor);
+
+    void AttachScript(const std::string &scriptPath);
 };
 
 #define COMPONENT(name_)                                        \

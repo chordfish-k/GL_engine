@@ -8,6 +8,7 @@ int Node::ID_COUNTER = 0;
 Node::Node (glm::vec2 position, glm::vec2 scale) {
     transform.position = position;
     transform.scale = scale;
+    script = {};
 }
 
 Node::~Node(){
@@ -33,6 +34,7 @@ void Node::Start() {
     for (auto & i : children) {
         i->Start();
     }
+    MainWindow::GetScene()->GetLuaScriptManager()->AddScriptNode(this);
 }
 
 void Node::Update(float dt) {
@@ -86,6 +88,9 @@ json Node::Serialize() {
         j["data"]["transform"]["scale"] = {scale.x, scale.y};
         j["data"]["transform"]["rotation"] = rotation;
         j["data"]["zIndex"] = zIndex.GetZIndex();
+        if (!script.filePath.empty())
+            j["data"]["script"] = script.filePath;
+
         int i = 0;
         for (auto n : children) {
             auto sub = n->Serialize();
@@ -131,6 +136,11 @@ Node *Node::Deserialize(json j){
         auto &z = data["zIndex"];
         if (!z.empty()) {
             zIndex = z;
+        }
+
+        auto &sc = data["script"];
+        if (!sc.empty()) {
+            script.filePath = sc;
         }
     }
 
@@ -240,6 +250,7 @@ void Node::Imgui() {
     if (ImGui::CollapsingHeader("Node")) {
         transform.Imgui();
         zIndex.Imgui();
+        script.Imgui();
     }
 }
 
@@ -354,6 +365,18 @@ bool Node::IsAncestorOrSelf(Node *ancestor) {
         p = p->parent;
     }
     return false;
+}
+
+void Node::AttachScript(const std::string &scriptPath) {
+    script.filePath = scriptPath;
+}
+
+void Node::BindThisToScript(sol::table &table) {
+    table["this"] = this;
+}
+
+Node *Node::GetNode() {
+    return this;
 }
 
 BEGIN_RTTR_REG(Node)

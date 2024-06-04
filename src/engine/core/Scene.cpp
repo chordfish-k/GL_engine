@@ -12,6 +12,7 @@ Scene::Scene(ASceneInitializer *sceneInitializer)
     :sceneInitializer(sceneInitializer) {
     renderer = new Renderer();
     physics2D = new Physics2D();
+    luaScriptManager = new LuaScriptManager();
     root = new Node();
     sceneToolsRoot = new Node();
     sceneToolsRoot->SetDoSerialization(false);
@@ -24,6 +25,7 @@ Scene::~Scene() {
     delete root;
     delete renderer;
     delete physics2D;
+    delete luaScriptManager;
     delete sceneInitializer;
     delete camera;
 }
@@ -36,6 +38,7 @@ void Scene::Init() {
 
 void Scene::Start() {
     root->Start();
+    luaScriptManager->OnGameStart();
     isRunning = true;
 }
 
@@ -43,6 +46,7 @@ void Scene::Update(float dt) {
     camera->AdjustProjection();
     physics2D->Update(dt);
     root->Update(dt);
+    luaScriptManager->OnGameUpdate(dt);
     root->CheckDelete();
     if (root->ShouldDestroy()) delete root;
 }
@@ -144,6 +148,10 @@ Renderer *Scene::GetRenderer() const {
 
 Physics2D *Scene::GetPhysics2D() const {
     return physics2D;
+}
+
+LuaScriptManager *Scene::GetLuaScriptManager() const {
+    return luaScriptManager;
 }
 
 void Scene::Render() {

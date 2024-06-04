@@ -30,7 +30,7 @@ public:
 
     static bool DrawColor4Control(const std::string& label, glm::vec4 &color);
 
-    static bool DrawResourceDragDropBox(const std::string &label, std::string &path);
+    static bool DrawResourceDragDropBox(const std::string &label, std::string &path, const std::string &type="FILE_PATH");
 
     static bool DrawResourceDragDropBoxWithBtn(const std::string &label, std::string &path, const std::string &btnTex);
 

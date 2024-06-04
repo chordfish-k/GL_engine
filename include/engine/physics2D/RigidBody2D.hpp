@@ -74,5 +74,8 @@ public:
     void SetBodyType(BodyType bodyType);
 
     void Imgui() override;
+
     void SetActive(bool active) override;
+
+    void BindThisToScript(sol::table &table) override;
 };

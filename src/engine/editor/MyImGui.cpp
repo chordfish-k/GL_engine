@@ -335,7 +335,7 @@ bool MyImGui::DrawColor4Control(const std::string& label, glm::vec4 &color) {
     return res;
 }
 
-bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &path) {
+bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &path, const std::string &type) {
     bool res = false;
     auto lb = label.c_str();
     ImGui::PushID(lb);
@@ -363,7 +363,7 @@ bool MyImGui::DrawResourceDragDropBox(const std::string &label, std::string &pat
     if (ImGui::BeginDragDropTarget())
     {
         // TODO 添加类别判断
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(type.c_str()))
         {
             const char *path_ = ((char *)payload->Data);
             path = path_;

@@ -91,6 +91,11 @@ public:
     json Serialize() override;
 
     SpriteRenderer *Deserialize(json j) override;
+
     void SetActive(bool active) override;
+
+    void BindThisToScript(sol::table &table) override;
+
+    SpriteRenderer *GetNode() override;
 };
 
