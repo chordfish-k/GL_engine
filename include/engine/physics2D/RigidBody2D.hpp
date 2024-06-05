@@ -15,6 +15,7 @@ protected:
     Angular angular;
 
     float mass = 1;
+    float gravityScale = 1;
     BodyType bodyType = BodyType::Dynamic;
 
     bool fixedRotation = false;
@@ -60,6 +61,9 @@ public:
     bool IsFixedRotation() const;
 
     void SetFixedRotation(bool fixedRotation);
+
+    float GetGravityScale() const;
+    void SetGravityScale(float gravityScale);
 
     bool IsContinuousCollision() const;
 

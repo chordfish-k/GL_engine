@@ -61,6 +61,12 @@ public:
 
     virtual Node *GetNode();
 
+    template <class T>
+    std::enable_if_t<std::is_base_of<Node, T>::value, T *>
+    To() {
+        return (T*)this;
+    }
+
     void CheckDelete();
 
     virtual void Destroy() {
@@ -146,6 +152,8 @@ public:
         transform = t;
         return this;
     }
+
+
 
     virtual void Imgui();
 

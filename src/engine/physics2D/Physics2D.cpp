@@ -37,6 +37,7 @@ void Physics2D::Add(RigidBody2D *rb) {
     bodyDef.linearDamping = rb->GetLinearDamping();
     bodyDef.fixedRotation = rb->IsFixedRotation();
     bodyDef.bullet = rb->IsContinuousCollision();
+    bodyDef.gravityScale = rb->GetGravityScale();
 
     auto vel = b2Vec2(rb->GetLinearVelocity().x, rb->GetLinearVelocity().y);
     bodyDef.linearVelocity = Setting::PHYSICS_SCALE_INV * vel;

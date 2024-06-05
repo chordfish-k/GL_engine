@@ -406,6 +406,7 @@ void TileMap::Update(float dt) {
         }
     }
     rigidBody2D->Update(dt);
+    rigidBody2D->CheckDelete();
 
     Node::Update(dt);
 }
@@ -433,6 +434,7 @@ void TileMap::EditorUpdate(float dt) {
     }
 
     rigidBody2D->EditorUpdate(dt);
+    rigidBody2D->CheckDelete();
 
     // 世界转换为TileMap的坐标系
     auto pos = WorldPosToGridPos(MouseListener::GetWorldPos());
@@ -449,7 +451,8 @@ void TileMap::EditorUpdate(float dt) {
                     auto &tc = tileList[i];
                     if (tc.tileX != x || tc.tileY != y)
                         continue;
-                    delete tc.spriteRenderer;
+
+                    tc.spriteRenderer->Destroy();
                     for (int j = i; j < tileList.size() - 1; ++j) {
                         tileList[j] = tileList[j+1];
                     }

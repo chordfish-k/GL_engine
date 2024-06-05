@@ -198,6 +198,28 @@ SpriteRenderer *SpriteRenderer::GetNode() {
     return (SpriteRenderer*)this;
 }
 
+bool SpriteRenderer::IsFlipX() const {
+    return flipX;
+}
+
+void SpriteRenderer::SetFlipX(bool flipX_) {
+    if (flipX != flipX_) {
+        flipX = flipX_;
+        isDirty = true;
+    }
+}
+
+bool SpriteRenderer::IsFlipY() const {
+    return flipY;
+}
+
+void SpriteRenderer::SetFlipY(bool flipY_) {
+    if (flipY != flipY_) {
+        flipY = flipY_;
+        isDirty = true;
+    }
+}
+
 BEGIN_RTTR_REG (SpriteRenderer)
 rttr::registration::class_<SpriteRenderer>("SpriteRenderer")
     .constructor<>()(
@@ -205,6 +227,8 @@ rttr::registration::class_<SpriteRenderer>("SpriteRenderer")
         )
     .property("centered", &SpriteRenderer::IsCentered, &SpriteRenderer::SetCentered)
     .property("visitable", &SpriteRenderer::IsVisitable, &SpriteRenderer::SetVisitable)
+    .property("flipX", &SpriteRenderer::IsFlipX, &SpriteRenderer::SetFlipX)
+    .property("flipY", &SpriteRenderer::IsFlipY, &SpriteRenderer::SetFlipY)
     .property("color", &SpriteRenderer::GetColor, &SpriteRenderer::SetColor)
     .property("offset", &SpriteRenderer::GetOffset, &SpriteRenderer::SetOffset)
     .property("sprite", &SpriteRenderer::GetSprite, &SpriteRenderer::SetSprite);

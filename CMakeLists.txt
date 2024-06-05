@@ -45,5 +45,5 @@ target_include_directories(main PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(main PRIVATE ${LUA_LIBRARIES})
 
 
-# 将assets文件夹复制到输出目录
-file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# 将测试游戏工程文件夹复制到输出目录
+file(COPY ${CMAKE_SOURCE_DIR}/_project DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

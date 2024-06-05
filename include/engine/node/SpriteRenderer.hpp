@@ -25,6 +25,8 @@ private:
 protected:
     bool visitable = true;
     bool centered = true; // 从纹理的正中心开始算offset
+    bool flipX = false;
+    bool flipY = false;
     Color color = {1, 1, 1, 1};
     Sprite *sprite = new Sprite();
     glm::vec2 offset = glm::vec2(0, 0);
@@ -85,6 +87,14 @@ public:
     bool IsVisitable() const;
 
     void SetVisitable(bool visitable);
+
+    bool IsFlipX() const;
+
+    void SetFlipX(bool flipX);
+
+    bool IsFlipY() const;
+
+    void SetFlipY(bool flipY);
 
     void Imgui() override;
 

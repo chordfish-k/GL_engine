@@ -191,6 +191,7 @@ void RenderBatch::LoadVertexProperties(int index) {
         }
     }
 
+
     // 根据相关属性添加顶点
     auto t = sprite->GetTransform();
     auto size = sprite->GetSize();// * t.scale;
@@ -198,6 +199,8 @@ void RenderBatch::LoadVertexProperties(int index) {
     auto centered = sprite->IsCentered();
     auto modelMat = sprite->GetModelMatrix();
     auto center = centered ? glm::vec2(0.5f, 0.5f) : glm::vec2(1, 1);
+    auto flipX = sprite->IsFlipX();
+    auto flipY = sprite->IsFlipY();
 
     float xAdd = size.x * center.x;
     float yAdd = size.y * center.y;
@@ -229,8 +232,8 @@ void RenderBatch::LoadVertexProperties(int index) {
         vertices[offset + 5] = visitable ? color.w : 0;
 
         // 载入材质坐标
-        vertices[offset + 6] = texCoords[i].x;
-        vertices[offset + 7] = texCoords[i].y;
+        vertices[offset + 6] = texCoords[!flipX ? i : (i + 2) % 4].x;
+        vertices[offset + 7] = texCoords[!flipY ? i : (i + 2) % 4].y;
 
         // 载入材质id
         vertices[offset + 8] = texId;

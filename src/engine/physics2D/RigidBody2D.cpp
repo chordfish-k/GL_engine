@@ -12,11 +12,12 @@ RigidBody2D::~RigidBody2D() {
 void RigidBody2D::Update(float dt)  {
     if (!active) return;
 
-    if (rawBody != nullptr && bodyType == BodyType::Dynamic) {
+    if (rawBody != nullptr) {
         // 更新rawBody的实际位置到gameObject的transform组件
 
         Transform temp;
         temp.ApplyDataByLocalMatrix(GetModelMatrix());
+
         auto dWorldMat = TransformMatBuilder()
                              .Translate(glm::vec2(rawBody->GetPosition().x,rawBody->GetPosition().y) * Setting::PHYSICS_SCALE)
                              .Rotate(rawBody->GetAngle())
@@ -28,7 +29,7 @@ void RigidBody2D::Update(float dt)  {
         transform.ApplyDataByLocalMatrix(dParentMat);
 
         auto vel = rawBody->GetLinearVelocity();
-        linear.velocity = glm::vec2(vel.x, vel.y);
+        linear.velocity = glm::vec2(vel.x, vel.y) * Setting::PHYSICS_SCALE;
 
         auto angV = rawBody->GetAngularVelocity();
         angular.velocity = angV;
@@ -193,6 +194,7 @@ json RigidBody2D::Serialize() {
     j["data"]["bodyType"] = GetNameByBodyType(bodyType);
     j["data"]["fixRotate"] = fixedRotation;
     j["data"]["continuous"] = continuousCollision;
+    j["data"]["gravityScale"] = gravityScale;
     j["data"]["linear"]["velocity"] = {linear.velocity.x, linear.velocity.y};
     j["data"]["linear"]["damp"] = linear.damp;
     j["data"]["angular"]["velocity"] = angular.velocity;
@@ -220,6 +222,10 @@ RigidBody2D *RigidBody2D::Deserialize(json j) {
     auto &co = data["continuous"];
     if (!co.empty())
         SetContinuousCollision(co);
+
+    auto &gs = data["gravityScale"];
+    if (!gs.empty())
+        SetGravityScale(gs);
 
     auto &l = data["linear"];
     if (!l.empty()) {
@@ -262,13 +268,26 @@ void RigidBody2D::BindThisToScript(sol::table &table) {
     table["this"] = (RigidBody2D*)this;
 }
 
+float RigidBody2D::GetGravityScale() const {
+    return gravityScale;
+}
+
+void RigidBody2D::SetGravityScale(float gravityScale_) {
+    gravityScale = gravityScale_;
+    if (rawBody != nullptr) {
+        rawBody->SetGravityScale(gravityScale);
+    }
+}
+
 BEGIN_RTTR_REG(RigidBody2D)
 RTTR_CLASS(RigidBody2D)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )
-    .property("mass", &RigidBody2D::GetMass, &RigidBody2D::SetMass)
+
     .property("body type", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType)
+    .property("gravityScale", &RigidBody2D::GetGravityScale, &RigidBody2D::SetGravityScale)
+    .property("mass", &RigidBody2D::GetMass, &RigidBody2D::SetMass)
     .property("fixed rotation", &RigidBody2D::IsFixedRotation, &RigidBody2D::SetFixedRotation)
     .property("continuous", &RigidBody2D::IsContinuousCollision, &RigidBody2D::SetContinuousCollision);
 END_RTTR_REG(RigidBody2D)

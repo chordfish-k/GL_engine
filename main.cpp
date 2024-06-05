@@ -5,7 +5,7 @@
 
 int main() {
     MainWindow *window = MainWindow::Get();
-    window->SetDefaultScenePath("test/scene/a.scene");
+    window->SetDefaultScenePath("_project/scene/a.scene");
     window->Run();
     return 0;
 }

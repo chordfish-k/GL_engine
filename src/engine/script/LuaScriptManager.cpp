@@ -16,9 +16,7 @@ void LuaScriptManager::OnGameStart() {
             if(result.return_count() == 1 && result[0].is<sol::table>())
             {
                item.self = result[0];
-               node->BindThisToScript(item.self);
-               item.self["transform"] = &node->transform;
-//               item.self["children"] = (*node->children.begin())->GetNode();
+               item.self["this"] = node;
                Call(item, "Start");
             }
         }

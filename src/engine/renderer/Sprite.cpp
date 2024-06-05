@@ -8,10 +8,10 @@ json Sprite::Serialize() {
     for (int i=0; i<texCoords.size(); i++) {
         j["texCoords"][i] = {texCoords[i].x, texCoords[i].y};
     }
-  j["texture"] = texture ? texture->GetFilePath() : "";
-  j["size"] = {width, height};
+    j["texture"] = texture ? texture->GetFilePath() : "";
+    j["size"] = {width, height};
 
-  return j;
+    return j;
 }
 
 Sprite *Sprite::Deserialize(json j) {
@@ -54,7 +54,6 @@ void Sprite::SetHeight(float height) {
 
 void Sprite::SetTexture(Texture *texture) {
     if (texture != nullptr) {
-//        if (this->texture) delete this->texture;
         this->texture = texture;
         this->width = (float) texture->GetWidth();
         this->height = (float) texture->GetHeight();

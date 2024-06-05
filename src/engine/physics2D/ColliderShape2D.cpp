@@ -106,7 +106,7 @@ void ColliderShape2D::TryReshape() {
     if (collider) {
         if (lastTransform.scale != newTr.scale
             || lastTransform.rotation != newTr.rotation && newTr.scale.x != newTr.scale.y
-            || lastTransform.position != newTr.position && newTr.scale.x != newTr.scale.y
+            || lastTransform.position != newTr.position// && newTr.scale.x != newTr.scale.y
             ) {
             collider->RefreshShape();
             newTr.CopyTo(lastTransform);
