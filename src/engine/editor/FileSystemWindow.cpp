@@ -7,7 +7,7 @@
 #include "engine/core/EditorSceneInitializer.hpp"
 #include "engine/util/StringUtils.hpp"
 #include "engine/core/MainWindow.hpp"
-#include "engine/util/Setting.hpp"
+#include "engine/util/Common.hpp"
 #ifdef _WIN32
 #include <windows.h>
 //#include "engine/editor/WindowsProjectFileMonitor.hpp"
@@ -40,7 +40,7 @@ void FileSystemWindow::ShowPath() {
         fs::path p = fs::path(path) / localPath;
         path = p.string();
     }
-    path = AssetPool::GetAbsolutePath(path);
+    path = util::GetAbsolutePath(path);
     if (path.empty()) {
         return;
     }

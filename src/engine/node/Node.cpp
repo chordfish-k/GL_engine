@@ -2,6 +2,7 @@
 #include "engine/node/SpriteRenderer.hpp"
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/core/MainWindow.hpp"
+#include "engine/util/Common.hpp"
 
 int Node::ID_COUNTER = 0;
 

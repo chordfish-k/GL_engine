@@ -8,7 +8,7 @@ local node = {
 
 local speed = 130;
 local maxSpeed = 200;
-local jumpSpeed = 500;
+local jumpSpeed = 600;
 local runIndex = 0;
 local dtCounter = 0;
 local accel = 700;

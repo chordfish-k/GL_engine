@@ -2,7 +2,7 @@
 #include <sol/sol.hpp>
 #include "engine/script/LuaScriptManager.hpp"
 #include "engine/script/LuaBinder.hpp"
-
+#include "engine/util/Common.hpp"
 
 void LuaScriptManager::OnGameStart() {
     LuaBinder::BindAll(state);
@@ -10,7 +10,9 @@ void LuaScriptManager::OnGameStart() {
     for (auto node : scripts){
         Script &item = node->script;
         if (item.filePath.empty()) continue;
-        auto result = state.safe_script_file(item.filePath, &sol::script_pass_on_error);
+        auto result = state.safe_script_file(
+            util::GetAbsolutePath(item.filePath),
+            &sol::script_pass_on_error);
         if(result.valid())
         {
             if(result.return_count() == 1 && result[0].is<sol::table>())

@@ -1,6 +1,6 @@
 ﻿#include "engine/renderer/Sprite.hpp"
 #include "engine/node/SpriteRenderer.hpp"
-#include "engine/core/MainWindow.hpp"
+#include "engine/util/Common.hpp"
 #include <filesystem>
 
 json Sprite::Serialize() {

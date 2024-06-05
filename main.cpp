@@ -1,6 +1,5 @@
 ﻿#include "engine/core/MainWindow.hpp"
-#include <sol/sol.hpp>
-
+#include "engine/util/Common.hpp"
 
 
 int main() {

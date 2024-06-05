@@ -10,7 +10,7 @@
 MainWindow *MainWindow::window = nullptr;
 
 MainWindow::~MainWindow() {
-    AssetPool::Clear();
+
 
 }
 
@@ -230,6 +230,7 @@ void MainWindow::ChangeScene(const std::string&filePath) {
         Get()->currentScene->Destroy();
     }
     PropertiesWindow::SetActiveNode(nullptr);
+    AssetPool::Clear();
     auto sceneInitializer = new EditorSceneInitializer(filePath);
     if (Get()->currentScene != nullptr) {
         ChangeSceneLazy(sceneInitializer);

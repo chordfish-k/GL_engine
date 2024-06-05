@@ -9,6 +9,7 @@
 #include "engine/util/Mat4Utils.hpp"
 #include "engine/core/KeyListener.hpp"
 #include "engine/physics2D/Box2DCollider.hpp"
+#include "engine/util/Common.hpp"
 
 // std::vector<TileSet> TileMap::tileSetList;
 
@@ -67,8 +68,10 @@ json TileMap::Serialize(){
 
     index = 0;
     for (auto & t : tileList) {
-        j["data"]["tiles"][index] = {t.tileX, t.tileY, t.tileSetIndex, t.index};
-        ++index;
+        j["data"]["tiles"][index++] = t.tileX;
+        j["data"]["tiles"][index++] = t.tileY;
+        j["data"]["tiles"][index++] = t.tileSetIndex;
+        j["data"]["tiles"][index++] = t.index;
     }
 
     j["data"]["rigidBody"]["bodyType"] = GetNameByBodyType(rigidBody2D->GetBodyType());
@@ -105,10 +108,8 @@ TileMap *TileMap::Deserialize(json j){
     auto &tcs = data["tiles"];
     if (!tcs.empty()) {
         tileList.clear();
-        for (auto &tc : tcs) {
-            if (tc.size() != 4)
-                continue;
-            AddTileCell(tc[0], tc[1], tc[2], tc[3]);
+        for (int i=0; i <tcs.size(); i+=4) {
+            AddTileCell(tcs[i+0], tcs[i+1], tcs[i+2], tcs[i+3]);
         }
     }
 
@@ -186,6 +187,7 @@ void TileMap::Imgui(){
 
             static std::string path;
             if (MyImGui::DrawResourceDragDropBoxWithBtn("add from",path, "Add")) {
+                path = util::PathRelativeToProjectRoot(path);
                 AddTileSet({AssetPool::GetTexture(path), 1, 1});
             }
 

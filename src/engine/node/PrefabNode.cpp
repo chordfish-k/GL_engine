@@ -40,7 +40,7 @@ void PrefabNode::Destroy() {
 
 json PrefabNode::Serialize() {
     json j = Node::Serialize();
-    j["prefabFile"] = prefabFile;
+    j["prefabFile"] = util::PathRelativeToProjectRoot(prefabFile);
     return j;
 }
 

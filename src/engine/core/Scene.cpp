@@ -108,7 +108,7 @@ void Scene::Save() {
     auto save = [&](const std::string &path) {
         util::Println("Save:", path);
 
-        std::string jsonText = this->Serialize().dump(2);
+        std::string jsonText = util::Dump(this->Serialize());// this->Serialize().dump(2);
         std::ofstream out(path, std::ios::trunc);
         if (out.is_open()){
             out << jsonText;
