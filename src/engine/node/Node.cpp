@@ -3,6 +3,7 @@
 #include "engine/editor/PropertiesWindow.hpp"
 #include "engine/core/MainWindow.hpp"
 #include "engine/util/Common.hpp"
+#include "engine/util/PrefabsUtils.hpp"
 
 int Node::ID_COUNTER = 0;
 
@@ -19,8 +20,10 @@ Node::~Node(){
 void Node::Delete() {
     auto renderer = MainWindow::GetScene()->GetRenderer();
     auto physics2D = MainWindow::GetScene()->GetPhysics2D();
+    auto scripts = MainWindow::GetScene()->GetLuaScriptManager();
     renderer->DestroyNode(this);
     physics2D->DestroyNode(this);
+    scripts->DestroyNode(this);
     for (auto &c : children) {
         delete c;
         c = nullptr;
@@ -32,10 +35,17 @@ void Node::Delete() {
 }
 
 void Node::Start() {
-    for (auto & i : children) {
-        i->Start();
+    if (!started) {
+        for (auto & i : children) {
+            i->Start();
+        }
+        auto scene = MainWindow::GetScene();
+        if (scene) {
+            scene->GetLuaScriptManager()->AddScriptNode(this);
+        }
+
+//        started = true;
     }
-    MainWindow::GetScene()->GetLuaScriptManager()->AddScriptNode(this);
 }
 
 void Node::Update(float dt) {
@@ -163,7 +173,7 @@ Node *Node::Deserialize(json j){
                     auto nodePtr = instance.get_value<Node*>();
                     nodePtr->Deserialize(ch);
                     if (nodePtr)
-                        this->AddNode(nodePtr);
+                        this->AddChildNode(nodePtr);
                 }
             }
         }
@@ -185,10 +195,14 @@ bool Node::IsChildOf(Node *p) {
     return parent->IsChildOf(p);
 }
 
-Node *Node::AddNode(Node *comp) {
+Node *Node::AddChildNode(Node *comp) {
     children.push_back(comp);
     comp->parent = this;
     comp->GeneratedId();
+    auto scene = MainWindow::GetScene();
+    if (scene != nullptr && scene->IsRunning()) {
+        comp->Start();
+    }
     return comp;
 }
 
@@ -378,6 +392,25 @@ void Node::BindThisToScript(sol::table &table) {
 
 Node *Node::GetNode() {
     return this;
+}
+
+Node *Node::Copy() {
+    return PrefabsUtils::CopyNode(this);
+}
+
+glm::vec2 Node::GetWorldPos() {
+    Transform temp;
+    temp.ApplyDataByLocalMatrix(GetModelMatrix());
+    return temp.position;
+}
+
+void Node::CheckAdd() {
+    if (!addOnNextUpdate.empty()) {
+        for (auto ch : addOnNextUpdate) {
+
+        }
+        addOnNextUpdate.clear();
+    }
 }
 
 BEGIN_RTTR_REG(Node)

@@ -11,6 +11,7 @@ private:
     ACollider *collider = nullptr;
     RigidBody2D *rigidBody2D = nullptr;
     Transform lastTransform;
+    glm::vec2 lastPos;
     ShapeType shapeType = ShapeType::Box2DCollider;
 public:
     ColliderShape2D();

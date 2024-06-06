@@ -28,7 +28,6 @@ public:
 
     void ApplyDataByLocalMatrix(const glm::mat4 &mat);
 
-
     Transform operator+(Transform b) const;
 
 

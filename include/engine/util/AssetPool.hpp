@@ -13,15 +13,9 @@ private:
     static std::unordered_map<std::string, Spritesheet *> spritesheets;
 
 public:
-    static Shader *GetShader(std::string resourceName);
+    static Shader *GetShader(const std::string &resourceName);
 
-    static Texture *GetTexture(std::string resourceName);
-
-    static void AddSpritesheet(std::string resourceName, int spriteWidth,int spriteHeight,int numSprite);
-
-    static Spritesheet *GetSpritesheet(std::string resourceName);
+    static Texture *GetTexture(const std::string &resourceName);
 
     static void Clear();
-
-    static std::string GetAbsolutePath(std::string path);
 };

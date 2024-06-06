@@ -97,10 +97,12 @@ void MainWindow::Loop() {
 
         if (currentScene && currentScene->shouldDestroy) {
             delete currentScene;
-            Get()->currentScene = new Scene(nextScene);
-            Get()->currentScene->Load();
-            Get()->currentScene->Init();
-            Get()->currentScene->Start();
+            currentScene = nullptr;
+            currentScene = new Scene(nextScene);
+            currentScene->Load();
+            currentScene->Init();
+            currentScene->Start();
+            currentScene->GetLuaScriptManager()->OnAttached();
             SceneHierarchyWindow::Init();
         }
     }
@@ -220,27 +222,14 @@ void MainWindow::ChangeScene(ASceneInitializer *sceneInitializer) {
         Get()->currentScene->Load();
         Get()->currentScene->Init();
         Get()->currentScene->Start();
+        Get()->currentScene->GetLuaScriptManager()->OnAttached();
+        Get()->currentScene->GetLuaScriptManager()->OnGameStart();
         SceneHierarchyWindow::Init();
     }
 }
 
 void MainWindow::ChangeScene(const std::string&filePath) {
-    if (Get()->currentScene != nullptr) {
-        // 销毁当前场景
-        Get()->currentScene->Destroy();
-    }
-    PropertiesWindow::SetActiveNode(nullptr);
-    AssetPool::Clear();
-    auto sceneInitializer = new EditorSceneInitializer(filePath);
-    if (Get()->currentScene != nullptr) {
-        ChangeSceneLazy(sceneInitializer);
-    } else {
-        Get()->currentScene = new Scene(sceneInitializer);
-        Get()->currentScene->Load();
-        Get()->currentScene->Init();
-        Get()->currentScene->Start();
-        SceneHierarchyWindow::Init();
-    }
+    ChangeScene(new EditorSceneInitializer(filePath));
 }
 
 GLFWwindow *MainWindow::GetGlfwWindow(){
@@ -276,6 +265,7 @@ void MainWindow::Notify(Node *node, Event event) {
             ChangeScene(new EditorSceneInitializer(
                 currentScene->GetSceneInitializer()->GetFilePath()));
             runtimePlaying = true;
+            currentScene->GetLuaScriptManager()->OnGameStart();
         }
         break;
 

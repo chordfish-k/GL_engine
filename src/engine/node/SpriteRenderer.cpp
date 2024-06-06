@@ -13,11 +13,15 @@ SpriteRenderer::~SpriteRenderer() {
 }
 
 void SpriteRenderer::Start() {
-    lastTransform = GetTransform().Copy();
-    auto scene = MainWindow::GetScene();
-    if (scene != nullptr) {
-        scene->GetRenderer()->Add(this);
+    if (!started) {
+        lastTransform = GetTransform().Copy();
+        auto scene = MainWindow::GetScene();
+        if (scene != nullptr) {
+            scene->GetRenderer()->DestroyNode(this);
+            scene->GetRenderer()->Add(this);
+        }
     }
+
     Node::Start();
 }
 

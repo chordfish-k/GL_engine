@@ -1,0 +1,106 @@
+{
+  "children": [
+    
+    {
+      "data": {
+        "script": "script\\c.lua",
+        "transform": {
+          "position": [
+            -72.5, 39.5
+          ],
+          "rotation": 0.0,
+          "scale": [
+            0.5, 0.5
+          ]
+        },
+        "zIndex": 0
+      },
+      "name": "Shooter",
+      "type": "Node"
+    }, 
+    {
+      "data": {
+        "cellSize": [
+          16, 16
+        ],
+        "rigidBody": {
+          "bodyType": "Dynamic",
+          "fixedRotation": false,
+          "mass": 10.0
+        },
+        "tileSets": [
+          [
+            "D:\\other_things\\Programs\\cpps\\GL_engine\\cmake-build-debug\\_project\\assets\\image\\spritesheets\\decorationsAndBlocks.png", 
+            12, 7
+          ]
+        ],
+        "tiles": [
+          6, 3, 0, 0, 7, 3, 0, 0, 5, 3, 0, 0, 4, 3, 0, 0, 3, 3, 0, 0, 2, 3, 0, 0, 1, 3, 0, 0, 0, 3, 0, 0, -1, 3, 0, 
+          0, -2, 3, 0, 0, -3, 3, 0, 0, -4, 3, 0, 0, -5, 3, 0, 0, -6, 3, 0, 0
+        ],
+        "transform": {
+          "position": [
+            0.0, 5.0
+          ],
+          "rotation": 0.0,
+          "scale": [
+            1.0, 1.0
+          ]
+        },
+        "zIndex": 0
+      },
+      "name": "TileMap",
+      "type": "TileMap"
+    }, 
+    {
+      "data": {
+        "cellSize": [
+          16, 16
+        ],
+        "rigidBody": {
+          "bodyType": "Static",
+          "fixedRotation": false,
+          "mass": 10.0
+        },
+        "tileSets": [
+          [
+            "D:\\other_things\\Programs\\cpps\\GL_engine\\cmake-build-debug\\_project\\assets\\image\\spritesheets\\decorationsAndBlocks.png", 
+            12, 7
+          ]
+        ],
+        "tiles": [
+          -6, 2, 0, 1, -6, 1, 0, 1, -6, 0, 0, 1, -6, -1, 0, 1, -6, -2, 0, 1, -6, -3, 0, 1, -6, -4, 0, 1, -6, 
+          -5, 0, 1, -5, -5, 0, 1, -4, -5, 0, 1, -3, -5, 0, 1, -2, -5, 0, 1, -1, -5, 0, 1, 0, -5, 0, 1, 1, -5, 
+          0, 1, 2, -5, 0, 1, 3, -5, 0, 1, 4, -5, 0, 1, 5, -5, 0, 1, 6, -5, 0, 1, 7, -5, 0, 1, 7, -4, 0, 1, 7, -3, 
+          0, 1, 7, -2, 0, 1, 7, -1, 0, 1, 7, 0, 0, 1, 7, 1, 0, 1, 7, 2, 0, 1
+        ],
+        "transform": {
+          "position": [
+            0.0, 0.0
+          ],
+          "rotation": 0.0,
+          "scale": [
+            1.0, 1.0
+          ]
+        },
+        "zIndex": 0
+      },
+      "name": "TileMap",
+      "type": "TileMap"
+    }
+  ],
+  "data": {
+    "transform": {
+      "position": [
+        0.0, 0.0
+      ],
+      "rotation": 0.0,
+      "scale": [
+        2.0, 2.0
+      ]
+    },
+    "zIndex": 0
+  },
+  "name": "Root",
+  "type": "Node"
+}

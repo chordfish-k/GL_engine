@@ -68,6 +68,8 @@ bool CircleCollider::Imgui() {
 void CircleCollider::RefreshShape() {
     if (!colliderShape2D || fixture.empty() || !fixture[0]) return;
 
+//    util::Println("Reshape ",std::rand());
+
     auto modelMat = colliderShape2D->GetModelMatrix();
 
     segments = CIRCLE_SEGMENTS;
@@ -91,18 +93,19 @@ void CircleCollider::RefreshShape() {
     }
 
     // 分割顶点并创建多个多边形
-    for (int i = 0; i < segments; i++) {
-        b2Vec2 polygonVertices[3];
+    const int c = 7;
+    for (int i = 0; i < segments; i+=c) {
+        b2Vec2 polygonVertices[8];
         polygonVertices[0] = vs[segments+1];
         int32 vertexCount = 1;
 
         // 复制顶点到多边形
         // TODO 提高单个fixture顶点数
-        for (int j = 0; j < 2; ++j) {
+        for (int j = 0; j < c && (i+j) < segments+1; ++j) {
             polygonVertices[vertexCount] = vs[(i + j) % segments];
             vertexCount++;
         }
-
+        i--;
         // 创建新的多边形形状
         b2PolygonShape poly;
         poly.Set(polygonVertices, vertexCount);
@@ -110,7 +113,6 @@ void CircleCollider::RefreshShape() {
         SetFixture(colliderShape2D->GetRigidBody2D()->GetRawBody()
                        ->CreateFixture(&poly,
                                        colliderShape2D->GetRigidBody2D()->GetMass()), i);
-
     }
     SetDirty(false);
 }

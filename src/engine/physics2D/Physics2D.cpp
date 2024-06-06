@@ -10,7 +10,7 @@ Physics2D::Physics2D() {
 //                       | b2Draw::e_jointBit // 关节
 //                       | b2Draw::e_aabbBit  // 外包围盒
 //                       | b2Draw::e_pairBit // 碰撞对连线
-                       | b2Draw::e_centerOfMassBit // 质心
+//                       | b2Draw::e_centerOfMassBit // 质心
                        );
     world->SetDebugDraw(&debugDraw);
 }
@@ -50,7 +50,7 @@ void Physics2D::Add(RigidBody2D *rb) {
         break;
     case BodyType::Dynamic:
         bodyDef.type = b2_dynamicBody;
-        bodyDef.allowSleep = false;
+//        bodyDef.allowSleep = false;
         break;
     case BodyType::Kinematic:
         bodyDef.type = b2_kinematicBody;

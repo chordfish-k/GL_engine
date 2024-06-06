@@ -9,7 +9,8 @@ class LuaScriptManager {
 public:
     void AddScriptNode(Node *node);
 
-    virtual void OnGameStart();
+    virtual void OnAttached(Node *node = nullptr);
+    virtual void OnGameStart(Node *node = nullptr);
     virtual void OnGameUpdate(float dt);
 
     template<typename ...Args>
@@ -21,6 +22,8 @@ public:
             util::Println(err.what());
         }
     }
+    void DestroyNode(Node *pNode);
+
 private:
     sol::state state;
     std::vector<Node*> scripts;

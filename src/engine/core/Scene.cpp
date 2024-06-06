@@ -16,7 +16,7 @@ Scene::Scene(ASceneInitializer *sceneInitializer)
     root = new Node();
     sceneToolsRoot = new Node();
     sceneToolsRoot->SetDoSerialization(false);
-    root->AddNode(sceneToolsRoot);
+    root->AddChildNode(sceneToolsRoot);
     root->name = "Root";
     isRunning = false;
 }
@@ -38,15 +38,14 @@ void Scene::Init() {
 
 void Scene::Start() {
     root->Start();
-    luaScriptManager->OnGameStart();
     isRunning = true;
 }
 
 void Scene::Update(float dt) {
     camera->AdjustProjection();
+    luaScriptManager->OnGameUpdate(dt);
     physics2D->Update(dt);
     root->Update(dt);
-    luaScriptManager->OnGameUpdate(dt);
     root->CheckDelete();
     if (root->ShouldDestroy()) delete root;
 }
@@ -59,7 +58,7 @@ void Scene::EditorUpdate(float dt) {
 }
 
 void Scene::AddNode(Node *n) const {
-    root->AddNode(n);
+    root->AddChildNode(n);
     n->GeneratedId();
     if (isRunning) {
         n->Start();
@@ -67,7 +66,7 @@ void Scene::AddNode(Node *n) const {
 }
 
 void Scene::AddNodeAsChild(Node *parent, Node *n) const {
-    parent->AddNode(n);
+    parent->AddChildNode(n);
     n->GeneratedId();
     if (isRunning) {
         n->Start();

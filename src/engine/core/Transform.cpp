@@ -32,7 +32,7 @@ Transform &Transform::operator=(const Transform &t) {
 bool Transform::Equals(Transform &t) {
     return t.position == this->position &&
            t.scale == this->scale &&
-           t.rotation == this->rotation;
+           fabs(t.rotation - this->rotation) < 0.0001;
 }
 
 bool Transform::Imgui() {

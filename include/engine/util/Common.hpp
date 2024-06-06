@@ -36,18 +36,7 @@ inline std::string Trim(std::string str) {
     }
 }
 
-inline std::string LoadTextFromFile(const std::string &path) {
-    std::ifstream fin(path);
-    std::string text;
-    if (fin.is_open()) {
-        std::stringstream ss;
-        ss << fin.rdbuf();
-        text = ss.str();
-    } else {
-        util::Println("Open File Failed: ", path);
-    }
-    return text;
-}
+
 
 inline nlohmann::json Str2Json(const std::string &str) {
     nlohmann::json j;
@@ -57,10 +46,6 @@ inline nlohmann::json Str2Json(const std::string &str) {
         util::Println("Convert String to Json Failed.", e.what());
     }
     return j;
-}
-
-inline nlohmann::json LoadJsonFromFile(const std::string &path) {
-    return util::Str2Json(LoadTextFromFile(path));
 }
 
 inline std::string PathRelativeToProjectRoot(const fs::path &path) {
@@ -77,6 +62,24 @@ inline std::string GetAbsolutePath(std::string path) {
     fs::path curath = Setting::PROJECT_ROOT;
     fs::path abPath = curath / path;
     return abPath.string();
+}
+
+inline std::string LoadTextFromFile(const std::string &path) {
+    if (path.empty()) return "";
+    std::ifstream fin(path);
+    std::string text;
+    if (fin.is_open()) {
+        std::stringstream ss;
+        ss << fin.rdbuf();
+        text = ss.str();
+    } else {
+        util::Println("Open File Failed: ", path);
+    }
+    return text;
+}
+
+inline nlohmann::json LoadJsonFromFile(const std::string &path) {
+    return util::Str2Json(LoadTextFromFile(path));
 }
 
 inline std::string Dump(const nlohmann::json& j, int indent = 2, int maxLineLen = 150) {

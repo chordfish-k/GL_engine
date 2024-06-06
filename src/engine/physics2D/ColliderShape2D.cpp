@@ -95,6 +95,7 @@ void ColliderShape2D::EditorUpdate(float dt) {
     TryReshape();
 
     if (collider != nullptr) {
+        collider->RefreshShape();
         collider->EditorUpdate(dt);
     }
     Node::EditorUpdate(dt);
@@ -102,20 +103,20 @@ void ColliderShape2D::EditorUpdate(float dt) {
 
 void ColliderShape2D::TryReshape() {
     Transform newTr = GetTransform();
+    glm::vec2 newPos = transform.position;
     newTr.position = transform.position;
     if (collider) {
-        if (lastTransform.scale != newTr.scale
-            || lastTransform.rotation != newTr.rotation && newTr.scale.x != newTr.scale.y
-            || lastTransform.position != newTr.position// && newTr.scale.x != newTr.scale.y
+        if (fabs(lastTransform.scale.x - newTr.scale.x) > 0.0001 && fabs(lastTransform.scale.y - newTr.scale.y) > 0.0001
+            || fabs(lastTransform.rotation - newTr.rotation) > 0.0001 && fabs(newTr.scale.x - newTr.scale.y) > 0.0001
+            || lastTransform.position != newTr.position
             ) {
             collider->RefreshShape();
-            newTr.CopyTo(lastTransform);
         }
         if (collider->IsDirty()) {
             collider->RefreshShape();
-            collider->SetDirty(false);
         }
     }
+    newTr.CopyTo(lastTransform);
 }
 
 ShapeType ColliderShape2D::GetShapeType() const {

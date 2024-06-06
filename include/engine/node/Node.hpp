@@ -25,11 +25,11 @@ private:
     bool doSerialization = true;
     bool isPickable = true;
     bool shouldDestroy = false;
-
+    std::vector<Node*> addOnNextUpdate;
 protected:
     ZIndex zIndex = 0;
     bool active = true;
-
+    bool started = false;
 public:
     Node *parent = nullptr;
     std::list<Node *> children;
@@ -47,6 +47,8 @@ public:
 
     void Delete();
 
+    virtual Node* Copy();
+
     virtual std::string GetNodeType() {return nodeType;}
 
     static void Init(int maxId) {ID_COUNTER = maxId; }
@@ -61,6 +63,8 @@ public:
 
     virtual Node *GetNode();
 
+    glm::vec2 GetWorldPos();
+
     template <class T>
     std::enable_if_t<std::is_base_of<Node, T>::value, T *>
     To() {
@@ -68,6 +72,8 @@ public:
     }
 
     void CheckDelete();
+
+    void CheckAdd();
 
     virtual void Destroy() {
         shouldDestroy = true;
@@ -78,11 +84,11 @@ public:
     AddNode(const std::string &name_ = "") {
         T *comp = new T();
         comp->name = name_;
-        AddNode(comp);
+        AddChildNode(comp);
         return comp;
     }
 
-    Node *AddNode(Node *comp);
+    Node *AddChildNode(Node *comp);
 
     void RemoveAllNodes();
 

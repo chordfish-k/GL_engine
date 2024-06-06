@@ -375,7 +375,7 @@ void TileMap::AddTileCell(int x, int y, int tileSetIndex, int tileIndex) {
     };
 
 
-    rigidBody2D->AddNode(spr); // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
+    rigidBody2D->AddChildNode(spr); // 设置父节点为自身，让GetTransform和GetMatrix等正常工作
 
     // tileCell加入数组
     tileList.push_back(cell);

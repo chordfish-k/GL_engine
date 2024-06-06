@@ -13,3 +13,6 @@
 13.Game Coding & Script System √
 14.Relative Resource Path
 15.Tidy the Code
+
+bug & adjust
+1.Delete PrefabNode and Use Node Instead

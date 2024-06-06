@@ -339,7 +339,10 @@ void FileSystemWindow::NodePrefabDragDrop() {
             // 以pref文件保存json，统一将position设置成0
             Transform temp = source->transform;
             source->transform.position = {0, 0};
-            auto jsonText = source->Serialize().dump(2);
+            Node pNode;
+            pNode.SetName("Prefab");
+            pNode.AddChildNode(source->Copy());
+            auto jsonText = pNode.Serialize().dump(2);
             source->transform = temp;
             // TODO 弹出提示窗表示文件已存在，是否替换
             std::ofstream ofs( Setting::PROJECT_ROOT / localPath / (source->GetName() + ".pfb"),

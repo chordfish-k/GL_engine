@@ -12,12 +12,19 @@ RigidBody2D::~RigidBody2D() {
 void RigidBody2D::Update(float dt)  {
     if (!active) return;
 
-    if (rawBody != nullptr) {
+    if (rawBody != nullptr && bodyType == BodyType::Static){
+        auto pmat = GetModelMatrix();
+        auto p = pmat * glm::vec4(0, 0, 0, 1);
+        auto ro = glm::radians(GetTransform().rotation);
+        rawBody->SetTransform({Setting::PHYSICS_SCALE_INV * p.x, Setting::PHYSICS_SCALE_INV * p.y}, ro);
+    }
+
+    if (rawBody != nullptr && rawBody->IsAwake() && bodyType != BodyType::Static) {
         // 更新rawBody的实际位置到gameObject的transform组件
 
         Transform temp;
         temp.ApplyDataByLocalMatrix(GetModelMatrix());
-
+        auto scale = transform.scale;
         auto dWorldMat = TransformMatBuilder()
                              .Translate(glm::vec2(rawBody->GetPosition().x,rawBody->GetPosition().y) * Setting::PHYSICS_SCALE)
                              .Rotate(rawBody->GetAngle())
@@ -27,6 +34,7 @@ void RigidBody2D::Update(float dt)  {
         auto pInvMat = parent ? glm::inverse(parent->GetModelMatrix()) : glm::mat4(1);
         auto dParentMat = pInvMat * dWorldMat;
         transform.ApplyDataByLocalMatrix(dParentMat);
+        transform.scale = scale;
 
         auto vel = rawBody->GetLinearVelocity();
         linear.velocity = glm::vec2(vel.x, vel.y) * Setting::PHYSICS_SCALE;
@@ -181,9 +189,11 @@ void RigidBody2D::Imgui() {
 }
 
 void RigidBody2D::Start() {
-    auto scene = MainWindow::GetScene();
-    if (scene != nullptr) {
-        scene->GetPhysics2D()->Add(this);
+    if (!started) {
+        auto scene = MainWindow::GetScene();
+        if (scene != nullptr) {
+            scene->GetPhysics2D()->ReAdd(this);
+        }
     }
     Node::Start();
 }
@@ -251,15 +261,15 @@ RigidBody2D *RigidBody2D::Deserialize(json j) {
 
 void RigidBody2D::SetActive(bool active) {
 
-    if (active) {
-        rawBody->SetAwake(active);
-        MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
-        MainWindow::GetScene()->GetPhysics2D()->Add(this);
-    }
-    else {
-        rawBody->SetAwake(active);
-        MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
-    }
+//    if (active) {
+//        rawBody->SetAwake(active);
+//        MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
+//        MainWindow::GetScene()->GetPhysics2D()->Add(this);
+//    }
+//    else {
+//        rawBody->SetAwake(active);
+//        MainWindow::GetScene()->GetPhysics2D()->DestroyNode(this);
+//    }
     Node::SetActive(active);
 }
 

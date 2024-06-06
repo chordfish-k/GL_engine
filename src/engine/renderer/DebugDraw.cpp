@@ -129,7 +129,7 @@ void DebugDraw::AddBox2D(glm::vec2 center, glm::vec2 dimensions, float rotation,
 
 void DebugDraw::AddLine2D(glm::vec2 from, glm::vec2 to, glm::vec4 color,
                           int lifeTime) {
-//    if (lines.size() >= DEBUG_MAX_LINES) return;
+    if (lines.size() >= DEBUG_MAX_LINES) return;
     DebugDraw::lines.emplace_back(from, to, color, lifeTime);
 }
 

@@ -6,7 +6,7 @@ void EditorMouseControls::PickupNode(Node *node) {
     this->holdingNode = node;
     auto activeNode = PropertiesWindow::GetActiveNode();
 //    if (activeNode != nullptr) {
-//        activeNode->AddNode(node);
+//        activeNode->AddChildNode(node);
 //    } else {
     MainWindow::GetScene()->AddNode(node);
 //    }

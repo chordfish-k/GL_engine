@@ -214,9 +214,6 @@ void SceneHierarchyWindow::NodeMenu(Node *node) {
             auto jsonText = glfwGetClipboardString(MainWindow::GetGlfwWindow());
             auto j = Str2Json(jsonText);
             auto nodePtr = PrefabsUtils::GenerateNodeFromJson(j);
-            nodePtr->TravelOnSubTree([](auto n) {
-                n->GeneratedId(true);
-            });
             MainWindow::GetScene()->AddNodeAsChild(node, nodePtr);
         }
         if (ImGui::MenuItem("Delete")) {
@@ -265,11 +262,11 @@ void SceneHierarchyWindow::PrefabDropTarget(Node *target) {
         {
             const char *path_ = ((char *)payload->Data);
 
-            auto prefab = new PrefabNode();
+            auto *prefab = new PrefabNode();
             prefab->SetPrefabFile(path_);
-            prefab->Start();
+//            prefab->Start();
             // 添加prefab到target
-            target->AddNode(prefab);
+            target->AddChildNode(*prefab->GetNode()->children.begin());
         }
         ImGui::EndDragDropTarget();
     }
