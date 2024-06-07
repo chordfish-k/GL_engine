@@ -62,7 +62,7 @@ json TileMap::Serialize(){
 
     int index = 0;
     for (auto & ts : tileSetList) {
-        j["data"]["tileSets"][index] = {ts.texture->GetFilePath(), ts.rows, ts.columns};
+        j["data"]["tileSets"][index] = {util::PathRelativeToProjectRoot(ts.texture->GetFilePath()), ts.rows, ts.columns};
         ++index;
     }
 

@@ -30,6 +30,7 @@ protected:
     ZIndex zIndex = 0;
     bool active = true;
     bool started = false;
+    bool asPrefab = false;
 public:
     Node *parent = nullptr;
     std::list<Node *> children;
@@ -105,6 +106,8 @@ public:
     int GetUid() const { return uid; }
 
     int GetZIndex() const { return zIndex.GetZIndex(); }
+
+    bool IsAsPrefab() const;
 
     glm::mat4 GetModelMatrix() const;
 

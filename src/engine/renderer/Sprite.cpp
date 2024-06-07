@@ -8,7 +8,7 @@ json Sprite::Serialize() {
     for (int i=0; i<texCoords.size(); i++) {
         j["texCoords"][i] = {texCoords[i].x, texCoords[i].y};
     }
-    j["texture"] = texture ? texture->GetFilePath() : "";
+    j["texture"] = texture ? util::PathRelativeToProjectRoot(texture->GetFilePath()) : "";
     j["size"] = {width, height};
 
     return j;
@@ -16,7 +16,7 @@ json Sprite::Serialize() {
 
 Sprite *Sprite::Deserialize(json j) {
     auto &t = j["texture"];
-    if (!t.empty()) SetTexture(AssetPool::GetTexture(t));
+    if (!t.empty()) SetTexture(AssetPool::GetTexture(util::GetAbsolutePath(t)));
 
     auto &tc = j["texCoords"];
     if (!tc.empty()) {

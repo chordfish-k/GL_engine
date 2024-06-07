@@ -30,7 +30,7 @@
         },
         "tileSets": [
           [
-            "D:\\other_things\\Programs\\cpps\\GL_engine\\cmake-build-debug\\_project\\assets\\image\\spritesheets\\decorationsAndBlocks.png", 
+            "assets\\image\\spritesheets\\decorationsAndBlocks.png",
             12, 7
           ]
         ],
@@ -64,7 +64,7 @@
         },
         "tileSets": [
           [
-            "D:\\other_things\\Programs\\cpps\\GL_engine\\cmake-build-debug\\_project\\assets\\image\\spritesheets\\decorationsAndBlocks.png", 
+            "assets\\image\\spritesheets\\decorationsAndBlocks.png",
             12, 7
           ]
         ],

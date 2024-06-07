@@ -98,7 +98,7 @@ void SceneHierarchyWindow::ShowSubNodes(Node *root) {
     auto &obj = root;
 
     auto nodeFlags = baseFlags;
-    if (selectingUid == obj->GetUid()) {
+    if (selectingUid == obj->GetUid() && !obj->IsAsPrefab()) {
         nodeFlags |= ImGuiTreeNodeFlags_Selected;
     }
 

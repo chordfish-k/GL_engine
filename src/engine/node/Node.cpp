@@ -249,6 +249,10 @@ void Node::SetActive(bool active_) {
     }
 }
 
+bool Node::IsAsPrefab() const {
+    return asPrefab;
+}
+
 void Node::Imgui() {
     auto name_ = GetName();
     if (MyImGui::DrawTextInput("name", name_)){
@@ -403,7 +407,6 @@ glm::vec2 Node::GetWorldPos() {
     temp.ApplyDataByLocalMatrix(GetModelMatrix());
     return temp.position;
 }
-
 void Node::CheckAdd() {
     if (!addOnNextUpdate.empty()) {
         for (auto ch : addOnNextUpdate) {
