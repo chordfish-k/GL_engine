@@ -20,7 +20,7 @@ protected:
 
     bool fixedRotation = false;
     bool continuousCollision = true; // 连续碰撞，防止隧穿
-
+    bool enable = true;
     b2Body *rawBody = nullptr;
 
 public:
@@ -57,6 +57,10 @@ public:
     float GetMass() const;
 
     void SetMass(float mass);
+
+    bool IsEnable() const;
+
+    void SetEnable(bool enable);
 
     bool IsFixedRotation() const;
 

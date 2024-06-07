@@ -14,7 +14,6 @@ function ball:Update(dt)
 end
 
 function ball:OnCollision(other)
-    print("coll: ", ball.this, " -> ", other);
     other:Destroy();
 end
 

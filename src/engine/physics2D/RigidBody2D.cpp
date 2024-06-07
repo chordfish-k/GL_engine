@@ -201,6 +201,7 @@ void RigidBody2D::Start() {
 json RigidBody2D::Serialize() {
     json j = Node::Serialize();
     j["data"]["mass"] = mass;
+    j["data"]["enable"] = enable;
     j["data"]["bodyType"] = GetNameByBodyType(bodyType);
     j["data"]["fixRotate"] = fixedRotation;
     j["data"]["continuous"] = continuousCollision;
@@ -220,6 +221,10 @@ RigidBody2D *RigidBody2D::Deserialize(json j) {
     auto &m = data["mass"];
     if (!m.empty())
         SetMass(m);
+
+    auto &e = data["enable"];
+    if (!e.empty())
+        SetEnable(e);
 
     auto &t = data["bodyType"];
     if (!t.empty())
@@ -289,12 +294,24 @@ void RigidBody2D::SetGravityScale(float gravityScale_) {
     }
 }
 
+bool RigidBody2D::IsEnable() const {
+    return enable;
+}
+
+void RigidBody2D::SetEnable(bool enable_) {
+    if (enable_ != enable) {
+        enable = enable_;
+        if (rawBody != nullptr)
+            rawBody->SetEnabled(enable_);
+    }
+}
+
 BEGIN_RTTR_REG(RigidBody2D)
 RTTR_CLASS(RigidBody2D)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )
-
+    .property("enable", &RigidBody2D::IsEnable, &RigidBody2D::SetEnable)
     .property("body type", &RigidBody2D::GetBodyType, &RigidBody2D::SetBodyType)
     .property("gravityScale", &RigidBody2D::GetGravityScale, &RigidBody2D::SetGravityScale)
     .property("mass", &RigidBody2D::GetMass, &RigidBody2D::SetMass)

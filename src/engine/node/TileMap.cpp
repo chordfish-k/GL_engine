@@ -60,6 +60,7 @@ json TileMap::Serialize(){
     json j = Node::Serialize();
     j["data"]["cellSize"] = {cellWidth, cellHeight};
 
+
     int index = 0;
     for (auto & ts : tileSetList) {
         j["data"]["tileSets"][index] = {util::PathRelativeToProjectRoot(ts.texture->GetFilePath()), ts.rows, ts.columns};
@@ -74,9 +75,7 @@ json TileMap::Serialize(){
         j["data"]["tiles"][index++] = t.index;
     }
 
-    j["data"]["rigidBody"]["bodyType"] = GetNameByBodyType(rigidBody2D->GetBodyType());
-    j["data"]["rigidBody"]["fixedRotation"] = rigidBody2D->IsFixedRotation();
-    j["data"]["rigidBody"]["mass"] = rigidBody2D->GetMass();
+    j["data"]["rigidBody"] = rigidBody2D->Serialize();
 
     return j;
 }
@@ -116,18 +115,7 @@ TileMap *TileMap::Deserialize(json j){
     // 设置内置的rigidBody
     auto &rb = data["rigidBody"];
     if (!rb.empty()) {
-        auto &bt = rb["bodyType"];
-        if (!bt.empty()) {
-            rigidBody2D->SetBodyType(GetBodyTypeByName(bt));
-        }
-        auto &fr = rb["fixedRotation"];
-        if (!fr.empty()) {
-            rigidBody2D->SetFixedRotation(fr);
-        }
-        auto &ma = rb["mass"];
-        if (!ma.empty()) {
-            rigidBody2D->SetMass(ma);
-        }
+        rigidBody2D->Deserialize(rb);
     }
 
     return this;
@@ -179,6 +167,7 @@ void TileMap::Imgui(){
             ImGui::TreePop();
         }
         ImGui::PopStyleColor();
+
 
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
         if (ImGui::TreeNodeEx("TileSets",
@@ -628,6 +617,7 @@ void TileMap::Start() {
 void TileMap::BindThisToScript(sol::table &table) {
     table["this"] = (TileMap*)this;
 }
+
 
 BEGIN_RTTR_REG(TileMap)
 RTTR_CLASS(TileMap)
