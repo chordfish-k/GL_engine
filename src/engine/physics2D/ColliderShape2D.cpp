@@ -146,6 +146,18 @@ void ColliderShape2D::BindThisToScript(sol::table &table) {
     table["this"] = (ColliderShape2D*)this;
 }
 
+bool ColliderShape2D::IsSensor() const {
+    return sensor;
+}
+
+void ColliderShape2D::SetSensor(bool sensor_) {
+    if (sensor != sensor_) {
+        sensor = sensor_;
+        for (auto f : collider->GetFixture()) {
+            if (f) f->SetSensor(sensor_);
+        }
+    }
+}
 
 BEGIN_RTTR_REG(ColliderShape2D)
 RTTR_CLASS(ColliderShape2D)

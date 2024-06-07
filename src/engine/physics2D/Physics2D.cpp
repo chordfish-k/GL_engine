@@ -134,8 +134,8 @@ void Physics2D::DestroyNode(Node *node) {
         if (rbb) {
             if (rbb->GetRawBody()) {
                 // 循环删除所有fixture
-                for (auto &f : fs) {
-                    rbb->GetRawBody()->DestroyFixture(f);
+                for (auto f : fs) {
+                    if (f) rbb->GetRawBody()->DestroyFixture(f);
                 }
             }
         }

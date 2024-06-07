@@ -75,7 +75,10 @@ json TileMap::Serialize(){
         j["data"]["tiles"][index++] = t.index;
     }
 
-    j["data"]["rigidBody"] = rigidBody2D->Serialize();
+    j["data"]["rigidBody"]["bodyType"] = GetNameByBodyType(rigidBody2D->GetBodyType());
+    j["data"]["rigidBody"]["fixedRotation"] = rigidBody2D->IsFixedRotation();
+    j["data"]["rigidBody"]["mass"] = rigidBody2D->GetMass();
+    j["data"]["rigidBody"]["enable"] = rigidBody2D->IsEnable();
 
     return j;
 }
@@ -115,7 +118,22 @@ TileMap *TileMap::Deserialize(json j){
     // 设置内置的rigidBody
     auto &rb = data["rigidBody"];
     if (!rb.empty()) {
-        rigidBody2D->Deserialize(rb);
+        auto &bt = rb["bodyType"];
+        if (!bt.empty()) {
+            rigidBody2D->SetBodyType(GetBodyTypeByName(bt));
+        }
+        auto &fr = rb["fixedRotation"];
+        if (!fr.empty()) {
+            rigidBody2D->SetFixedRotation(fr);
+        }
+        auto &ma = rb["mass"];
+        if (!ma.empty()) {
+            rigidBody2D->SetMass(ma);
+        }
+        auto &e = rb["enable"];
+        if (!e.empty()) {
+            rigidBody2D->SetEnable(e);
+        }
     }
 
     return this;

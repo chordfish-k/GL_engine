@@ -13,6 +13,7 @@ private:
     Transform lastTransform;
     glm::vec2 lastPos;
     ShapeType shapeType = ShapeType::Box2DCollider;
+    bool sensor = false;
 public:
     ColliderShape2D();
 
@@ -25,6 +26,10 @@ public:
     RigidBody2D *GetRigidBody2D() const;
 
     void SetRigidBody2D(RigidBody2D *rigidBody2D);
+
+    bool IsSensor() const;
+
+    void SetSensor(bool sensor);
 
     void Start() override;
 

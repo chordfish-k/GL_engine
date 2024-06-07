@@ -94,6 +94,7 @@ void CircleCollider::RefreshShape() {
 
     // 分割顶点并创建多个多边形
     const int c = 7;
+    int fi = 0;
     for (int i = 0; i < segments; i+=c) {
         b2Vec2 polygonVertices[8];
         polygonVertices[0] = vs[segments+1];
@@ -114,6 +115,7 @@ void CircleCollider::RefreshShape() {
                        ->CreateFixture(&poly,
                                        colliderShape2D->GetRigidBody2D()->GetMass()), i);
     }
+//    fixture.resize(fi);
     SetDirty(false);
 }
 
