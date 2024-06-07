@@ -8,7 +8,7 @@ Physics2D::Physics2D() {
 
     debugDraw.SetFlags(b2Draw::e_shapeBit // fixture形状
 //                       | b2Draw::e_jointBit // 关节
-//                       | b2Draw::e_aabbBit  // 外包围盒
+                       | b2Draw::e_aabbBit  // 外包围盒
 //                       | b2Draw::e_pairBit // 碰撞对连线
 //                       | b2Draw::e_centerOfMassBit // 质心
                        );
@@ -38,6 +38,7 @@ void Physics2D::Add(RigidBody2D *rb) {
     bodyDef.fixedRotation = rb->IsFixedRotation();
     bodyDef.bullet = rb->IsContinuousCollision();
     bodyDef.gravityScale = rb->GetGravityScale();
+    bodyDef.userData.pointer = (uintptr_t)rb;
 
     auto vel = b2Vec2(rb->GetLinearVelocity().x, rb->GetLinearVelocity().y);
     bodyDef.linearVelocity = Setting::PHYSICS_SCALE_INV * vel;
@@ -143,4 +144,8 @@ void Physics2D::DestroyNode(Node *node) {
 void Physics2D::ReAdd(RigidBody2D *rb) {
     DestroyNode(rb);
     Add(rb);
+}
+
+void Physics2D::Init() {
+    world->SetContactListener(MainWindow::GetScene()->GetLuaScriptManager());
 }

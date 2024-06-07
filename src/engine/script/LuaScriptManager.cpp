@@ -5,12 +5,13 @@
 #include "engine/util/Common.hpp"
 
 
+LuaScriptManager::LuaScriptManager() {
+    LuaBinder::BindAll(state);
+}
+
+
 void LuaScriptManager::OnAttached(Node *node) {
-
-
     if (node == nullptr) {
-        LuaBinder::BindAll(state);
-
         for (auto node_ : scripts){
             Script &item = node_->script;
             if (item.filePath.empty() || item.attached) continue;
@@ -55,7 +56,6 @@ void LuaScriptManager::OnAttached(Node *node) {
     }
 }
 
-
 void LuaScriptManager::OnGameStart(Node *node) {
     if (node == nullptr) {
         for (auto node_ : scripts){
@@ -77,6 +77,7 @@ void LuaScriptManager::OnGameStart(Node *node) {
     }
 }
 
+
 void LuaScriptManager::OnGameUpdate(float dt) {
     for (int i = 0; i < scripts.size(); ++i){
         Script &item = scripts[i]->script;
@@ -91,6 +92,14 @@ void LuaScriptManager::OnGameUpdate(float dt) {
     }
 }
 
+void LuaScriptManager::OnCollision(Node *a, Node *b) {
+    if (!a->script.filePath.empty()) {
+        Call(a->script, "OnCollision", "other", b);
+    }
+    if (!b->script.filePath.empty()) {
+        Call(b->script, "OnCollision", "other", a);
+    }
+}
 
 void LuaScriptManager::AddScriptNode(Node *node) {
     if (scripts.end() == std::find(scripts.begin(), scripts.end(), node)
@@ -105,3 +114,42 @@ void LuaScriptManager::DestroyNode(Node *node) {
         scripts.erase(it);
     }
 }
+
+void LuaScriptManager::BeginContact(b2Contact *contact) {
+    b2ContactListener::BeginContact(contact);
+    auto A = (Node*) contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+    auto B = (Node*) contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+    if (A != nullptr && B != nullptr) {
+        OnCollision(A, B);
+    }
+}
+
+void LuaScriptManager::EndContact(b2Contact *contact) {
+    b2ContactListener::EndContact(contact);
+}
+
+void LuaScriptManager::PreSolve(b2Contact *contact,
+                                const b2Manifold *oldManifold) {
+    b2ContactListener::PreSolve(contact, oldManifold);
+}
+
+void LuaScriptManager::PostSolve(b2Contact *contact,
+                                 const b2ContactImpulse *impulse) {
+    b2ContactListener::PostSolve(contact, impulse);
+}
+
+/*
+void LuaScriptManager::Notify(Node *node, Event event) {
+    switch (event.type) {
+    case EventType::GameEngineStartPlay:
+        OnAttached(node);
+        OnGameStart(node);
+        break;
+//    case EventType::GameEngineStopPlay:
+//        OnGameUpdate();
+//        break;
+    default:
+        break;
+    }
+}
+*/

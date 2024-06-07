@@ -6,7 +6,7 @@
         "script": "script\\c.lua",
         "transform": {
           "position": [
-            -72.5, 39.5
+            18.5, -56.5
           ],
           "rotation": 0.0,
           "scale": [
@@ -60,7 +60,7 @@
         "rigidBody": {
           "bodyType": "Static",
           "fixedRotation": false,
-          "mass": 10.0
+          "mass": 1.0
         },
         "tileSets": [
           [

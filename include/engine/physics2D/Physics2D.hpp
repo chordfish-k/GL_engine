@@ -29,4 +29,5 @@ public:
     void ReAdd(RigidBody2D *rb);
 
     void Update(float dt);
+    void Init();
 };

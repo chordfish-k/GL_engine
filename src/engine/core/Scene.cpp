@@ -11,8 +11,8 @@
 Scene::Scene(ASceneInitializer *sceneInitializer)
     :sceneInitializer(sceneInitializer) {
     renderer = new Renderer();
-    physics2D = new Physics2D();
     luaScriptManager = new LuaScriptManager();
+    physics2D = new Physics2D();
     root = new Node();
     sceneToolsRoot = new Node();
     sceneToolsRoot->SetDoSerialization(false);
@@ -39,6 +39,7 @@ void Scene::Init() {
 void Scene::Start() {
     root->Start();
     isRunning = true;
+    physics2D->Init();
 }
 
 void Scene::Update(float dt) {

@@ -27,6 +27,7 @@ void LuaNodeBinder::Bind(sol::state &state) {
                              "children", &Node::children,
                              "parent", &Node::parent,
                              "Copy", &Node::Copy,
+                             "Destroy", &Node::Destroy,
                              "AddChildNode", &Node::AddChildNode,
                              "GetWorldPos", &Node::GetWorldPos,
                              "ToSpriteRenderer", &Node::To<SpriteRenderer>,

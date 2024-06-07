@@ -7,9 +7,11 @@ enum EventType {
     LoadScene,
     CloseTopWindow,
     GameEngineStartPlay,
-    GameEngineStopPlay
+    GameEngineStopPlay,
+    OnCollision
 };
 
 struct Event {
     EventType type;
+    void *data;
 };
