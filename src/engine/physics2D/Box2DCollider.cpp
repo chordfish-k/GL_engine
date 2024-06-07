@@ -110,10 +110,10 @@ void Box2DCollider::RefreshShape() {
 
     b2PolygonShape poly;
     poly.Set(vertices, 4);
-    SetFixture(colliderShape2D->GetRigidBody2D()->GetRawBody()
-                   ->CreateFixture(&poly,
-                                   colliderShape2D->GetRigidBody2D()->GetMass()));
-
+    auto f = colliderShape2D->GetRigidBody2D()->GetRawBody()
+                 ->CreateFixture(&poly, colliderShape2D->GetRigidBody2D()->GetMass());
+    f->SetSensor(colliderShape2D->IsSensor());
+    SetFixture(f);
     SetDirty(false);
 }
 

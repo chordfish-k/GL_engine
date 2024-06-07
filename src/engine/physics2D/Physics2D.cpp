@@ -97,7 +97,9 @@ void Physics2D::Add(ColliderShape2D *cs) {
     b2PolygonShape poly;
     poly.SetAsBox(0.001, 0.001);
     // 默认随便给一个fixture
-    collider->SetFixture(rawBody->CreateFixture(&poly, rb->GetMass()));
+    auto f = rawBody->CreateFixture(&poly, rb->GetMass());
+    f->SetSensor(colliderShape2D->IsSensor());
+    collider->SetFixture(f);
 }
 
 void Physics2D::Update(float dt) {

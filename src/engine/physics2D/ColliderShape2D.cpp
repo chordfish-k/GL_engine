@@ -37,6 +37,7 @@ void ColliderShape2D::SetCollider(ACollider *shape) {
 
 json ColliderShape2D::Serialize() {
     json j = Node::Serialize();
+    j["data"]["sensor"] = sensor;
     if (collider) {
         j["data"]["collider"] = collider->Serialize();
         j["data"]["collider"]["type"] = GetNameByShapeType(shapeType);
@@ -48,6 +49,11 @@ Node *ColliderShape2D::Deserialize(json j) {
     Node::Deserialize(j);
     auto &data = j["data"];
     if (data.empty()) return this;
+
+    auto &s = data["sensor"];
+    if (!s.empty()) {
+        SetSensor(s);
+    }
 
     auto &c = data["collider"];
     if (!c.empty()) {
@@ -164,5 +170,6 @@ RTTR_CLASS(ColliderShape2D)
     .constructor<>()(
         rttr::policy::ctor::as_raw_ptr // 使用 new 创建对象
         )
-    .property("shape", &ColliderShape2D::GetShapeType, &ColliderShape2D::SetShapeType);
+    .property("shape", &ColliderShape2D::GetShapeType, &ColliderShape2D::SetShapeType)
+    .property("as sensor", &ColliderShape2D::IsSensor, &ColliderShape2D::SetSensor);
 END_RTTR_REG(ColliderShape2D)

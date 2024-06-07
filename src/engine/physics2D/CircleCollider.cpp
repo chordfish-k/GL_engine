@@ -111,9 +111,10 @@ void CircleCollider::RefreshShape() {
         b2PolygonShape poly;
         poly.Set(polygonVertices, vertexCount);
 
-        SetFixture(colliderShape2D->GetRigidBody2D()->GetRawBody()
-                       ->CreateFixture(&poly,
-                                       colliderShape2D->GetRigidBody2D()->GetMass()), i);
+        auto f = colliderShape2D->GetRigidBody2D()->GetRawBody()
+                     ->CreateFixture(&poly,colliderShape2D->GetRigidBody2D()->GetMass());
+        f->SetSensor(colliderShape2D->IsSensor());
+        SetFixture(f, i);
     }
 //    fixture.resize(fi);
     SetDirty(false);
